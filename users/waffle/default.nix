@@ -8,19 +8,18 @@ in
     shell = pkgs.fish;
     extraGroups = [
       "wheel"
+    ] ++ ifTheyExist [
       "video"
       "audio"
-    ] ++ ifTheyExist [
       "network"
       "wireshark"
       "git"
     ];
 
-    openssh.authorizedKeys.keys = [ (builtins.readFile ../../../../home/waffle/ssh.pub) ];
-    packages = [ pkgs.home-manager ];
+    openssh.authorizedKeys.keys = [ (builtins.readFile ../../home/waffle/ssh.pub) ];
   };
 
-  home-manager.users.waffle = import ../../../../home/waffle/${config.networking.hostName}.nix;
+  home-manager.users.waffle = import ../../home/waffle/${config.networking.hostName}.nix;
 
   security.pam.services = { swaylock = { }; };
 }

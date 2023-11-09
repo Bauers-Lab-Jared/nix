@@ -17,7 +17,7 @@ in
     };
   };
 
-  home.persistence = {
-    "/persist/home/waffle".directories = [ ".ssh" ];
-  };
+  # home.persistence = {
+  #   "/persist/home/waffle".directories = [ ".ssh" ];
+  # };
 }

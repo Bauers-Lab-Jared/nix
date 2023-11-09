@@ -5,10 +5,7 @@ let
   hasRipgrep = hasPackage "ripgrep";
   hasExa = hasPackage "eza";
   hasNeovim = config.programs.neovim.enable;
-  hasNeomutt = config.programs.neomutt.enable;
-  hasShellColor = config.programs.shellcolor.enable;
   hasKitty = config.programs.kitty.enable;
-  shellcolor = "${pkgs.shellcolord}/bin/shellcolor";
 in
 {
   programs.fish = {
@@ -34,13 +31,9 @@ in
       ls = mkIf hasExa "eza";
       exa = mkIf hasExa "eza";
 
-      vrg = mkIf (hasNeomutt && hasRipgrep) "nvimrg";
       vim = mkIf hasNeovim "nvim";
       vi = vim;
       v = vim;
-
-      mutt = mkIf hasNeomutt "neomutt";
-      m = mutt;
 
       cik = mkIf hasKitty "clone-in-kitty --type os-window";
       ck = cik;
@@ -52,20 +45,6 @@ in
     functions = {
       # Disable greeting
       fish_greeting = "";
-      # Grep using ripgrep and pass to nvim
-      nvimrg = mkIf (hasNeomutt && hasRipgrep) "nvim -q (rg --vimgrep $argv | psub)";
-      # Integrate ssh with shellcolord
-      ssh = mkIf hasShellColor ''
-        ${shellcolor} disable $fish_pid
-        # Check if kitty is available
-        if set -q KITTY_PID && set -q KITTY_WINDOW_ID && type -q -f kitty
-          kitty +kitten ssh $argv
-        else
-          command ssh $argv
-        end
-        ${shellcolor} enable $fish_pid
-        ${shellcolor} apply $fish_pid
-      '';
     };
     interactiveShellInit =
       # Open command buffer in vim when alt+e is pressed

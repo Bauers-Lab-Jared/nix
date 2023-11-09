@@ -17,7 +17,7 @@ in
     extraConfig = {
       init.defaultBranch = "main";
       user.signing.key = "";
-      commit.gpgSign = true;
+      commit.gpgSign = false;
       gpg.program = "${config.programs.gpg.package}/bin/gpg2";
     };
     lfs.enable = true;

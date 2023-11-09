@@ -1,44 +1,44 @@
-{ pkgs, ... }: {
+{ pkgs, inputs, ... }: {
   imports = [
     ./bash.nix
-    ./bat.nix
-    ./direnv.nix
+    #./bat.nix
+    #./direnv.nix
     ./fish.nix
     ./gh.nix
     ./git.nix
     #./gpg.nix
     #./jujutsu.nix
-    ./nix-index.nix
-    ./pfetch.nix
-    ./ranger.nix
-    ./screen.nix
-    ./shellcolor.nix
+    #./nix-index.nix
+    #./pfetch.nix
+    #./ranger.nix
+    #./screen.nix
+    #./shellcolor.nix
     ./ssh.nix
-    ./starship.nix
+    #./starship.nix
   ];
   home.packages = with pkgs; [
-    comma # Install and run programs by sticking a , before them
-    distrobox # Nice escape hatch, integrates docker images with my environment
+    #comma # Install and run programs by sticking a , before them
+    #distrobox # Nice escape hatch, integrates docker images with my environment
 
-    bc # Calculator
-    bottom # System viewer
-    ncdu # TUI disk usage
+    #bc # Calculator
+    #bottom # System viewer
+    #ncdu # TUI disk usage
     #eza # Better ls
-    ripgrep # Better grep
-    fd # Better find
-    httpie # Better curl
-    diffsitter # Better diff
-    jq # JSON pretty printer and manipulator
-    timer # To help with my ADHD paralysis
+    #ripgrep # Better grep
+    #fd # Better find
+    #httpie # Better curl
+    #diffsitter # Better diff
+    #jq # JSON pretty printer and manipulator
+    #timer # To help with my ADHD paralysis
 
-    nil # Nix LSP
-    nixfmt # Nix formatter
-    nix-inspect # See which pkgs are in your PATH
+    #nil # Nix LSP
+    #nixfmt # Nix formatter
+    #nix-inspect # See which pkgs are in your PATH
 
-    ltex-ls # Spell checking LSP
+    #ltex-ls # Spell checking LSP
 
-    tly # Tally counter
+    #tly # Tally counter
 
-    inputs.nh.default # nixos-rebuild and home-manager CLI wrapper
+    #inputs.nh.packages.${system}.default # nixos-rebuild and home-manager CLI wrapper
   ];
 }

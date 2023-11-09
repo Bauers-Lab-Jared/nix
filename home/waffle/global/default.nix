@@ -1,15 +1,10 @@
 { inputs, lib, pkgs, config, outputs, ... }:
-let
-  inherit (inputs.nix-colors) colorSchemes;
-  inherit (inputs.nix-colors.lib-contrib { inherit pkgs; });
-in
 {
   imports = [
-    inputs.impermanence.nixosModules.home-manager.impermanence
-    inputs.nix-colors.homeManagerModule
+    #inputs.impermanence.nixosModules.home-manager.impermanence
     ../features/cli
-    #../features/nvim
-  ] ++ (builtins.attrValues outputs.homeManagerModules);
+    ../features/nvim
+  ];
 
   nixpkgs = {
     overlays = builtins.attrValues outputs.overlays;
@@ -18,7 +13,7 @@ in
       allowUnfreePredicate = (_: true);
     };
   };
-
+  
   nix = {
     package = lib.mkDefault pkgs.nix;
     settings = {
@@ -26,7 +21,7 @@ in
       warn-dirty = false;
     };
   };
-
+  
   systemd.user.startServices = "sd-switch";
 
   programs = {
@@ -44,14 +39,14 @@ in
       FLAKE = "$HOME/Workspace/NixConfig";
     };
 
-    persistence = {
-      "/persist/home/waffle" = {
-        directories = [
-          "Workspace"
-          ".local/bin"
-        ];
-        allowOther = true;
-      };
-    };
+    # persistence = {
+    #   "/persist/home/waffle" = {
+    #     directories = [
+    #       "Workspace"
+    #       ".local/bin"
+    #     ];
+    #     allowOther = true;
+    #   };
+    # };
   };
 }

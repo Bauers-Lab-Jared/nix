@@ -8,7 +8,7 @@
       prompt = "enabled";
     };
   };
-  home.persistence = {
-    "/persist/home/waffle".directories = [ ".config/gh" ];
-  };
+  # home.persistence = {
+  #   "/persist/home/waffle".directories = [ ".config/gh" ];
+  # };
 }

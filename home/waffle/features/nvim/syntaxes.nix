@@ -13,8 +13,6 @@
     plugins = with pkgs.vimPlugins; [
       vim-markdown
       vim-nix
-      vim-toml
-      vim-terraform
       vim-jsx-typescript
 
       {
