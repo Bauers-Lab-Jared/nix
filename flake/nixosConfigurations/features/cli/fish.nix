@@ -1,4 +1,4 @@
-{
+{ inputs, outputs, pkgs, lib, config, ... }: {
   programs.fish = {
     enable = true;
     vendor = {
@@ -7,4 +7,7 @@
       functions.enable = true;
     };
   };
+
+  # Set default shell to fish global
+  users.defaultUserShell = pkgs.fish;
 }

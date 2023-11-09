@@ -1,8 +1,7 @@
 { inputs, lib, pkgs, config, outputs, ... }:
 let 
-inherit config;
-ifTheyExist = groups: builtins.filter (group: builtins.hasAttr group config.users.groups) groups;
-userName = "waffle";
+  ifTheyExist = groups: builtins.filter (group: builtins.hasAttr group config.users.groups) groups;
+  userName = "waffle";
 in
 {
   #global user config

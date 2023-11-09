@@ -1,27 +1,41 @@
 rec {
-  description = "The One True Flake";
+  description = "Bauer's Lab Flake";
 
   inputs = {
     # Nixpkgs
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.05";
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-    # Also see the 'unstable-packages' overlay at 'overlays/default.nix'.
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
     # Home manager
-    home-manager = {
-      url = "github:nix-community/home-manager/release-23.05";
+    home-manager.url = "github:nix-community/home-manager";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+
+    # Utilities for building our flake
+    flake-utils.url = "github:numtide/flake-utils";
+
+    # Extra flakes for modules, packages, etc
+    hardware.url = "github:nixos/nixos-hardware"; # Convenience modules for hardware-specific quirks
+    nur.url = "github:nix-community/NUR"; # User contributed pkgs and modules
+    nix-colors.url = "github:misterio77/nix-colors"; # Color schemes for usage with home-manager
+    impermanence.url = "github:riscadoa/impermanence"; # Utilities for opt-in persistance
+    agenix.url = "github:ryantm/agenix"; # Secrets management
+
+     # Window manager
+    hyprland = {
+      url = "github:hyprwm/Hyprland";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    hyprland-contrib = {
+      url = "github:hyprwm/contrib";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    hardware.url = "github:nixos/nixos-hardware";
-    flake-utils.url = "github:numtide/flake-utils";
+    nixvim = {
+      url = "github:nix-community/nixvim";
+      # If you are not running an unstable channel of nixpkgs, select the corresponding branch of nixvim.
+      # url = "github:nix-community/nixvim/nixos-23.05";
 
-    flake-compat = {
-      url = "github:edolstra/flake-compat";
-      flake = false;
+      inputs.nixpkgs.follows = "nixpkgs";
     };
-    
-    impermanence.url = "github:nix-community/impermanence";
 
     nixos-wsl = {
       url = "github:nix-community/nixos-wsl";

@@ -6,6 +6,5 @@
     ];
   };
 
-  # Required settings per system:
-  # time.timeZone = lib.mkDefault "US/Eastern";
+  time.timeZone = lib.mkDefault "US/Eastern";
 }

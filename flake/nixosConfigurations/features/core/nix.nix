@@ -1,4 +1,4 @@
-{ inputs, lib, ... }:
+{ inputs, lib, config, ... }:
 {
   nix = {
     settings = {
@@ -6,8 +6,9 @@
       auto-optimise-store = lib.mkDefault true;
       experimental-features = [ "nix-command" "flakes" "repl-flake" ];
       warn-dirty = false;
-      flake-registry = ""; # Disable global flake registry
     };
+
+    # Weekly garbage collection
     gc = {
       automatic = true;
       dates = "weekly";
@@ -15,12 +16,15 @@
       options = "--delete-older-than +3";
     };
     
+    # Enable optimisation
+    optimise = {
+      automatic = true;
+      dates = ["weekly"];
+    };
+
     # Add each flake input as a registry
     # To make nix3 commands consistent with the flake
     registry = lib.mapAttrs (_: value: { flake = value; }) inputs;
-
-    # Add nixpkgs input to NIX_PATH
-    # This lets nix2 commands still use <nixpkgs>
-    nixPath = [ "nixpkgs=${inputs.nixpkgs.outPath}" ];
+    nixPath = lib.mapAttrsToList (key: value: "${key}=${value.to.path}") config.nix.registry;
   };
 }
