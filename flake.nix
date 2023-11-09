@@ -23,11 +23,13 @@ rec {
     
     impermanence.url = "github:nix-community/impermanence";
 
-    nixos-wsl.url = "github:nix-community/nixos-wsl";
-    nixos-wsl.inputs.nixpkgs.follows = "nixpkgs";
+    nixos-wsl = {
+      url = "github:nix-community/nixos-wsl";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = {self, nixpkgs, home-manager, ... } @ inputs: let 
+  outputs = {self, ... } @ inputs: let 
     inherit (self) outputs;
   in 
   ( import ./flake {inherit inputs outputs;} );

@@ -4,5 +4,8 @@
     ];
 
   wsl.enable = true;
-  wsl.defaultUser = thisConfig.mainUser;
+  
+  # Required settings per system:
+  # wsl.defaultUser = username;
+  
 }
