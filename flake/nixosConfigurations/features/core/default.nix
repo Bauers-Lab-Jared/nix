@@ -17,7 +17,6 @@
     ./locale.nix
     ./pam.nix
     ./nix.nix
-    ./systemd-initrd.nix
   ];
 
   
