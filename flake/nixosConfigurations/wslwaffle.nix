@@ -24,6 +24,8 @@ rec {
   imports = [
     ./features/wsl
     ./features/cli
+    ./features/nvim
+    ./features/xserver
 
     # Define your users by importing './users/user-name'
     (../users + "/${thisConfig.mainUser}")

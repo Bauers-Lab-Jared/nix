@@ -1,5 +1,5 @@
 { pkgs, lib, config, ... }: {
-
+#WIP
   config = {
     services.xserver =
     { 
