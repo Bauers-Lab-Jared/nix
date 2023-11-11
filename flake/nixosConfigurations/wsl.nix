@@ -8,10 +8,10 @@
   pkgs,
   ...
 }: let
-  thisConfig.mainUser = "waffle";
+  thisConfig.mainUser = "username";
 in
 rec {
-  system.name = "wslwaffle";
+  system.name = "wsl";
   networking.hostName = "${system.name}";
   nixpkgs.hostPlatform = "x86_64-linux";
 

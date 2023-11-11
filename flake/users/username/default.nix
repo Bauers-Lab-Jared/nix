@@ -1,7 +1,7 @@
 { inputs, lib, pkgs, config, outputs, ... }:
 let 
   ifTheyExist = groups: builtins.filter (group: builtins.hasAttr group config.users.groups) groups;
-  userName = "waffle";
+  userName = "username";
 in
 {
   #global user config
