@@ -1,0 +1,17 @@
+;This is wsl configuration for windows. 
+;Generally it is expected in %UserProfile%/.wslconfig
+[wsl2]
+;kernel=C:\\temp\\myCustomKernel
+;memory=4GB # Limits VM memory in WSL 2 to 4 GB
+;processors=2 # Makes the WSL 2 VM use two virtual processors
+;localhostForwarding=true # forwards Windows localhost into WSL 2
+;kernelCommandLine="" # Specify additional kernel command line args
+;safeMode=true # disables many features and is intended for recovery
+;swap= #How much swap space to add to the WSL 2 VM, 0 for no swap file.
+;   Swap storage is disk-based RAM used when memory demand exceeds limit on hardware device.
+;swapFile=%USERPROFILE%\AppData\Local\Temp\swap.vhdx
+;pageReporting=true # Enables Windows to reclaim unused memory allocated
+;guiApplications=true # Enables GUI app support on WSL 2 by default
+;debugConsole=true # output console Window that shows the contents of dmesg
+;nestedVirtualization=true # enabling other nested VMs to run inside WSL 2. Only available for Windows 11.
+;vmIdleTimeout=60000 # How long (in minutes) to wait until shutdown the WSL 2 VM. 0 for no timeout.

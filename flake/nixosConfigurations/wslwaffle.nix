@@ -29,5 +29,10 @@ rec {
 
     # Define your users by importing './users/user-name'
     (../users + "/${thisConfig.mainUser}")
-  ]; 
+  ];
+
+  environment.systemPackages = with pkgs; [
+    mullvad-browser
+  ];
+
 }
