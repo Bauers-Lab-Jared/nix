@@ -26,7 +26,7 @@ in
       sessionPath = [ "$HOME/.local/bin" ];
       sessionVariables = 
         {FLAKE = "$HOME/NixConfig";}
-        // (if config.programs.nixvim.enable then {EDITOR = "nvim";} else {});
+        // (if (config.programs ? nixvim && config.programs.nixvim.enable) then {EDITOR = "nvim";} else {});
     };
   };
 }

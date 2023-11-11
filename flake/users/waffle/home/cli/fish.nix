@@ -4,7 +4,7 @@ let
   hasPackage = pname: lib.any (p: p ? pname && p.pname == pname) config.home.packages;
   hasRipgrep = hasPackage "ripgrep";
   hasExa = hasPackage "eza";
-  hasNeovim = osConfig.programs.nixvim.enable;
+  hasNeovim = (osConfig.programs ? nixvim && osConfig.programs.nixvim.enable);
   hasFish = osConfig.programs.fish.enable;
 in
 {

@@ -1,9 +1,4 @@
-{
-  pkgs,
-  lib,
-  config,
-  ...
-}: {
+{ pkgs, lib, config, ... }: {
   # Core pakages for system
   environment.systemPackages = with pkgs; [
     wget
@@ -22,7 +17,6 @@
     ./locale.nix
     ./pam.nix
     ./nix.nix
-    ./systemd-initrd.nix
   ];
 
   
