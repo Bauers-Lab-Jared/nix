@@ -6,19 +6,14 @@
 #   if they are added to /flake/nixosConfigurations/configFeatures/${featureName}.nix
 
 #NOTE: The name of this file will be the name of the module in config.configFeatures
-{featureName}: { lib, config, pkgs, ... }: with lib; 
-let
-  cfg = config.configFeatures.${featureName};
-in
+{ lib, config, pkgs, ... }: with lib;
 {
 
-  imports = [      
+  imports = [
     # EX: inputs.home-manager.nixosModules.home-manager
   ];
 
-  options.configFeatures.${featureName}.enable = mkEnableOption "short desc";
-
-  config = mkIf cfg.enable {
+  config = {
     
     #Place the usual config here.
     

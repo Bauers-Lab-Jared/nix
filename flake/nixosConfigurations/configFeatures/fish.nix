@@ -1,12 +1,7 @@
-{featureName}: { lib, config, pkgs, ... }: with lib; 
-let
-  cfg = config.configFeatures.${featureName};
-in
+{ lib, config, pkgs, ... }: with lib;
 {
-  options.configFeatures.${featureName}.enable =
-    mkEnableOption "Adds and sets default shell to fish";
 
-  config = mkIf cfg.enable {
+  config = {
     programs.fish = {
       enable = true;
       vendor = {

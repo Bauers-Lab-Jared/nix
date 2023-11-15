@@ -1,6 +1,5 @@
-{featureName}: { inputs, lib, config, pkgs, ... }: with lib; 
+{ inputs, lib, config, pkgs, ... }: with lib; 
 let
-  cfg = config.configFeatures.${featureName};
   mainUser = config.thisConfig.mainUser;
   systemName = config.thisConfig.systemName;
 in
@@ -10,10 +9,7 @@ in
     inputs.nixos-wsl.nixosModules.wsl
   ];
 
-  options.configFeatures.${featureName}.enable =
-    mkEnableOption "Windows Subsystem for Linux";
-
-  config = mkIf cfg.enable {
+  config = {
     wsl = {
       enable = true;
       defaultUser = mainUser;

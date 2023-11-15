@@ -1,17 +1,10 @@
-{featureName}: { inputs, outputs, lib, config, pkgs, ... }: with lib; 
-let
-  cfg = config.configFeatures.${featureName};
-in
+{ inputs, outputs, lib, config, pkgs, ... }: with lib;
 {
   imports = [
     inputs.home-manager.nixosModules.home-manager
   ];
 
-  options.configFeatures.${featureName}.enable =
-    mkEnableOption "Adds and configures home-manager";
-
-  config = mkIf cfg.enable {
-
+  config = {
     home-manager = {
       useUserPackages = true;
       useGlobalPkgs = true;

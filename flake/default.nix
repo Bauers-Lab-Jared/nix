@@ -1,9 +1,7 @@
 {inputs, outputs, ... }: 
 let
   inherit outputs;
-  nixpkgs = inputs.nixpkgs;
-  home-manager = inputs.home-manager;
-  system = inputs.system;
+  inherit (inputs) nixpkgs home-manager system;
 
   # Supported systems for your flake packages, shell, etc.
   systems = [
@@ -16,10 +14,7 @@ let
 
   forEachSystem = f: lib.genAttrs systems (system: f pkgsFor.${system});
   pkgsFor = lib.genAttrs systems (system:
-    import nixpkgs {
-      inherit system;
-      config.allowUnfree = true;
-    });
+    import nixpkgs {inherit system;});
 
   systemNames = 
   builtins.filter (x: x != "default")
@@ -64,7 +59,9 @@ in
       modules = [ 
         (./nixosConfigurations + "/${systemName}.nix")
         ./nixosConfigurations
-        ({ ... }: {thisConfig = {inherit systemName;};})
+        ({ ... }: {
+          thisConfig = {inherit systemName;};
+        })
       ];
 
     }

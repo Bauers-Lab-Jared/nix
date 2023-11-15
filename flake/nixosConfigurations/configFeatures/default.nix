@@ -1,28 +1,17 @@
 #(https://nixos.wiki/wiki/Module).
 { inputs, outputs, lib, config, pkgs, ... }: with lib;
 let
+  util = import ../../util { inherit lib; };
   cfg = config.thisConfig;
 
   configFeaturesDir = ./.;
-  featureFiles = builtins.readDir configFeaturesDir;
-
-  featureNames = if (featureFiles == {}) then [] else
-    builtins.filter (x: x != "default")
-      (foldlAttrs 
-        (acc: key: value: 
-          if value == "regular" 
-          then acc ++ [
-            (builtins.replaceStrings [".nix"] [""] key)] 
-          else acc ) 
-        [] 
-        (featureFiles)
-      );
+  featureNames = util.nixNamesInDir configFeaturesDir;
 
   hasFeat = (featName: (builtins.elem featName cfg.features));
 in
 {
   imports = builtins.map (featureName: 
-    (import (./. + "/${featureName}.nix") { inherit featureName; })
+    (util.featureWrapper { inherit featureName; importDir = configFeaturesDir; })
   ) featureNames;
   
   options.thisConfig = {

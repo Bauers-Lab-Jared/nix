@@ -1,4 +1,4 @@
-{ inputs, lib, config, pkgs, ... }: with lib;
+{ inputs, outputs, lib, config, pkgs, ... }: with lib;
 let
   inherit (config.thisConfig) systemName;
 in { 
