@@ -1,7 +1,7 @@
 #(https://nixos.wiki/wiki/Module).
 { inputs, outputs, lib, config, pkgs, ... }: with lib;
 let
-  util = import ../../util { inherit lib; };
+  inherit (inputs) util;
   cfg = config.thisConfig;
 
   configFeaturesDir = ./.;

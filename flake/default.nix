@@ -1,7 +1,7 @@
 {inputs, outputs, ... }: 
 let
   inherit outputs;
-  inherit (inputs) nixpkgs home-manager system;
+  inherit (inputs) nixpkgs home-manager system util;
 
   # Supported systems for your flake packages, shell, etc.
   systems = [
@@ -10,7 +10,7 @@ let
     "x86_64-linux"
   ];
 
-  lib = nixpkgs.lib // home-manager.lib;
+  lib = nixpkgs.lib // home-manager.lib // util;
 
   forEachSystem = f: lib.genAttrs systems (system: f pkgsFor.${system});
   pkgsFor = lib.genAttrs systems (system:
