@@ -1,3 +1,5 @@
+#https://nixos-and-flakes.thiscute.world/introduction/
+#https://jdisaacs.com/blog/nixos-config/
 rec {
   description = "Bauer's Lab Flake";
 

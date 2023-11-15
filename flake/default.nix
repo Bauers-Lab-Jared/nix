@@ -49,31 +49,33 @@ in
 {
   inherit lib;
   
-  templates = import ./templates;
+  #templates = import ./templates;
   packages = forEachSystem (pkgs: import ./customPkgs { inherit pkgs; });
-  devShells = forEachSystem (pkgs: import ./shell.nix {inherit pkgs;});
+  #devShells = forEachSystem (pkgs: import ./shell.nix {inherit pkgs;});
 
   overlays.default = import ./overlays {inherit inputs outputs;};
-  nixosModules = import ./nixosModules;
-  homeManagerModules = import ./homeManagerModules;
+  #nixosModules = import ./nixosModules;
+  #homeManagerModules = import ./homeManagerModules;
 
 
-  nixosConfigurations = lib.genAttrs systemNames (name:
+  nixosConfigurations = lib.genAttrs systemNames (systemName:
     lib.nixosSystem {
       specialArgs = {inherit inputs outputs;};
       modules = [ 
-        (./nixosConfigurations + "/${name}.nix")
+        (./nixosConfigurations + "/${systemName}.nix")
         ./nixosConfigurations
+        ({ ... }: {thisConfig = {inherit systemName;};})
       ];
+
     }
   );
 
-  homeConfigurations = lib.genAttrs homeNames (name:
-    lib.homeManagerConfiguration {
-      specialArgs = {inherit inputs outputs;};
-      modules = [ 
-        (./homeConfigurations + "/${name}.nix")
-      ];
-    }
-  );
+  # homeConfigurations = lib.genAttrs homeNames (name:
+  #   lib.homeManagerConfiguration {
+  #     specialArgs = {inherit inputs outputs;};
+  #     modules = [ 
+  #       (./homeConfigurations + "/${name}.nix")
+  #     ];
+  #   }
+  # );
 }
