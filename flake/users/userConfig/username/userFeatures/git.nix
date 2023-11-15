@@ -1,12 +1,6 @@
-{featureName}: { lib, config, ... }: with lib; 
-let
-  cfg = config.userFeatures.${featureName};
-in
+{ lib, config, ... }: with lib;
 {
-  options.userFeatures.${featureName}.enable =
-    mkEnableOption "custom config for git";
-
-  config = mkIf cfg.enable {
+  config = {
     programs.git = {
       userName = "Jared";
       userEmail = "127258074+Bauers-Lab-Jared@users.noreply.github.com";

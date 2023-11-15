@@ -1,13 +1,6 @@
-{featureName}: { lib, config, pkgs, ... }: with lib; 
-let
-  cfg = config.homeFeatures.${featureName};
-in
+{ lib, config, pkgs, ... }: with lib;
 {
-  options.homeFeatures.${featureName}.enable =
-    mkEnableOption "{WIP} Adds and configures basic network functionality";
-
-  config = mkIf cfg.enable {
-
+  config = {
     home.packages = with pkgs; [
       wget
       curl

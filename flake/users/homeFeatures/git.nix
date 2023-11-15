@@ -1,12 +1,6 @@
-{featureName}: { lib, config, pkgs, ... }: with lib; 
-let
-  cfg = config.homeFeatures.${featureName};
-in
+{ lib, config, pkgs, ... }: with lib;
 {
-  options.homeFeatures.${featureName}.enable =
-    mkEnableOption "some standard config for git";
-
-  config = mkIf cfg.enable {
+  config = {
     programs.git = {
       enable = mkDefault true;
       package = mkDefault pkgs.gitAndTools.gitFull;

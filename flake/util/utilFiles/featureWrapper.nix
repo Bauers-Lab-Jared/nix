@@ -1,9 +1,9 @@
 { lib }: {
   thisUtil = {
-    wrapper = {featureName, importDir}: {
-      featHandler = args@{ inputs, outputs, lib, config, pkgs, ... }: with lib; 
+    wrapper = {featureName, importDir, setName}: {
+      featHandler = args@{ inputs, outputs, lib, config, pkgs, osConfig ? {}, ... }: with lib; 
       let
-        cfg = config.configFeatures.${featureName};
+        cfg = config.${setName}.${featureName};
 
         featureImport = import (importDir + "/${featureName}.nix") (args);
       in
@@ -16,7 +16,7 @@
         options = (if (featureImport ? options) 
           then featureImport.options
           else {}) // 
-            {configFeatures.${featureName}.enable =
+            {${setName}.${featureName}.enable =
               mkEnableOption "";};
 
         config = mkIf cfg.enable (if (featureImport ? config)

@@ -1,13 +1,6 @@
-{featureName}: { lib, config, ... }: with lib; 
-let
-  cfg = config.userFeatures.${featureName};
-in
+{ lib, config, ... }: with lib; 
 {
-
-  options.userFeatures.${featureName}.enable =
-    mkEnableOption "user config for nixvim";
-
-  config.home = mkIf cfg.enable {
+  config.home = {
     
   };
 }

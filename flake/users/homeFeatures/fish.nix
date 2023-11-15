@@ -1,14 +1,9 @@
-{featureName}: { lib, config, pkgs, osConfig, ... }: with lib; 
+{ lib, config, pkgs, osConfig, ... }: with lib; 
 let
-  cfg = config.homeFeatures.${featureName};
-
   hasNeovim = builtins.elem "nvim" osConfig.thisConfig.features;
 in
 {
-  options.homeFeatures.${featureName}.enable =
-    mkEnableOption "some default configs for fish";
-
-  config = mkIf cfg.enable {
+  config = {
     programs.fish = {
       enable = mkDefault true;
 

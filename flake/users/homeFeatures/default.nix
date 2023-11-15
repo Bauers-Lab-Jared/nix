@@ -1,28 +1,18 @@
 #(https://nixos.wiki/wiki/Module).
 { inputs, outputs, lib, config, pkgs, ... }: with lib;
 let
+  inherit (inputs) util;
   cfg = config.homeConfig;
 
   homeFeaturesDir = ./.;
-  featureFiles = builtins.readDir homeFeaturesDir;
-
-  featureNames = if (featureFiles == {}) then [] else
-    builtins.filter (x: x != "default")
-      (foldlAttrs 
-        (acc: key: value: 
-          if value == "regular" 
-          then acc ++ [
-            (builtins.replaceStrings [".nix"] [""] key)] 
-          else acc ) 
-        [] 
-        (featureFiles)
-      );
+  featureNames = util.nixNamesInDir homeFeaturesDir;
+  setName = "homeFeatures";
 
   hasFeat = (featName: (builtins.elem featName cfg.features));
 in
 {
   imports = builtins.map (featureName: 
-    (import (./. + "/${featureName}.nix") { inherit featureName; })
+    (util.featureWrapper { inherit featureName setName; importDir = homeFeaturesDir;})
   ) featureNames;
   
   options.homeConfig = {

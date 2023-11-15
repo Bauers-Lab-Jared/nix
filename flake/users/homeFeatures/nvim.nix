@@ -1,17 +1,11 @@
-{featureName}: {inputs, lib, config, ... }: with lib; 
-let
-  cfg = config.homeFeatures.${featureName};
-in
+{inputs, lib, config, ... }: with lib;
 {
 
   imports = [      
     inputs.nixvim.homeManagerModules.nixvim
   ];
 
-  options.homeFeatures.${featureName}.enable =
-    mkEnableOption "general config for nixvim";
-
-  config = mkIf cfg.enable {
+  config = {
     programs.nixvim = {
       enable = mkDefault true;
 

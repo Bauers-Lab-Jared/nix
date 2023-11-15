@@ -6,12 +6,13 @@ let
 
   configFeaturesDir = ./.;
   featureNames = util.nixNamesInDir configFeaturesDir;
+  setName = "configFeatures";
 
   hasFeat = (featName: (builtins.elem featName cfg.features));
 in
 {
   imports = builtins.map (featureName: 
-    (util.featureWrapper { inherit featureName; importDir = configFeaturesDir; })
+    (util.featureWrapper { inherit featureName setName; importDir = configFeaturesDir; })
   ) featureNames;
   
   options.thisConfig = {
