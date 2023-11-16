@@ -1,7 +1,0 @@
-{
-  imports = [
-    ./cli
-    ./nvim
-    ./gnome
-  ]; 
-}
