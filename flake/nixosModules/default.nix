@@ -1,7 +1,16 @@
-# Add your reusable NixOS modules to this directory, on their own file (https://nixos.wiki/wiki/Module).
-# These should be stuff you would like to share with others, not your personal configurations.
-
-{
-  # List your module files here
-  # my-module = import ./my-module.nix;
-}
+#(https://nixos.wiki/wiki/Module).
+#Super Broken
+let
+moduleNames = 
+  builtins.filter (x: x != "default")
+    (lib.foldlAttrs 
+      (acc: key: value: 
+        if value == "regular" 
+        then acc ++ [
+          (builtins.replaceStrings [".nix"] [""] key)] 
+        else acc
+      ) 
+      [] 
+      (builtins.readDir ./.));
+in
+lib.genAttrs moduleNames (moduleName: import (./. + "/${moduleName}.nix"))
