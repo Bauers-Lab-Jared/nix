@@ -2,8 +2,8 @@
 {
   config = {
     programs.git = {
-      userName = "Jared";
-      userEmail = "127258074+Bauers-Lab-Jared@users.noreply.github.com";
+      userName = "username";
+      userEmail = "username@nowhere.not";
     };
   };
 }

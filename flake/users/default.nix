@@ -10,7 +10,7 @@ in
     openssh.authorizedKeys.keys = [ (builtins.readFile (./userConfig + "/${userName}/ssh.pub")) ];
 
     isNormalUser = true;
-    extraGroups = [ #make this user specific later
+    extraGroups = [ #TODO: make this user specific later
       "wheel"
     ] ++ ifTheyExist [
       "video"
