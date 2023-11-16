@@ -15,7 +15,7 @@ in
       defaultUser = mainUser;
     };
 
-    networking.hostName = systemName;
+    networking.hostName = mkDefault systemName;
     boot.isContainer = true;
     systemd.enableEmergencyMode = false;
   };

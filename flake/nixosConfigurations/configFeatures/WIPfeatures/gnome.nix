@@ -1,9 +1,11 @@
-{ pkgs, lib, config, ... }: {
+{ pkgs, lib, config, ... }: with lib;{
   
   config = {
     services.xserver =
     { 
       enable = true;
+      autorun = mkDefault false;
+      layout = mkDefault "us";
       displayManager = { 
           defaultSession = "gnome";
           gdm = {

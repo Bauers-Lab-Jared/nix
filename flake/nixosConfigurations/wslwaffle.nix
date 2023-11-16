@@ -7,8 +7,6 @@
       "wsl"
       "fish"
       "nvim"
-      "gnome"
-      "web-browsers"
     ];
   };
 
