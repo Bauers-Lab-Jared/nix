@@ -1,5 +1,5 @@
 { pkgs, lib, config, ... }: {
-#WIP
+  
   config = {
     services.xserver =
     { 
@@ -39,7 +39,6 @@
 
     environment.systemPackages = with pkgs; [
       gnome.gnome-tweaks
-      mullvad-browser
     ];
 
     systemd.services."getty@tty1".enable = false;
