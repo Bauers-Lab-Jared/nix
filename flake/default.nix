@@ -10,7 +10,7 @@ let
     "x86_64-linux"
   ];
 
-  lib = nixpkgs.lib // home-manager.lib // util;
+  lib = nixpkgs.lib // home-manager.lib;
 
   forEachSystem = f: lib.genAttrs systems (system: f pkgsFor.${system});
   pkgsFor = lib.genAttrs systems (system:
