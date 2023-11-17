@@ -1,5 +1,0 @@
-{ lib, utilName }: {
-  thisUtil = {
-
-  };
-}.thisUtil
