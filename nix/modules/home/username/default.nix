@@ -14,18 +14,18 @@
     virtual, # A boolean to determine whether this system is a virtual target using nixos-generators.
     systems, # An attribute map of your defined hosts.
 
-    # All other arguments come from the system system.
+    # All other arguments come from the module system.
     config,
+    osConfig,
     ...
-}:
+}: let
+username = "username";
+userFeatures = builtins.attrNames config.thisFlake.userFeatures.${username};
+configFeatures = builtins.attrNames lib.filterAtters (n: v: v.enable == true ) osConfig.thisFlake.configFeatures;
+commonFeatures = builtins.intersectLists configFeatures userFeatures;
+in 
 {
-  config = {
-
-
-    snowfallorg.user = { "username" }
-  };
+    config = {
+        userFeatures = lib.genAttrs commonFeatures (name: {${name}.enable = true;});
+    }
 }
-
-#This system will be made available on your flake’s nixosConfigurations, 
-# darwinConfigurations, or one of Snowfall Lib’s virtual *Configurations outputs
-# with the same name as the directory that you created.
