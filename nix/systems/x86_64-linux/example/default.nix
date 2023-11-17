@@ -19,7 +19,13 @@
     ...
 }:
 {
+  config = {
     # Your configuration.
+
+    snowfallorg.user = {
+      
+    }
+  };
 }
 
 #This system will be made available on your flake’s nixosConfigurations, 
