@@ -41,11 +41,8 @@ in {
   config = mkIf cfg.enable {
     wsl = {
       enable = true;
-      defaultUser = mkDefault mainUser;
-
-      networking.hostName = mkDefault systemName;
-      boot.isContainer = true;
-      systemd.enableEmergencyMode = false;
+      defaultUser = lib.mkDefault mainUser;
+    
     };
   };
 }
