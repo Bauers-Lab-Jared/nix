@@ -6,7 +6,7 @@
 # pull packages into your overlay.
 #
 # All other arguments for this function are your flake inputs.
-{ channels, my-input, ... }:
+{ channels, ... }:
 
 final: prev: {
     # For example, to pull a package from unstable NixPkgs make sure you have the

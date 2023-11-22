@@ -14,43 +14,32 @@
     virtual, # A boolean to determine whether this system is a virtual target using nixos-generators.
     systems, # An attribute map of your defined hosts.
 
-    # All other arguments come from the system system.
+    # All other arguments come from the module system.
     config,
     ...
 }: with lib;
 with lib.thisFlake;
 let
-  mainUser = "username";
+  featureName = baseNameOf (toString ./.);
+  cfg = config.thisFlake.configFeatures.${featureName};
 in {
 
+  imports = with inputs; [      
+    nixos-wsl.nixosModules.wsl
+  ];
 
-  config = {
-      thisFlake = {
-
-        users.${mainUser} = {
-          name = mainUser;
-          fullName = "";
-          email = "${mainUser}@nowhere.not";
-          extraGroups =  [
-            "wheel"
-          ];
-        };
-
-        thisConfig = {
-          inherit mainUser;
-
-          enabledFeatures = [
-            "wsl"
-            "fish"
-            "nvim"
-          ];
-        };
+  options = mkConfigFeature {inherit config featureName; 
+  otherOptions = with types;{
+      configFeatures.${featureName} = {
+        
       };
-    # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
-    system.stateVersion = "23.05";
+    };
+  };
+  
+  config = mkIf cfg.enable {
+    wsl = {
+      enable = true;
+      defaultUser = mkDefault config.thisFlake.thisConfig.mainUser;
+    };
   };
 }
-
-#This system will be made available on your flake’s nixosConfigurations, 
-# darwinConfigurations, or one of Snowfall Lib’s virtual *Configurations outputs
-# with the same name as the directory that you created.

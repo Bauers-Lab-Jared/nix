@@ -40,15 +40,15 @@ rec {
     };
 
     #When life gives you windows...
-    wsl = {
+    nixos-wsl = {
       url = "github:nix-community/NixOS-WSL";
-      inputs.nixpkgs.follows = "unstable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     #Do you even vim, bruv?
     nixvim = {
-      url = "github:nix-community/nixvim";
-      inputs.nixpkgs.follows = "unstable";
+      url = "github:nix-community/nixvim/nixos-23.05";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     
     #allows you to run a command from nixpkgs
@@ -85,11 +85,11 @@ rec {
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Flake Hygiene
-    flake-checker = {
-      url = "github:DeterminateSystems/flake-checker";
-      inputs.nixpkgs.follows = "unstable";
-    };
+    # # Flake Hygiene
+    # flake-checker = {
+    #   url = "github:DeterminateSystems/flake-checker";
+    #   inputs.nixpkgs.follows = "unstable";
+    # };
 
     # Discord Replugged
     replugged.url = "github:LunNova/replugged-nix-flake";
@@ -121,7 +121,7 @@ rec {
     #util.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs: 
+  outputs = inputs:
     inputs.snowfall-lib.mkFlake {
       # You must provide our flake inputs to Snowfall Lib.
       inherit inputs;
@@ -155,7 +155,7 @@ rec {
 
       overlays = with inputs; [
         tmux.overlay
-        flake.overlays.default
+        snowfall-flake.overlays.default
         attic.overlays.default
       ];
 
@@ -166,7 +166,7 @@ rec {
         # attic.nixosModules.atticd
       ];
 
-      deploy = lib.mkDeploy {inherit (inputs) self;};
+      deploy = inputs.lib.mkDeploy {inherit (inputs) self;};
 
       checks =
         builtins.mapAttrs
