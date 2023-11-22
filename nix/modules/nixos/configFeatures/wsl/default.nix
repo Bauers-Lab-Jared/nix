@@ -22,6 +22,8 @@ with lib.thisFlake;
 let
   featureName = baseNameOf (toString ./.);
   cfg = config.thisFlake.configFeatures.${featureName};
+
+  inherit (config.thisFlake.thisConfig) mainUser systemName;
 in {
 
   imports = with inputs; [      
@@ -39,7 +41,11 @@ in {
   config = mkIf cfg.enable {
     wsl = {
       enable = true;
-      defaultUser = mkDefault config.thisFlake.thisConfig.mainUser;
+      defaultUser = mkDefault mainUser;
+
+      networking.hostName = mkDefault systemName;
+      boot.isContainer = true;
+      systemd.enableEmergencyMode = false;
     };
   };
 }
