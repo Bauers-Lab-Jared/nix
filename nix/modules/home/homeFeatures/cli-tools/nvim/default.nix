@@ -75,5 +75,9 @@ in {
     home.sessionVariables = {
       EDITOR = mkDefault "nvim";
     };
+
+    programs.zsh.shellAliases.vimdiff = "nvim -d";
+    programs.bash.shellAliases.vimdiff = "nvim -d";
+    programs.fish.shellAliases.vimdiff = "nvim -d";
   };
 }

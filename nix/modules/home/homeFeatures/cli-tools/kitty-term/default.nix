@@ -46,7 +46,7 @@ in {
     programs.kitty = {
       enable = true;
       shellIntegration.mode = true;
-      theme = "Catppuccin-Mocha"
+      theme = "Catppuccin-Mocha";
 
       settings = mkDefault {
         scrollback_lines = 10000;
