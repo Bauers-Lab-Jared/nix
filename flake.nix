@@ -90,7 +90,7 @@ rec {
     #   url = "github:DeterminateSystems/flake-checker";
     #   inputs.nixpkgs.follows = "unstable";
     # };
-
+    
     # Discord Replugged
     replugged.url = "github:LunNova/replugged-nix-flake";
     replugged.inputs.nixpkgs.follows = "unstable";
@@ -117,8 +117,7 @@ rec {
       flake = false;
     };
 
-    #util.url = "path:./flake/util";
-    #util.inputs.nixpkgs.follows = "nixpkgs";
+    
   };
 
   outputs = inputs:
@@ -155,8 +154,9 @@ rec {
 
       overlays = with inputs; [
         tmux.overlay
-        snowfall-flake.overlays.default
-        attic.overlays.default
+        snowfall-thaw.overlay
+        snowfall-flake.overlay
+        #attic.overlays.default
       ];
 
       # modules to apply to all nixos systems

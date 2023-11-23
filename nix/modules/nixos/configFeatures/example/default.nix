@@ -30,7 +30,7 @@ in {
 
   options = mkConfigFeature {inherit config featureName; 
   otherOptions = with types;{
-      configFeatures.${featureName} = {
+      thisFlake.configFeatures.${featureName} = {
         
       };
     };
