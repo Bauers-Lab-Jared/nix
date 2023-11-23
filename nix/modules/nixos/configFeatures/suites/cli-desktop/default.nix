@@ -37,6 +37,19 @@ in {
   };
   
   config = mkIf cfg.enable {
-    
+    thisFlake = {
+      configFeatures = genAttrs [
+        "env"
+        "fish"           
+        "nvim"           
+        "bottom-proc-mon"
+        "cli-utils"      
+        "nix-utils"       
+        "tmux"  
+        "kitty-term"         
+      ] (n: enabled);
+    };
+
+
   };
 }

@@ -22,21 +22,28 @@ with lib.thisFlake;
 let
   featureName = baseNameOf (toString ./.);
   cfg = config.thisFlake.configFeatures.${featureName};
-in {
 
-  imports = [      
-    
-  ];
+  fup-repl = pkgs.writeShellScriptBin "fup-repl" ''
+    ${pkgs.fup-repl}/bin/repl ''${@}
+  '';
+in {
 
   options = mkConfigFeature {inherit config featureName; 
   otherOptions = with types;{
-      thisFlake.configFeatures.${featureName} = {
+      configFeatures.${featureName} = {
         
       };
     };
   };
   
   config = mkIf cfg.enable {
-    
+    environment.systemPackages = with pkgs; [
+      snowfallorg.flake
+      snowfallorg.thaw
+      fup-repl
+      comma
+      nix-melt
+      deploy-rs
+    ];
   };
 }

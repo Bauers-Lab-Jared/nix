@@ -18,12 +18,10 @@
     config,
     ...
 }: with lib;
+with lib.thisFlake;
 {
     
-    thisFlake.thisConfig.enabledFeatures = [
-        #"home-manager"
-        "git"
-    ];
+    thisFlake.configFeatures."git" = enabled;
 
     i18n = {
         defaultLocale = mkDefault "en_US.UTF-8";

@@ -23,7 +23,9 @@ let
   mainUser = "waffle";
   systemName = baseNameOf (toString ./.);
 in {
-
+	imports = [
+		./hardware-configuration.nix
+	];
 
   config = {
     thisFlake = {
@@ -38,8 +40,9 @@ in {
       };
 
       configFeatures = genAttrs [
-        "wsl"
+      	"boot"
         "cli-desktop"
+	      "networking"
       ] (n: enabled);
 
       thisConfig = {

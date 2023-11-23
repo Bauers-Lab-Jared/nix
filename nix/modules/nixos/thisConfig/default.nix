@@ -28,8 +28,6 @@ in
     { 
         mainUser = mkOpt str "nixos" "Primary user of this system";
         systemName = mkOpt str "nixos" "Name of this system";
-
-        enabledFeatures = mkOpt (listOf str) [ ] "The flat list of features to be enabled on this config";
     };
 
     config = {

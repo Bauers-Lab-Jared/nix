@@ -25,7 +25,7 @@ let
 in {
 
   imports = [      
-    inputs.nixvim.nixosModules.nixvim
+    
   ];
 
   options = mkConfigFeature {inherit config featureName; 
@@ -37,8 +37,11 @@ in {
   };
   
   config = mkIf cfg.enable {
-    programs.nixvim = {
-      enable = true;
+    
+    console.useXkbConfig = true;
+    services.xserver = {
+      layout = "us";
+      xkbOptions = "caps:escape";
     };
   };
 }
