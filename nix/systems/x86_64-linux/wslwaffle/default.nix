@@ -26,27 +26,27 @@ in {
 
 
   config = {
-      thisFlake = {
+    thisFlake = {
 
-        users.${mainUser} = {
-          name = mainUser;
-          fullName = "";
-          email = "${mainUser}@nowhere.not";
-          extraGroups =  [
-            "wheel"
-          ];
-        };
-
-        thisConfig = {
-          inherit systemName mainUser;
-
-          enabledFeatures = [
-            "wsl"
-            "fish"
-            "nvim"
-          ];
-        };
+      users.${mainUser} = {
+        name = mainUser;
+        fullName = "";
+        email = "${mainUser}@nowhere.not";
+        extraGroups =  [
+          "wheel"
+        ];
       };
+
+      configFeatures = genAttrs [
+        "wsl"
+        "cli-desktop"
+      ] (n: enabled);
+
+      thisConfig = {
+        inherit systemName mainUser;
+      };
+    };
+    
     # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
     system.stateVersion = "23.05";
   };

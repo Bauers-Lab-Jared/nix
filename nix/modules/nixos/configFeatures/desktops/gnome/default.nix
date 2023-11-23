@@ -67,13 +67,13 @@ in {
   };
   
   config = mkIf cfg.enable {
-    thisFlake.thisConfig.enabledFeatures = [
-      "xkb-keyboard"
-      "gtk-toolkit"
-      "wallpapers"
-      "electron-support"
-      "foot-terminal"
-    ];
+    thisFlake.configFeatures = {
+      "xkb-keyboard"      = enabled;
+      "gtk-toolkit"       = enabled;
+      "wallpapers"        = enabled;
+      "electron-support"  = enabled;
+      "foot-terminal"     = enabled;
+    };
 
     environment.systemPackages = with pkgs;
       [

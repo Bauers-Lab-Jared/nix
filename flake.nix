@@ -33,6 +33,11 @@ rec {
 			inputs.nixpkgs.follows = "unstable";
 		};
 
+    snowfall-thaw = {
+			url = "github:snowfallorg/thaw";
+			inputs.nixpkgs.follows = "nixpkgs";
+		};
+
     #It's for a friend, I swear...
     vscode-server = {
       url = "github:nix-community/nixos-vscode-server";
@@ -154,8 +159,8 @@ rec {
 
       overlays = with inputs; [
         tmux.overlay
-        snowfall-thaw.overlay
-        snowfall-flake.overlay
+        snowfall-thaw.overlays.default
+        snowfall-flake.overlays.default
         #attic.overlays.default
       ];
 

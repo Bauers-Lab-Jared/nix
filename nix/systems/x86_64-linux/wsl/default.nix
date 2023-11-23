@@ -36,16 +36,12 @@ in {
           ];
         };
 
-        thisConfig = {
-          inherit mainUser;
-
-          enabledFeatures = [
-            "wsl"
-            "fish"
-            "nvim"
-          ];
-        };
-      };
+        configFeatures = genAttrs [
+          "wsl"
+          "fish"
+          "nvim"
+        ] (n: enabled);
+    };
     # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
     system.stateVersion = "23.05";
   };

@@ -30,16 +30,15 @@ in {
 
   options = mkConfigFeature {inherit config featureName; 
   otherOptions = with types;{
-      thisConfig.configFeatures.${featureName} = with types; mkOption {
-          type = attrsOf (oneOf [ str path (listOf (either str path)) ]);
-          apply = mapAttrs (n: v:
-            if isList v then
-              concatMapStringsSep ":" (x: toString x) v
-            else
-              (toString v));
-          default = { };
-          description = "A set of environment variables to set.";
-        };
+    thisConfig.configFeatures.${featureName} = with types; mkOption {
+        type = attrsOf (oneOf [ str path (listOf (either str path)) ]);
+        apply = mapAttrs (n: v:
+          if isList v then
+            concatMapStringsSep ":" (x: toString x) v
+          else
+            (toString v));
+        default = { };
+        description = "A set of environment variables to set.";
       };
     };
   };

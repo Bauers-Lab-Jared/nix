@@ -27,7 +27,7 @@ in
       useGlobalPkgs = true;
 
       users = mapAttrs' (n: v: nameValuePair (v.name) ({
-        home = mkAliasDefinitions options.thisFlake.home.extraOptions // {
+        home = {
           username = v.name;
           homeDirectory = "/home/${v.name}";
           sessionPath = mkDefault [ "$HOME/.local/bin" ];
@@ -35,7 +35,7 @@ in
             FLAKE = mkDefault "$HOME/NixConfig";
           };
         };
-      })) config.thisFlake.users;
+      } // mkAliasDefinitions options.thisFlake.home.extraOptions)) config.thisFlake.users;
     };
   };
 }

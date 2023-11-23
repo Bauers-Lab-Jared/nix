@@ -30,15 +30,24 @@ in {
 
   options = mkConfigFeature {inherit config featureName; 
   otherOptions = with types;{
-      configFeatures.${featureName} = {
+      thisFlake.configFeatures.${featureName} = {
         
       };
     };
   };
   
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      plusultra.tmux
-    ];
+    thisFlake = {
+      configFeatures = genAttrs [
+        "fish"           
+        "nvim"           
+        "bottom-proc-mon"
+        "cli-utils"      
+        "nix-utils"       
+        "tmux"           
+      ] (n: enabled);
+    };
+
+
   };
 }

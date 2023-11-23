@@ -38,7 +38,7 @@ in {
   
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
-      thisFlake.tmux
+      plusultra.tmux
     ];
   };
 }

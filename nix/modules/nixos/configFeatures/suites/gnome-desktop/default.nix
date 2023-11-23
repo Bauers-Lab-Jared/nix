@@ -36,13 +36,12 @@ in {
   
   config = mkIf cfg.enable {
 
-      enabledFeatures = [
-        "gnome"
-        "web-browsers"
-        "vlc"
-        "yt-music"
-        "gparted"
-      ];
+    thisFlake.configFeatures = {
+      "gnome"         = enabled;
+      "web-browsers"  = enabled;
+      "vlc"           = enabled;
+      "yt-music"      = enabled;
+      "gparted"       = enabled;
     };
   };
 }
