@@ -22,6 +22,7 @@ with lib.thisFlake;
 let
   featureName = baseNameOf (toString ./.);
   cfg = config.thisFlake.configFeatures.${featureName};
+  mainUser = config.thisFlake.thisConfig.mainUser;
 in {
 
   imports = [      
@@ -37,7 +38,7 @@ in {
   };
   
   config = mkIf cfg.enable {
-    thisFlake.users.mainUser.extraGroups = [ "networkmanager" ];
+    thisFlake.users.${mainUser}.extraGroups = [ "networkmanager" ];
 
     networking = {
       hosts = {
