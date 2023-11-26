@@ -1,32 +1,32 @@
-{ config, lib, pkgs, inputs, ... }: let
+{ config, lib, pkgs, inputs, modulesPath, ... }: let
   inherit (inputs) nixos-hardware;
 in {
   imports = with nixos-hardware.nixosModules; [ 
+     (modulesPath + "/installer/scan/not-detected.nix")
       common-cpu-intel
-      common-gpu-nvidia-nonprime
+      #common-gpu-nvidia-nonprime
       common-hidpi
       common-pc-laptop
       common-pc-laptop-ssd
-      common-pc-laptop-acpi_call
     ];
 
-  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "rtsx_pci_sdmmc" ];
+  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/46adb894-757e-4264-a4dd-fd043f48271b";
+    { device = "/dev/disk/by-label/FILE";
       fsType = "ext4";
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/84D5-D944";
+    { device = "/dev/disk/by-label/BOOT";
       fsType = "vfat";
     };
 
   swapDevices =
-    [ { device = "/dev/disk/by-uuid/15dbccd6-f5d0-4d06-b379-f5f699c16a58"; }
+    [ { device = "/dev/disk/by-label/swap"; }
     ];
 
   # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
@@ -40,4 +40,5 @@ in {
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
   hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+  hardware.opengl.enable = true;
 }

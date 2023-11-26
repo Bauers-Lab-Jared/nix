@@ -30,7 +30,7 @@ in {
 
   options = mkConfigFeature {inherit config featureName; 
   otherOptions = with types;{
-    thisConfig.configFeatures.${featureName} = with types; mkOption {
+    thisFlake.configFeatures.${featureName}.extraInit = mkOption {
         type = attrsOf (oneOf [ str path (listOf (either str path)) ]);
         apply = mapAttrs (n: v:
           if isList v then
@@ -59,7 +59,7 @@ in {
         WGETRC = "$XDG_CONFIG_HOME/wgetrc";
       };
       extraInit = concatStringsSep "\n"
-        (mapAttrsToList (n: v: ''export ${n}="${v}"'') cfg);
+        (mapAttrsToList (n: v: ''export ${n}="${v}"'') cfg.extraInit);
     };
   };
 }

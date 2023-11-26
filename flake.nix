@@ -49,12 +49,6 @@ rec {
       url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    #Do you even vim, bruv?
-    nixvim = {
-      url = "github:nix-community/nixvim/nixos-23.05";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     
     #allows you to run a command from nixpkgs
     #in a single use shell. EX: ", cowsay neato"

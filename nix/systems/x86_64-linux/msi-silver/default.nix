@@ -28,21 +28,31 @@ in {
 	];
 
   config = {
+    networking.networkmanager.enable = true;
+    users = {
+	#extraUsers."root".hashedPassword = "$y$j9T$nMoJ8XuxRO5UJkUU3njPo1$mr6yrVNOb6gSNtigGEr57Zecb4AcDeJg.UInX4pqIo0";
+	#users.${mainUser}.hashedPassword = "$y$j9T$nMoJ8XuxRO5UJkUU3njPo1$mr6yrVNOb6gSNtigGEr57Zecb4AcDeJg.UInX4pqIo0";
+    };
     thisFlake = {
 
       users.${mainUser} = {
         name = mainUser;
-        fullName = "";
-        email = "${mainUser}@nowhere.not";
+        fullName = mainUser;
+        initialPassword = "change-it";
+        email = "${mainUser}@${systemName}";
         extraGroups =  [
           "wheel"
+	  "video"
+	  "audio"
+	  "disk"
+	  "input"
         ];
       };
 
       configFeatures = genAttrs [
       	"boot"
         "cli-desktop"
-	      "networking"
+        "networking"
       ] (n: enabled);
 
       thisConfig = {
@@ -50,6 +60,8 @@ in {
       };
     };
     
+	security.pam.services = { lightdm = {};};
+
     # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
     system.stateVersion = "23.05";
   };

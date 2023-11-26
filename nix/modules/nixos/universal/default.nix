@@ -66,8 +66,6 @@ with lib.thisFlake;
         registry = mapAttrs (_: value: { flake = value; }) inputs;
         nixPath = mapAttrsToList (key: value: "${key}=${value.to.path}") config.nix.registry;
     };
-
-    security.pam.services = mkDefault { swaylock = { }; };
     
     # Increase open file limit for sudoers
     security.pam.loginLimits = [

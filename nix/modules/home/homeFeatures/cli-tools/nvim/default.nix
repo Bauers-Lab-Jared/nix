@@ -26,7 +26,7 @@ let
 in {
 
   imports = [      
-    inputs.nixvim.homeManagerModules.nixvim
+    
   ];
 
   options = mkHomeFeature {inherit osConfig featureName; otherOptions = {
@@ -37,47 +37,64 @@ in {
   };
   
   config = mkIf cfg.enable {
-    programs.nixvim = {
-      enable = mkDefault true;
 
-      globals.mapleader = mkDefault " ";
+    # home.file."$XDG_CONFIG_HOME/nvim/lua/init.lua" = {
+    #   enable = true;
+    #   source = ./lua/init.lua;
+    # };
 
-      options = {
-          nu = mkDefault true;
-          relativenumber = mkDefault true;
-          tabstop = mkDefault 4;
-          softtabstop = mkDefault 4;
-          shiftwidth = mkDefault 4;
-          expandtab = mkDefault true;
-          smartindent = mkDefault true;
-          wrap = mkDefault false;
-          swapfile = mkDefault false;
-          backup = mkDefault false;
-          undodir = mkDefault "os.getenv(\"HOME\") .. \"/.nvim/undodir\"";
-          undofile = mkDefault true;
-          hlsearch = mkDefault false;
-          incsearch = mkDefault true;
-          termguicolors = mkDefault true;
-          scrolloff = mkDefault 8;
-          updatetime = mkDefault 50;
-      };
+    programs.neovim = {
+  		enable = true;
+  		defaultEditor = true;
+  		vimAlias = true;
+  		viAlias = true;
+      vimdiffAlias = true;
 
-      colorschemes.catppuccin = {
-        enable = mkDefault true;
+      plugins = with pkgs.vimPlugins; [
+          catppuccin-nvim
+          vim-fugitive
+          vim-rhubarb
+          vim-sleuth
+          nvim-lspconfig
+          mason-lspconfig-nvim
+          mason-nvim
+          fidget-nvim
+          neodev-nvim
+          nvim-cmp
+          luasnip
+          cmp_luasnip
+          cmp-nvim-lsp
+          friendly-snippets
+          which-key-nvim
+          gitsigns-nvim
+          lualine-nvim
+          indent-blankline-nvim
+          comment-nvim
+          plenary-nvim
+          telescope-nvim
+          telescope-fzf-native-nvim
+          nvim-treesitter-textobjects
+          (nvim-treesitter.withPlugins (
+            plugins: with plugins; [
+              nix
+              lua
+            ]))
+        ];
 
-        flavour = mkDefault "mocha";
-        terminalColors = mkDefault true; 
-        background.dark = mkDefault "mocha";
-        dimInactive.enabled = mkDefault true;
-      };
+      extraPackages = with pkgs; [
+        fzf
+        wget
+        gcc
+      ];
+
+      extraConfig = ''
+        :colorscheme catppuccin
+        let mapleader = " "
+      '';
+
+      extraLuaConfig = fileWithText' (./lua/init.lua) ''
+        
+      '';
     };
-
-    home.sessionVariables = {
-      EDITOR = mkDefault "nvim";
-    };
-
-    programs.zsh.shellAliases.vimdiff = "nvim -d";
-    programs.bash.shellAliases.vimdiff = "nvim -d";
-    programs.fish.shellAliases.vimdiff = "nvim -d";
   };
 }

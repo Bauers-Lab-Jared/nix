@@ -25,7 +25,7 @@ let
 in {
 
   imports = [      
-    inputs.nixvim.nixosModules.nixvim
+   
   ];
 
   options = mkConfigFeature {inherit config featureName; 
@@ -39,6 +39,7 @@ in {
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       fzf
+      wget
     ];
 
     programs.neovim = {
@@ -47,47 +48,7 @@ in {
   		vimAlias = true;
   		viAlias = true;
   		
-  		configure = {packages.myVimPackage = with pkgs.vimPlugins; {
-		    start = [
-          catppuccin-nvim
-          vim-fugitive
-          vim-rhubarb
-          vim-sleuth
-          nvim-lspconfig
-          mason-lspconfig-nvim
-          mason-nvim
-          fidget-nvim
-          neodev-nvim
-          nvim-cmp
-          luasnip
-          cmp_luasnip
-          cmp-nvim-lsp
-          friendly-snippets
-          which-key-nvim
-          gitsigns-nvim
-          lualine-nvim
-          indent-blankline-nvim
-          comment-nvim
-          plenary-nvim
-          telescope-nvim
-          telescope-fzf-native-nvim
-          nvim-treesitter-textobjects
-          (nvim-treesitter.withPlugins (
-            plugins: with plugins; [
-              nix
-              lua
-            ]))
-
-          (pkgs.vimUtils.buildVimPlugin {
-              name = "nvim-config";
-              src = ./neovim-config;
-            })
-        ];};
-
-		customRC = ''
-		  :colorscheme catppuccin
-      lua require("init")
-		'';};
+  		
   	};
   };
 }
