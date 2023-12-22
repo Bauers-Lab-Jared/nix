@@ -38,17 +38,8 @@ in {
   
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
-      fzf
-      wget
+      neovim-nix
     ];
-
-    programs.neovim = {
-  		enable = true;
-  		defaultEditor = true;
-  		vimAlias = true;
-  		viAlias = true;
-  		
-  		
-  	};
+    vim.theme.name = lib.mkForce "catppuccin";
   };
 }
