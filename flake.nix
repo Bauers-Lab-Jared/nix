@@ -2,12 +2,12 @@
 #https://jdisaacs.com/blog/nixos-config/
 #https://snowfall.org/guides/lib/quickstart/
 #https://github.com/jakehamilton/config
-rec {
+{
   description = "Bauer's Lab Flake";
 
   inputs = {
     #The SOURCE
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
     unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
     #provides a flake framework
@@ -17,7 +17,7 @@ rec {
     };
 
     #provides a set of sub module systems for handling each home
-    home-manager.url = "github:nix-community/home-manager/release-23.05";
+    home-manager.url = "github:nix-community/home-manager/release-23.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     # Hardware Configuration Library
@@ -109,7 +109,7 @@ rec {
       flake = false;
     };
 
-    inputs.neovim-flake.url = "github:jordanisaacs/neovim-flake";
+    neovim-flake.url = "github:jordanisaacs/neovim-flake";
 
   };
 
@@ -148,7 +148,7 @@ rec {
       overlays = with inputs; [
         snowfall-thaw.overlays.default
         snowfall-flake.overlays.default
-	neovim-flake.overlays.default
+        neovim-flake.overlays.default
         #attic.overlays.default
       ];
 

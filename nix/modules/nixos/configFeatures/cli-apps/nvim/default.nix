@@ -40,6 +40,5 @@ in {
     environment.systemPackages = with pkgs; [
       neovim-nix
     ];
-    vim.theme.name = lib.mkForce "catppuccin";
   };
 }
