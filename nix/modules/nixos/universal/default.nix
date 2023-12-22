@@ -18,12 +18,10 @@
     config,
     ...
 }: with lib;
+with lib.thisFlake;
 {
     
-    thisFlake.thisConfig.enabledFeatures = [
-        #"home-manager"
-        "git"
-    ];
+    thisFlake.configFeatures."git" = enabled;
 
     i18n = {
         defaultLocale = mkDefault "en_US.UTF-8";
@@ -68,8 +66,6 @@
         registry = mapAttrs (_: value: { flake = value; }) inputs;
         nixPath = mapAttrsToList (key: value: "${key}=${value.to.path}") config.nix.registry;
     };
-
-    security.pam.services = mkDefault { swaylock = { }; };
     
     # Increase open file limit for sudoers
     security.pam.loginLimits = [

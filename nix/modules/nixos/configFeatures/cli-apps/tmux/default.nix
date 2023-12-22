@@ -30,13 +30,13 @@ in {
 
   options = mkConfigFeature {inherit config featureName; 
   otherOptions = with types;{
-      thisFlake.configFeatures.${featureName} = {
+      configFeatures.${featureName} = {
         
       };
     };
   };
   
   config = mkIf cfg.enable {
-    
+    programs.tmux.enable = true;
   };
 }

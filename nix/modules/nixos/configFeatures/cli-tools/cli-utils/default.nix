@@ -37,6 +37,12 @@ in {
   };
   
   config = mkIf cfg.enable {
-    
+    environment.systemPackages = with pkgs; [
+      fzf
+      killall
+      unzip
+      file
+      clifm
+    ];
   };
 }

@@ -25,18 +25,30 @@ let
 in {
 
   imports = [      
-    
+   
   ];
 
   options = mkConfigFeature {inherit config featureName; 
   otherOptions = with types;{
-      thisFlake.configFeatures.${featureName} = {
+      configFeatures.${featureName} = {
         
       };
     };
   };
   
   config = mkIf cfg.enable {
-    
+    environment.systemPackages = with pkgs; [
+      fzf
+      wget
+    ];
+
+    programs.neovim = {
+  		enable = true;
+  		defaultEditor = true;
+  		vimAlias = true;
+  		viAlias = true;
+  		
+  		
+  	};
   };
 }

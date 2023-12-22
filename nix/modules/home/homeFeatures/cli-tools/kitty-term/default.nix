@@ -37,6 +37,21 @@ in {
   };
   
   config = mkIf cfg.enable {
-    
+
+    # home.file."$XDG_CONFIG_HOME/kitty/current-theme.conf" = {
+    #   enable = true;
+    #   source = ./current-theme.conf;
+    # };
+
+    programs.kitty = {
+      enable = true;
+      shellIntegration.mode = true;
+      theme = "Catppuccin-Mocha";
+
+      settings = mkDefault {
+        scrollback_lines = 10000;
+        enable_audio_bell = false;
+      };
+    };
   };
 }

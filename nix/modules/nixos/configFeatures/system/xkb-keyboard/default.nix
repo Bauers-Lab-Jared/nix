@@ -30,7 +30,7 @@ in {
 
   options = mkConfigFeature {inherit config featureName; 
   otherOptions = with types;{
-      thisFlake.configFeatures.${featureName} = {
+      configFeatures.${featureName} = {
         
       };
     };
@@ -38,5 +38,10 @@ in {
   
   config = mkIf cfg.enable {
     
+    console.useXkbConfig = true;
+    services.xserver = {
+      layout = "us";
+      xkbOptions = "caps:escape";
+    };
   };
 }

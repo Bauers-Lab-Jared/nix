@@ -33,6 +33,11 @@ rec {
 			inputs.nixpkgs.follows = "unstable";
 		};
 
+    snowfall-thaw = {
+			url = "github:snowfallorg/thaw";
+			inputs.nixpkgs.follows = "nixpkgs";
+		};
+
     #It's for a friend, I swear...
     vscode-server = {
       url = "github:nix-community/nixos-vscode-server";
@@ -42,12 +47,6 @@ rec {
     #When life gives you windows...
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    #Do you even vim, bruv?
-    nixvim = {
-      url = "github:nix-community/nixvim/nixos-23.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     
@@ -63,13 +62,6 @@ rec {
     # Run unpatched dynamically compiled binaries
     nix-ld.url = "github:Mic92/nix-ld";
     nix-ld.inputs.nixpkgs.follows = "unstable";
-
-    # Tmux
-    tmux.url = "github:jakehamilton/tmux";
-    tmux.inputs = {
-      nixpkgs.follows = "nixpkgs";
-      unstable.follows = "unstable";
-    };
 
     # This hosts a nix binary cache in a S3
     # Provider, which can be hosted with ceph
@@ -90,7 +82,7 @@ rec {
     #   url = "github:DeterminateSystems/flake-checker";
     #   inputs.nixpkgs.follows = "unstable";
     # };
-
+    
     # Discord Replugged
     replugged.url = "github:LunNova/replugged-nix-flake";
     replugged.inputs.nixpkgs.follows = "unstable";
@@ -117,8 +109,7 @@ rec {
       flake = false;
     };
 
-    #util.url = "path:./flake/util";
-    #util.inputs.nixpkgs.follows = "nixpkgs";
+    
   };
 
   outputs = inputs:
@@ -154,9 +145,9 @@ rec {
       channels-config.allowUnfree = true;
 
       overlays = with inputs; [
-        tmux.overlay
+        snowfall-thaw.overlays.default
         snowfall-flake.overlays.default
-        attic.overlays.default
+        #attic.overlays.default
       ];
 
       # modules to apply to all nixos systems
