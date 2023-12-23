@@ -603,13 +603,13 @@
       "locked": {
         "lastModified": 1697922087,
         "narHash": "sha256-b7zp7GxpXnCqnKkVv0cY16BETjhnCPA/uVvpLUsz7X8=",
-        "owner": "jordanisaacs",
+        "owner": "bauers-lab-jared",
         "repo": "neovim-flake",
         "rev": "7bcc215d38226892849411721cfbc096fd7e4d2d",
         "type": "github"
       },
       "original": {
-        "owner": "jordanisaacs",
+        "owner": "bauers-lab-jared",
         "repo": "neovim-flake",
         "type": "github"
       }

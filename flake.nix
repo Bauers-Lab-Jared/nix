@@ -109,7 +109,7 @@
       flake = false;
     };
 
-    neovim-flake.url = "github:jordanisaacs/neovim-flake";
+    neovim-flake.url = "github:bauers-lab-jared/neovim-flake";
 
   };
 
