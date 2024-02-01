@@ -51,7 +51,7 @@ in {
 
       configFeatures = genAttrs [
       	"boot"
-        "cli-desktop"
+        "Minimal-desktop"
         "networking"
       ] (n: enabled);
 

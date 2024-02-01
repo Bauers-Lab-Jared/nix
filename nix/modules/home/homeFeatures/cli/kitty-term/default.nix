@@ -28,9 +28,8 @@ in {
     
   ];
 
-  options = mkConfigFeature {inherit config featureName; 
-  otherOptions = with types;{
-      thisFlake.configFeatures.${featureName} = {
+  options = mkHomeFeature {inherit osConfig featureName; otherOptions = {
+      thisFlake.homeFeatures.${featureName} = {
         
       };
     };
@@ -44,9 +43,9 @@ in {
     # };
 
     programs.kitty = {
-      enable = true;
-      shellIntegration.mode = true;
-      theme = "Catppuccin-Mocha";
+      enable = mkDefault true;
+      shellIntegration.mode = mkDefault true;
+      theme = mkDefault "Catppuccin-Mocha";
 
       settings = mkDefault {
         scrollback_lines = 10000;

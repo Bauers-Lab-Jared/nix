@@ -109,8 +109,6 @@
       flake = false;
     };
 
-    neovim-flake.url = "github:bauers-lab-jared/neovim-flake";
-
   };
 
   outputs = inputs:
@@ -148,7 +146,6 @@
       overlays = with inputs; [
         snowfall-thaw.overlays.default
         snowfall-flake.overlays.default
-        neovim-flake.overlays.default
         #attic.overlays.default
       ];
 
