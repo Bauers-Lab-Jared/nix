@@ -16,6 +16,7 @@
 
     # All other arguments come from the module system.
     config,
+    osConfig,
     ...
 }: with lib;
 with lib.thisFlake;
