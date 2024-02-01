@@ -41,7 +41,7 @@ in {
       packages = [ pkgs.neovim ];
 
       file."./.config/nvim/" = {
-        source = ./config/;
+        source = "./config/";
         recursive = true;
       };
     };
