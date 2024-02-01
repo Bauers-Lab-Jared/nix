@@ -38,5 +38,5 @@ in rec {
             mkBoolOpt (thisFeatureEnabled && thisUserHome) "Enables user specific config feat: ${featureName}";}
         otherOptions);
 
-    hasFeat = {osConfig}: (feat: (elem "nvim" (builtins.attrNames osConfig.thisFlake.configFeatures)));
+    hasFeat = {osConfig}: (feat: (elem ${feat} (builtins.attrNames osConfig.thisFlake.configFeatures)));
 }
