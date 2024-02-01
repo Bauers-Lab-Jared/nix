@@ -38,10 +38,13 @@ in {
   
   config = mkIf cfg.enable {
     home = {
-      packages = [ pkgs.neovim ];
+      packages = with pkgs; [ 
+        neovim
+        gcc
+      ];
 
       file."./.config/nvim/" = mkDefault {
-        source = "./config/";
+        source = ./config;
         recursive = true;
       };
     };
