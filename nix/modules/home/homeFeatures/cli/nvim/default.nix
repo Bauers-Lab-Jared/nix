@@ -37,10 +37,10 @@ in {
   };
   
   config = mkIf cfg.enable {
-    home = mkDefault {
+    home = {
       packages = [ pkgs.neovim ];
 
-      file."./.config/nvim/" = {
+      file."./.config/nvim/" = mkDefault {
         source = "./config/";
         recursive = true;
       };
