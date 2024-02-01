@@ -21,7 +21,7 @@
 with lib.thisFlake;
 let
   featureName = baseNameOf (toString ./.);
-  cfg = config.thisFlake.configFeatures.${featureName};
+  cfg = config.thisFlake.homeFeatures.${featureName};
 in {
 
   imports = [      
