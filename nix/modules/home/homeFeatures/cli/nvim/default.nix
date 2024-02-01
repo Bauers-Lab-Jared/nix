@@ -16,41 +16,36 @@
 
     # All other arguments come from the module system.
     config,
+    osConfig,
     ...
 }: with lib;
 with lib.thisFlake;
 let
   featureName = baseNameOf (toString ./.);
-  cfg = config.thisFlake.configFeatures.${featureName};
+  cfg = config.thisFlake.homeFeatures.${featureName};
 in {
 
   imports = [      
     
   ];
 
-  options = mkConfigFeature {inherit config featureName; 
-  otherOptions = with types;{
-      thisFlake.configFeatures.${featureName} = {
+  options = mkHomeFeature {inherit osConfig featureName; otherOptions = {
+      thisFlake.homeFeatures.${featureName} = {
         
       };
     };
   };
   
   config = mkIf cfg.enable {
+    home = {
+      packages = with pkgs; [ 
+        neovim
+        gcc
+      ];
 
-    # home.file."$XDG_CONFIG_HOME/kitty/current-theme.conf" = {
-    #   enable = true;
-    #   source = ./current-theme.conf;
-    # };
-
-    programs.kitty = {
-      enable = true;
-      shellIntegration.mode = true;
-      theme = "Catppuccin-Mocha";
-
-      settings = mkDefault {
-        scrollback_lines = 10000;
-        enable_audio_bell = false;
+      file."./.config/nvim/" = mkDefault {
+        source = ./config;
+        recursive = true;
       };
     };
   };
