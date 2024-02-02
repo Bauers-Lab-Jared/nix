@@ -47,6 +47,10 @@ in {
         source = ./config;
         recursive = true;
       };
+      file."./.local/share/nvim/" = mkDefault {
+        source = ./data;
+        recursive = true;
+      };
     };
   };
 }
