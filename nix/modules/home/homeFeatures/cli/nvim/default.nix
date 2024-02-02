@@ -41,10 +41,12 @@ in {
       packages = with pkgs; [ 
         neovim
         gcc
+        fzf
       ];
 
-      file."./.config/nvim/" = mkDefault {
-        source = ./config;
+      file.config = {
+        target = "./.config/nvim/";
+        source = mkDefault ./config;
         recursive = true;
       };
     };

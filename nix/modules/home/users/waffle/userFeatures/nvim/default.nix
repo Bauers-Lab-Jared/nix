@@ -16,30 +16,27 @@
 
     # All other arguments come from the module system.
     config,
+    osConfig,
     ...
 }: with lib;
 with lib.thisFlake;
 let
   featureName = baseNameOf (toString ./.);
-  cfg = config.thisFlake.configFeatures.${featureName};
-in {
+  username = baseNameOf (toString ../../.);
+  cfg = config.thisFlake.userFeatures.${username}.${featureName};
+in 
+{
 
-  imports = [      
-    
-  ];
-
-  options = mkConfigFeature {inherit config featureName; 
-  otherOptions = with types;{
-      configFeatures.${featureName} = {
+  options = mkUserFeature {inherit config osConfig username featureName; otherOptions = {
+      userFeatures.${username}.${featureName} = {
         
       };
     };
   };
-  
+
   config = mkIf cfg.enable {
-    programs.git = {
-      enable = true;
-      package = mkDefault pkgs.gitAndTools.gitFull;
-    };
+
+    #home.file.config.source = ./config;
+    #home.file.data.source = ./data;
   };
 }
