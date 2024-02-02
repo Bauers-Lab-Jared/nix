@@ -39,7 +39,7 @@ in {
   config = mkIf cfg.enable {
     programs.git = {
       enable = true;
-      package = pkgs.gitAndTools.gitFull;
+      package = mkDefault pkgs.gitAndTools.gitFull;
     };
   };
 }
