@@ -21,7 +21,7 @@ with lib;
 with lib.thisFlake; let
   featureName = baseNameOf (toString ./.);
   cfg = config.thisFlake.homeFeatures.${featureName};
-  baseNeovim = neovim-flake.packages.${system}.maximal;
+  baseNeovim = inputs.neovim-flake.packages.${system}.maximal;
 in {
   imports = [
   ];
