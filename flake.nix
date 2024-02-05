@@ -38,7 +38,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    neovim-flake.url = "github:bauers-lab-jared/neovim-flake?ref=refs/tags/testing";
+    neovim-flake.url = "github:bauers-lab-jared/neovim-flake?ref=feat-bauerslab-default-nvim";
 
     #It's for a friend, I swear...
     vscode-server = {
