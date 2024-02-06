@@ -606,16 +606,15 @@
         "tidalcycles": "tidalcycles"
       },
       "locked": {
-        "lastModified": 1707236783,
+        "lastModified": 1707238594,
         "narHash": "sha256-fNIil4jvcDxI197gMH/TR76onfx5AWwjvST3w7KoGQ0=",
         "owner": "bauers-lab-jared",
         "repo": "neovim-flake",
-        "rev": "017f4e0a8c48eb4ad2dee11d064f37dbc722732e",
+        "rev": "bd3954520cdcef6a5b8fd01d4586b8f7c181fafa",
         "type": "github"
       },
       "original": {
         "owner": "bauers-lab-jared",
-        "ref": "main-dev",
         "repo": "neovim-flake",
         "type": "github"
       }
