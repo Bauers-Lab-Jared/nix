@@ -41,7 +41,7 @@ in {
         "cli-utils"
         "nix-utils"
         "tmux"
-        "yubikey"
+        #"yubikey"
       ] (n: enabled);
 
       thisConfig = {
