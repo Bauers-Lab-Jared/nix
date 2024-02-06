@@ -46,7 +46,15 @@ in {
         };
       };
 
-      # Set default shell to fish global
-      users.defaultUserShell = pkgs.fish;
+    environment.systemPackages = with pkgs; [
+      fishPlugins.done
+      fishPlugins.fzf-fish
+      fzf
+      fishPlugins.grc
+      grc
+    ];
+
+    # Set default shell to fish global
+    users.defaultUserShell = pkgs.fish;
   };
 }

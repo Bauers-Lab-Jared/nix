@@ -20,36 +20,27 @@ with lib;
 with lib.thisFlake; let
   featureName = baseNameOf (toString ./.);
   cfg = config.thisFlake.configFeatures.${featureName};
-
-  inherit (config.thisFlake.thisConfig) mainUser systemName;
 in {
-  imports = with inputs; [
-    nixos-wsl.nixosModules.wsl
+  imports = [
   ];
 
   options = mkConfigFeature {
     inherit config featureName;
     otherOptions = with types; {
-      configFeatures.${featureName} = {
+      thisFlake.configFeatures.${featureName} = {
       };
     };
   };
 
   config = mkIf cfg.enable {
-    thisFlake.configFeatures = {
-      "usbip" = {
-        enable = true;
-        autoAttach = mkDefault ["11-4"];
-      };
-      "yubikey" = {
-        enable = true;
-      };
-    };
-
-    wsl = {
-      enable = true;
-      defaultUser = lib.mkDefault mainUser;
-    };
+    environment.systemPackages = with pkgs; [
+      fzf
+      killall
+      unzip
+      file
+      clifm
+      bottom
+    ];
   };
 }
 

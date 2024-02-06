@@ -37,20 +37,12 @@ in {
   };
   
   config = mkIf cfg.enable {
-    thisFlake = {
-      configFeatures = genAttrs [
-        "env"
-        "fish"           
-        "nvim"           
-        "bottom-proc-mon"
-        "cli-utils"      
-        "nix-utils"       
-        "tmux"  
-        "kitty-term"         
-        "qtile"
-      ] (n: enabled);
+    services.yubikey-agent.enable = true;
+    environment.systemPackages = with pkgs; [ yubikey-manager yubikey-personalization ];
+
+    programs.gnupg.agent = {
+      enable = true;
+      enableSSHSupport = true;
     };
-
-
   };
 }

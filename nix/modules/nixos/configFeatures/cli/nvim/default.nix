@@ -37,8 +37,6 @@ in {
   };
   
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      neovim-nix
-    ];
+    # check home modules
   };
 }

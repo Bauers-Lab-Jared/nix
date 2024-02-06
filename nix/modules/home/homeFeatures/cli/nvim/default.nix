@@ -14,42 +14,31 @@
   systems, # An attribute map of your defined hosts.
   # All other arguments come from the module system.
   config,
+  osConfig,
   ...
 }:
 with lib;
 with lib.thisFlake; let
   featureName = baseNameOf (toString ./.);
-  cfg = config.thisFlake.configFeatures.${featureName};
-
-  inherit (config.thisFlake.thisConfig) mainUser systemName;
+  cfg = config.thisFlake.homeFeatures.${featureName};
+  baseNeovim = inputs.neovim-flake.packages.${system}.maximal;
 in {
-  imports = with inputs; [
-    nixos-wsl.nixosModules.wsl
+  imports = [
   ];
 
-  options = mkConfigFeature {
-    inherit config featureName;
-    otherOptions = with types; {
-      configFeatures.${featureName} = {
+  options = mkHomeFeature {
+    inherit osConfig featureName;
+    otherOptions = {
+      thisFlake.homeFeatures.${featureName} = with types; {
+        package = mkOpt' attrs baseNeovim;
       };
     };
   };
 
   config = mkIf cfg.enable {
-    thisFlake.configFeatures = {
-      "usbip" = {
-        enable = true;
-        autoAttach = mkDefault ["11-4"];
-      };
-      "yubikey" = {
-        enable = true;
-      };
-    };
-
-    wsl = {
-      enable = true;
-      defaultUser = lib.mkDefault mainUser;
-    };
+    home.packages = [
+      cfg.package
+    ];
   };
 }
 

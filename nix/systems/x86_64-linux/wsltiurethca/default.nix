@@ -18,7 +18,7 @@
 }:
 with lib;
 with lib.thisFlake; let
-  mainUser = "waffle";
+  mainUser = "tiurethca";
   systemName = baseNameOf (toString ./.);
 in {
   config = {
@@ -41,7 +41,7 @@ in {
         "cli-utils"
         "nix-utils"
         "tmux"
-        #"yubikey"
+        "yubikey"
       ] (n: enabled);
 
       thisConfig = {

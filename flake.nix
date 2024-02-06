@@ -12,8 +12,8 @@
 
     #provides a flake framework
     snowfall-lib = {
-        url = "github:snowfallorg/lib?ref=v2.1.1";
-        inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:snowfallorg/lib?ref=v2.1.1";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     #provides a set of sub module systems for handling each home
@@ -29,14 +29,16 @@
 
     #simplified command line calls for flakes
     snowfall-flake = {
-			url = "github:snowfallorg/flake?ref=v1.1.0";
-			inputs.nixpkgs.follows = "unstable";
-		};
+      url = "github:snowfallorg/flake?ref=v1.1.0";
+      inputs.nixpkgs.follows = "unstable";
+    };
 
     snowfall-thaw = {
-			url = "github:snowfallorg/thaw";
-			inputs.nixpkgs.follows = "nixpkgs";
-		};
+      url = "github:snowfallorg/thaw";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    neovim-flake.url = "github:bauers-lab-jared/neovim-flake?ref=main-dev";
 
     #It's for a friend, I swear...
     vscode-server = {
@@ -49,7 +51,7 @@
       url = "github:nix-community/NixOS-WSL";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    
+
     #allows you to run a command from nixpkgs
     #in a single use shell. EX: ", cowsay neato"
     comma.url = "github:nix-community/comma";
@@ -82,7 +84,7 @@
     #   url = "github:DeterminateSystems/flake-checker";
     #   inputs.nixpkgs.follows = "unstable";
     # };
-    
+
     # Discord Replugged
     replugged.url = "github:LunNova/replugged-nix-flake";
     replugged.inputs.nixpkgs.follows = "unstable";
@@ -108,9 +110,6 @@
       url = "github:drduh/config";
       flake = false;
     };
-
-    neovim-flake.url = "github:jordanisaacs/neovim-flake";
-
   };
 
   outputs = inputs:
@@ -125,22 +124,22 @@
 
       # Configure Snowfall Lib, all of these settings are optional.
       snowfall = {
-          # Tell Snowfall Lib to look in the `./nix/` directory for your
-          # Nix files.
-          root = ./nix;
+        # Tell Snowfall Lib to look in the `./nix/` directory for your
+        # Nix files.
+        root = ./nix;
 
-          # Choose a namespace to use for your flake's packages, library,
-          # and overlays.
-          namespace = "thisFlake";
+        # Choose a namespace to use for your flake's packages, library,
+        # and overlays.
+        namespace = "thisFlake";
 
-          # Add flake metadata that can be processed by tools like Snowfall Frost.
-          meta = {
-              # A slug to use in documentation when displaying things like file paths.
-              name = "bauers-lab-flake";
+        # Add flake metadata that can be processed by tools like Snowfall Frost.
+        meta = {
+          # A slug to use in documentation when displaying things like file paths.
+          name = "bauers-lab-flake";
 
-              # A title to show for your flake, typically the name.
-              title = "Bauer's Lab Flake";
-          };
+          # A title to show for your flake, typically the name.
+          title = "Bauer's Lab Flake";
+        };
       };
 
       channels-config.allowUnfree = true;
@@ -148,7 +147,6 @@
       overlays = with inputs; [
         snowfall-thaw.overlays.default
         snowfall-flake.overlays.default
-        neovim-flake.overlays.default
         #attic.overlays.default
       ];
 
@@ -170,9 +168,9 @@
       # The outputs builder receives an attribute set of your available NixPkgs channels.
       # These are every input that points to a NixPkgs instance (even forks). In this
       outputs-builder = channels: {
-          # Outputs in the outputs builder are transformed to support each system. This
-          # entry will be turned into multiple different outputs like `formatter.x86_64-linux.*`.
-          # EX: formatter = channels.nixpkgs.alejandra;
+        # Outputs in the outputs builder are transformed to support each system. This
+        # entry will be turned into multiple different outputs like `formatter.x86_64-linux.*`.
+        # EX: formatter = channels.nixpkgs.alejandra;
       };
     };
 }
