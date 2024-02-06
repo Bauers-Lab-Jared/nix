@@ -14,28 +14,40 @@
   systems, # An attribute map of your defined hosts.
   # All other arguments come from the module system.
   config,
+  osConfig,
   ...
 }:
 with lib;
 with lib.thisFlake; let
   featureName = baseNameOf (toString ./.);
-  cfg = config.thisFlake.configFeatures.${featureName};
+  cfg = config.thisFlake.homeFeatures.${featureName};
 in {
   imports = [
   ];
 
-  options = mkConfigFeature {
-    inherit config featureName;
-    otherOptions = with types; {
-      configFeatures.${featureName} = {
-
+  options = mkHomeFeature {
+    inherit osConfig featureName;
+    otherOptions = {
+      thisFlake.homeFeatures.${featureName} = {
       };
     };
   };
 
-  config =
-    mkIf cfg.enable {
-
+  config = mkIf cfg.enable {
+    programs = {
+      git = {
+        enable = true;
+        package = mkDefault pkgs.gitAndTools.gitFull;
+      };
+      gh = {
+        enable = true;
+        gitCredentialHelper = {
+          enable = true;
+          hosts = mkDefault [
+            "https://github.com"
+          ];
+        };
+      };
     };
+  };
 }
-
