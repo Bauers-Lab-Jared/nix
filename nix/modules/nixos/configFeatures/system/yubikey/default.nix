@@ -40,7 +40,7 @@ in {
     ];
 
     services = {
-      yubikey-agent.enable = true;
+      #yubikey-agent.enable = true;
 
       pcscd.enable = true;
 
