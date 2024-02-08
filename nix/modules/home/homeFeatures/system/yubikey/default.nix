@@ -37,20 +37,6 @@ in {
   };
   
   config = mkIf cfg.enable {
-    programs = {
-      gpg = {
-        enable = true;
-      };
-    };
-
-    services.gpg-agent = ( mkMerge [ {
-      enable = true;
-      enableScDaemon = true;
-      enableSshSupport = true;
-    }
-    (mkIf config.programs.fish.enable {
-      enableFishIntegration = true;
-    })
-    ]);
+    
   };
 }
