@@ -33,21 +33,24 @@ in {
   };
 
   config = mkIf cfg.enable {
-    services.yubikey-agent.enable = true;
     environment.systemPackages = with pkgs; [
       yubikey-manager
       libfido2
     ];
-    
-    services.pcscd.enable = true;
 
-    services.udev = {
-      enable = true;
-      packages = [pkgs.yubikey-personalization];
-      extra = ''
-        SUBSYSTEM=="usb", MODE="0666"
-        KERNEL=="hidraw*", SUBSYSTEM=="hidraw", TAG+="uaccess", MODE="0666"
-      '';
+    services = {
+      yubikey-agent.enable = true;
+
+      pcscd.enable = true;
+
+      udev = {
+        enable = true;
+        packages = [pkgs.yubikey-personalization];
+        extraRules = ''
+          SUBSYSTEM=="usb", MODE="0666"
+          KERNEL=="hidraw*", SUBSYSTEM=="hidraw", TAG+="uaccess", MODE="0666"
+        '';
+      };
     };
 
     programs.gnupg.agent = {
