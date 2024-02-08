@@ -37,9 +37,8 @@ in {
     programs.ssh.startAgent = false;
 
     environment.systemPackages = with pkgs; [
-      yubikey-manager
+      gnupg
       yubikey-personalization
-      libfido2
     ];
 
     services = {
