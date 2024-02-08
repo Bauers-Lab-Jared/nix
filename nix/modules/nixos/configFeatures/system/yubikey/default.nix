@@ -35,6 +35,7 @@ in {
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       yubikey-manager
+      yubikey-personalization
       libfido2
     ];
 
@@ -51,6 +52,11 @@ in {
           KERNEL=="hidraw*", SUBSYSTEM=="hidraw", TAG+="uaccess", MODE="0666"
         '';
       };
+    };
+
+    programs.gnupg.agent = {
+      enable = true;
+      enableSSHSupport = true;
     };
   };
 }
