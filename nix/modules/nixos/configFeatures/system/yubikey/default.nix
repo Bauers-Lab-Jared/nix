@@ -33,6 +33,9 @@ in {
   };
 
   config = mkIf cfg.enable {
+
+    programs.ssh.startAgent = false;
+
     environment.systemPackages = with pkgs; [
       yubikey-manager
       yubikey-personalization
