@@ -20,30 +20,25 @@ with lib;
 with lib.thisFlake; let
   featureName = baseNameOf (toString ./.);
   cfg = config.thisFlake.configFeatures.${featureName};
-
-  inherit (config.thisFlake.thisConfig) mainUser systemName;
 in {
-  imports = with inputs; [
-    nixos-wsl.nixosModules.wsl
+  imports = [
   ];
 
   options = mkConfigFeature {
     inherit config featureName;
     otherOptions = with types; {
-      configFeatures.${featureName} = {
+      thisFlake.configFeatures.${featureName} = {
       };
     };
   };
 
-  config = mkIf cfg.enable (mkMerge [
-    {
-      wsl = {
-        enable = true;
-        defaultUser = lib.mkDefault mainUser;
-      };
-    }
-    (mkIf thisFlake.configFeatures.yubikey.enable {
-      wsl.usbip.enable = true;
-    })
-  ]);
+  config = mkIf cfg.enable {
+    services.yubikey-agent.enable = true;
+    environment.systemPackages = with pkgs; [yubikey-manager yubikey-personalization];
+
+    programs.gnupg.agent = {
+      enable = true;
+      enableSSHSupport = true;
+    };
+  };
 }
