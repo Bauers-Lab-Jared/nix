@@ -42,7 +42,7 @@ in {
         defaultUser = lib.mkDefault mainUser;
       };
     }
-    (mkIf thisFlake.configFeatures.yubikey.enable {
+    (mkIf config.thisFlake.configFeatures.yubikey.enable {
       wsl.usbip.enable = true;
     })
   ]);
