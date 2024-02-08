@@ -35,6 +35,7 @@ in {
   config = mkIf cfg.enable {
     environment.systemPackages = with pkgs; [
       yubikey-manager
+      yubikey-personalization
       libfido2
     ];
 
