@@ -45,8 +45,5 @@ in {
     # pull in yubikey udev rules too
     # TODO: hardware.gpgSmartcards should maybe cover this?
     services.udev.packages = [ pkgs.yubikey-personalization ];
-
-    # using this requires use of `disable-ccid` in scdaemon.conf!
-    services.pcscd.enable = false;
   };
 }

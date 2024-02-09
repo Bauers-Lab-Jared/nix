@@ -40,9 +40,6 @@ in {
 
     programs.gpg = {
       enable = true;
-      scdaemonSettings = {
-        disable-ccid = true;
-      };
     };
 
     home.packages = with pkgs; [
@@ -57,11 +54,7 @@ in {
         pinentryFlavor = mkDefault "curses";
         enableSshSupport = true;
         enableExtraSocket = true;
-        enableScDaemon = true;
-        extraConfig = ''
-          no-grab
-          allow-preset-passphrase
-        '';
+        verbose = true;
         defaultCacheTtl = 864000;
         defaultCacheTtlSsh = 864000;
         maxCacheTtl = 864000;
