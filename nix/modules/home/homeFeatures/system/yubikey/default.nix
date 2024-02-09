@@ -37,28 +37,26 @@ in {
   };
   
   config = mkIf cfg.enable {
-    home = {
-      packages = [
-        yubikey-personalization
-        yubikey-manager
-        yubico-piv-tool
-      ];
+    home.packages = [
+      yubikey-personalization
+      yubikey-manager
+      yubico-piv-tool
+    ];
 
-      programs = {
-        gpg = {
-          enable = true;
-        };
-      };
-
-      services.gpg-agent = ( mkMerge [ {
+    programs = {
+      gpg = {
         enable = true;
-        enableScDaemon = true;
-        enableSshSupport = true;
-      }
-      (mkIf config.programs.fish.enable {
-        enableFishIntegration = true;
-      })
-      ]);
+      };
     };
+
+    services.gpg-agent = ( mkMerge [ {
+      enable = true;
+      enableScDaemon = true;
+      enableSshSupport = true;
+    }
+    (mkIf config.programs.fish.enable {
+      enableFishIntegration = true;
+    })
+    ]);
   };
 }
