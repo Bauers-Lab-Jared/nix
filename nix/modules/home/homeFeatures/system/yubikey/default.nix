@@ -54,16 +54,18 @@ in {
     services.gpg-agent = ( mkMerge [ 
       {
         enable = true;
+        pinentryFlavor = mkDefault "curses";
         enableSshSupport = true;
         enableExtraSocket = true;
+        enableScDaemon = true;
         extraConfig = ''
-          # enable-ssh-support
+          no-grab
           allow-preset-passphrase
         '';
-        defaultCacheTtl = 34560000;
-        defaultCacheTtlSsh = 34560000;
-        maxCacheTtl = 34560000;
-        maxCacheTtlSsh = 34560000;
+        defaultCacheTtl = 864000;
+        defaultCacheTtlSsh = 864000;
+        maxCacheTtl = 864000;
+        maxCacheTtlSsh = 864000;
       }    
       (mkIf config.programs.fish.enable {
         enableFishIntegration = true;
