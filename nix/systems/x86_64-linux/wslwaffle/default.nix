@@ -41,13 +41,15 @@ in {
         "cli-utils"
         "nix-utils"
         "tmux"
-        #"yubikey"
+        "yubikey"
       ] (n: enabled);
 
       thisConfig = {
         inherit systemName mainUser;
       };
     };
+
+    wsl.usbip.autoAttach = ["11-4"]; # for yubikey pass through
 
     # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
     system.stateVersion = "23.11";

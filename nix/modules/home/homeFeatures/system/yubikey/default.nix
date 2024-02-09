@@ -16,33 +16,48 @@
 
     # All other arguments come from the module system.
     config,
+    osConfig,
     ...
 }: with lib;
 with lib.thisFlake;
 let
   featureName = baseNameOf (toString ./.);
-  cfg = config.thisFlake.configFeatures.${featureName};
+  cfg = config.thisFlake.homeFeatures.${featureName};
 in {
 
   imports = [      
     
   ];
 
-  options = mkConfigFeature {inherit config featureName; 
-  otherOptions = with types;{
-      thisFlake.configFeatures.${featureName} = {
+  options = mkHomeFeature {inherit osConfig featureName; otherOptions = {
+      thisFlake.homeFeatures.${featureName} = {
         
       };
     };
   };
   
   config = mkIf cfg.enable {
-    services.yubikey-agent.enable = true;
-    environment.systemPackages = with pkgs; [ yubikey-manager yubikey-personalization ];
 
-    programs.gnupg.agent = {
+    programs.gpg = {
       enable = true;
-      enableSSHSupport = true;
     };
+
+    home.packages = with pkgs; [
+      yubikey-personalization
+      yubikey-manager
+      # yubico-piv-tool # seems to fail to cross-compile
+    ];
+
+    services.gpg-agent = ( mkMerge [ 
+      {
+        enable = true;
+        pinentryFlavor = mkDefault "curses";
+        enableSshSupport = true;
+        enableExtraSocket = true;
+      }    
+      (mkIf config.thisFlake.homeFeatures.fish.enable {
+        enableFishIntegration = true;
+      })
+    ]);
   };
 }
