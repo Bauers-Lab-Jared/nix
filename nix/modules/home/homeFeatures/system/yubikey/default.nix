@@ -54,13 +54,8 @@ in {
         pinentryFlavor = mkDefault "curses";
         enableSshSupport = true;
         enableExtraSocket = true;
-        verbose = true;
-        defaultCacheTtl = 864000;
-        defaultCacheTtlSsh = 864000;
-        maxCacheTtl = 864000;
-        maxCacheTtlSsh = 864000;
       }    
-      (mkIf config.programs.fish.enable {
+      (mkIf config.thisFlake.homeFeatures.fish.enable {
         enableFishIntegration = true;
       })
     ]);

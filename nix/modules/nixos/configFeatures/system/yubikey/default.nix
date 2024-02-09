@@ -32,18 +32,30 @@ in {
     };
   };
 
-  config = mkIf cfg.enable {
-    # try to enable gnupg's udev rules
-    # to allow it to do ccid stuffs
-    hardware.gpgSmartcards.enable = true;
+  config = mkIf cfg.enable ( mkMerge [ 
+    {
+      # try to enable gnupg's udev rules
+      # to allow it to do ccid stuffs
+      hardware.gpgSmartcards.enable = true;
 
-    # we're using ledger->openpgp_xl as a smartcard
-    # well, not anymore, but it can't hurt, I do
-    # use the Ledger still, so still want the udev rules
-    hardware.ledger.enable = true;
+      # we're using ledger->openpgp_xl as a smartcard
+      # well, not anymore, but it can't hurt, I do
+      # use the Ledger still, so still want the udev rules
+      hardware.ledger.enable = true;
 
-    # pull in yubikey udev rules too
-    # TODO: hardware.gpgSmartcards should maybe cover this?
-    services.udev.packages = [ pkgs.yubikey-personalization ];
-  };
+      # pull in yubikey udev rules too
+      # TODO: hardware.gpgSmartcards should maybe cover this?
+      services.udev.packages = [ pkgs.yubikey-personalization ];
+    }
+    (mkIf config.thisFlake.configFeatures.wsl.enable {
+      udev = {
+        enable = true;
+        packages = [pkgs.yubikey-personalization];
+        #extraRules = ''
+        #  SUBSYSTEM=="usb", MODE="0666"
+        #  KERNEL=="hidraw*", SUBSYSTEM=="hidraw", TAG+="uaccess", MODE="0666"
+        #'';
+      };
+    })
+  ]);
 }
