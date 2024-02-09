@@ -37,7 +37,7 @@ in {
   };
   
   config = mkIf cfg.enable {
-    home.packages = [
+    home.packages = with pkgs; [
       yubikey-personalization
       yubikey-manager
       yubico-piv-tool
