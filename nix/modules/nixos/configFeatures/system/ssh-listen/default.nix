@@ -16,52 +16,35 @@
 
     # All other arguments come from the module system.
     config,
-    osConfig,
     ...
 }: with lib;
 with lib.thisFlake;
 let
   featureName = baseNameOf (toString ./.);
-  cfg = config.thisFlake.homeFeatures.${featureName};
+  cfg = config.thisFlake.configFeatures.${featureName};
 in {
 
   imports = [      
     
   ];
 
-  options = mkHomeFeature {inherit osConfig featureName; otherOptions = {
-      thisFlake.homeFeatures.${featureName} = {
+  options = mkConfigFeature {inherit config featureName; 
+  otherOptions = with types;{
+      thisFlake.configFeatures.${featureName} = {
         
       };
     };
   };
   
   config = mkIf cfg.enable {
-
-    programs.gpg.enable = true;
-    home.packages = with pkgs; [
-      yubikey-personalization
-      yubikey-manager
-      # yubico-piv-tool # seems to fail to cross-compile
-    ];
-
-    services.gpg-agent = ( mkMerge [ 
-      {
-        enable = true;
-        enableSshSupport = true;
-        enableExtraSocket = true;
-        extraConfig = ''
-          # enable-ssh-support
-          allow-preset-passphrase
-        '';
-        defaultCacheTtl = 34560000;
-        defaultCacheTtlSsh = 34560000;
-        maxCacheTtl = 34560000;
-        maxCacheTtlSsh = 34560000;
-      }    
-      (mkIf config.programs.fish.enable {
-        enableFishIntegration = true;
-      })
-    ]);
+    networking.firewall.allowedTCPPorts = [ 22 ];
+    services.openssh = {
+      enable = true;
+      settings = {
+        PermitRootLogin = lib.mkForce "no";
+        PasswordAuthentication = false;
+        StreamLocalBindUnlink = "yes";
+      };
+    };
   };
 }

@@ -33,21 +33,20 @@ in {
   };
 
   config = mkIf cfg.enable {
+    # try to enable gnupg's udev rules
+    # to allow it to do ccid stuffs
     hardware.gpgSmartcards.enable = true;
 
-    services = {
-      #yubikey-agent.enable = true;
+    # we're using ledger->openpgp_xl as a smartcard
+    # well, not anymore, but it can't hurt, I do
+    # use the Ledger still, so still want the udev rules
+    hardware.ledger.enable = true;
 
-      pcscd.enable = false;
+    # pull in yubikey udev rules too
+    # TODO: hardware.gpgSmartcards should maybe cover this?
+    services.udev.packages = [ pkgs.yubikey-personalization ];
 
-      udev = {
-        enable = true;
-        packages = [pkgs.yubikey-personalization];
-        #extraRules = ''
-        #  SUBSYSTEM=="usb", MODE="0666"
-        #  KERNEL=="hidraw*", SUBSYSTEM=="hidraw", TAG+="uaccess", MODE="0666"
-        #'';
-      };
-    };
+    # using this requires use of `disable-ccid` in scdaemon.conf!
+    services.pcscd.enable = false;
   };
 }
