@@ -9,7 +9,6 @@
     # Additionally, Snowfall Lib's own inputs are passed. You probably don't need to use this!
     snowfall-inputs,
 }: with lib;
-with lib.thisFlake.;
 rec {
 
      ## Create a NixOS module option.
