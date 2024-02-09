@@ -38,7 +38,13 @@ in {
   
   config = mkIf cfg.enable {
 
-    programs.gpg.enable = true;
+    programs.gpg = {
+      enable = true;
+      scdaemonSettings = {
+        disable-ccid = true;
+      };
+    };
+
     home.packages = with pkgs; [
       yubikey-personalization
       yubikey-manager
