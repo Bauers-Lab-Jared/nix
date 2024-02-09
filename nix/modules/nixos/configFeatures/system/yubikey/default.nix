@@ -33,32 +33,21 @@ in {
   };
 
   config = mkIf cfg.enable {
-
-    programs.ssh.startAgent = false;
-
-    environment.systemPackages = with pkgs; [
-      gnupg
-      yubikey-personalization
-    ];
+    hardware.gpgSmartcards.enable = true;
 
     services = {
       #yubikey-agent.enable = true;
 
-      pcscd.enable = true;
+      pcscd.enable = false;
 
       udev = {
         enable = true;
         packages = [pkgs.yubikey-personalization];
-        extraRules = ''
-          SUBSYSTEM=="usb", MODE="0666"
-          KERNEL=="hidraw*", SUBSYSTEM=="hidraw", TAG+="uaccess", MODE="0666"
-        '';
+        #extraRules = ''
+        #  SUBSYSTEM=="usb", MODE="0666"
+        #  KERNEL=="hidraw*", SUBSYSTEM=="hidraw", TAG+="uaccess", MODE="0666"
+        #'';
       };
-    };
-
-    programs.gnupg.agent = {
-      enable = true;
-      enableSSHSupport = true;
     };
   };
 }
