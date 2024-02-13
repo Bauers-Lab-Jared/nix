@@ -22,19 +22,13 @@ with lib.thisFlake;
 let
   featureName = baseNameOf (toString ./.);
   cfg = config.thisFlake.configFeatures.${featureName};
-in {
 
-  imports = [      
-    
-  ];
-
-  options = mkConfigFeature {inherit config featureName; 
   otherOptions = with types;{
-      thisFlake.configFeatures.${featureName} = {
         
-      };
-    };
   };
+  
+in {
+  options = mkConfigFeature {inherit config featureName otherOptions};
   
   config = mkIf cfg.enable {
     
