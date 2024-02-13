@@ -24,15 +24,14 @@ let
   featureName = baseNameOf (toString ./.);
   username = baseNameOf (toString ../../.);
   cfg = config.thisFlake.userFeatures.${username}.${featureName};
+
+  otherOptions = with types; {
+    
+  };
+
 in 
 {
-
-  options = mkUserFeature {inherit config osConfig username featureName; otherOptions = {
-      userFeatures.${username}.${featureName} = {
-        
-      };
-    };
-  };
+  options = mkUserFeature {inherit config osConfig username featureName otherOptions};
 
   config = mkIf cfg.enable {
     

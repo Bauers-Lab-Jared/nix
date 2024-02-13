@@ -11,22 +11,22 @@
 }: with lib;
 rec {
 
-  mkOpt = type: default: description:
+    mkOpt = type: default: description:
     mkOption { inherit type default description; };
 
-  mkOpt' = type: default: mkOpt type default null;
+    mkOpt' = type: default: mkOpt type default null;
 
-  mkBoolOpt = mkOpt types.bool;
+    mkBoolOpt = mkOpt types.bool;
 
-  mkBoolOpt' = mkOpt' types.bool;
+    mkBoolOpt' = mkOpt' types.bool;
 
-  enabled = {
+    enabled = {
     enable = true;
-  };
+    };
 
-  disabled = {
+    disabled = {
     enable = false;
-  };
+    };
 
     mkSystemFeature = {config, featureName, otherOptions}: (recursiveUpdate 
         {thisFlake.systemFeatures.${featureName}.enable = 
@@ -38,7 +38,7 @@ rec {
     in (recursiveUpdate 
         {thisFlake.homeFeatures.${featureName}.enable = 
             mkBoolOpt thisFeatureEnabled "Enables system wide home config feat: ${featureName}";}
-        otherOptions);
+        {thisFlake.homeFeatures.${featureName} = otherOptions});
 
     mkUserFeature = {config, osConfig, username, featureName, otherOptions}: let
         thisFeatureEnabled = osConfig.thisFlake.systemFeatures.${featureName}.enable;
@@ -46,7 +46,7 @@ rec {
     in (recursiveUpdate 
         {thisFlake.userFeatures.${username}.${featureName}.enable =
             mkBoolOpt (thisFeatureEnabled && thisUserHome) "Enables user specific config feat: ${featureName}";}
-        otherOptions);
+        {thisFlake.userFeatures.${username}.${featureName} = otherOptions});
 
     hasFeat = {osConfig}: (feat: (elem feat (builtins.attrNames osConfig.thisFlake.systemFeatures)));
 }
