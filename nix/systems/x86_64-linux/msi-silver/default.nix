@@ -49,7 +49,7 @@ in {
         ];
       };
 
-      configFeatures = genAttrs [
+      systemFeatures = genAttrs [
       	"boot"
         "Minimal-desktop"
         "networking"

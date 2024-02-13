@@ -41,7 +41,7 @@ in {
           inherit systemName mainUser;
         };
 
-        configFeatures = genAttrs [
+        systemFeatures = genAttrs [
           "wsl"
           "fish"
           "nvim"

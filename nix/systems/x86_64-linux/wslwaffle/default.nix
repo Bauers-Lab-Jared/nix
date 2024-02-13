@@ -33,7 +33,7 @@ in {
         ];
       };
 
-      configFeatures = genAttrs [
+      systemFeatures = genAttrs [
         "wsl"
         "env"
         "fish"

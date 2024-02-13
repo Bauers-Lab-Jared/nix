@@ -19,15 +19,15 @@
 with lib;
 with lib.thisFlake; let
   featureName = baseNameOf (toString ./.);
-  cfg = config.thisFlake.configFeatures.${featureName};
+  cfg = config.thisFlake.systemFeatures.${featureName};
 in {
   imports = [
   ];
 
-  options = mkConfigFeature {
+  options = mkSystemFeature {
     inherit config featureName;
     otherOptions = with types; {
-      thisFlake.configFeatures.${featureName} = {
+      thisFlake.systemFeatures.${featureName} = {
       };
     };
   };
@@ -47,7 +47,7 @@ in {
       # TODO: hardware.gpgSmartcards should maybe cover this?
       services.udev.packages = [ pkgs.yubikey-personalization ];
     }
-    (mkIf config.thisFlake.configFeatures.wsl.enable {
+    (mkIf config.thisFlake.systemFeatures.wsl.enable {
       services.udev = {
         extraRules = ''
           SUBSYSTEM=="usb", MODE="0666"

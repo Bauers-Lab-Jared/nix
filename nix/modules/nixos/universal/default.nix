@@ -21,7 +21,7 @@
 with lib.thisFlake;
 {
     
-    thisFlake.configFeatures."git" = enabled;
+    thisFlake.systemFeatures."git" = enabled;
 
     i18n = {
         defaultLocale = mkDefault "en_US.UTF-8";

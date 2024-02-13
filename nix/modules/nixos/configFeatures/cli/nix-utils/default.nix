@@ -21,16 +21,16 @@
 with lib.thisFlake;
 let
   featureName = baseNameOf (toString ./.);
-  cfg = config.thisFlake.configFeatures.${featureName};
+  cfg = config.thisFlake.systemFeatures.${featureName};
 
   fup-repl = pkgs.writeShellScriptBin "fup-repl" ''
     ${pkgs.fup-repl}/bin/repl ''${@}
   '';
 in {
 
-  options = mkConfigFeature {inherit config featureName; 
+  options = mkSystemFeature {inherit config featureName; 
   otherOptions = with types;{
-      configFeatures.${featureName} = {
+      systemFeatures.${featureName} = {
         
       };
     };

@@ -21,7 +21,7 @@
 with lib.thisFlake;
 let
   featureName = baseNameOf (toString ./.);
-  cfg = config.thisFlake.configFeatures.${featureName};
+  cfg = config.thisFlake.systemFeatures.${featureName};
   mainUser = config.thisFlake.thisConfig.mainUser;
 in {
 
@@ -29,9 +29,9 @@ in {
     
   ];
 
-  options = mkConfigFeature {inherit config featureName; 
+  options = mkSystemFeature {inherit config featureName; 
   otherOptions = with types;{
-      thisFlake.configFeatures.${featureName} = {
+      thisFlake.systemFeatures.${featureName} = {
         hosts = mkOpt attrs { } "An attribute set to merge with `networking.hosts`";
       };
     };
