@@ -28,25 +28,76 @@ rec {
     enable = false;
     };
 
-    mkSystemFeature = {config, featureName, otherOptions}: (recursiveUpdate 
-        {thisFlake.systemFeatures.${featureName}.enable = 
-            mkBoolOpt false "Enables system config feat: ${featureName}";} 
-        {thisFlake.systemFeatures.${featureName} = otherOptions});
+    systemFeatureLocalLib = {config, featureName, ...}: {
+        out = {
+            osConfig = config;
+            hasFeat = targetFeat: osConfig.thisFlake.systemFeatures.${targetFeat}.enable or false;
+            systemHasFeat = hasFeat;
+        };
+        
+        _internal = {
+            featDefault = false;
+            featDescription = "Enables system config feat: ${featureName}";
+            appendFeatPath = attrSet: {thisFlake.systemFeatures.${featureName} = attrSet;};
+        };
+    };
 
-    mkHomeFeature = {osConfig, featureName, otherOptions}: let
-        thisFeatureEnabled = osConfig.thisFlake.systemFeatures.${featureName}.enable;
-    in (recursiveUpdate 
-        {thisFlake.homeFeatures.${featureName}.enable = 
-            mkBoolOpt thisFeatureEnabled "Enables system wide home config feat: ${featureName}";}
-        {thisFlake.homeFeatures.${featureName} = otherOptions});
+    homeFeatureLocalLib = {config, osConfig, featureName, ...}: {
+        out = {
+            hasFeat = targetFeat: osConfig.thisFlake.homeFeatures.${targetFeat}.enable or false;
+            systemHasFeat = targetFeat: osConfig.thisFlake.systemFeatures.${targetFeat}.enable or false;
+        };
 
-    mkUserFeature = {config, osConfig, username, featureName, otherOptions}: let
-        thisFeatureEnabled = osConfig.thisFlake.systemFeatures.${featureName}.enable;
-        thisUserHome = (username == config.home.username);
-    in (recursiveUpdate 
-        {thisFlake.userFeatures.${username}.${featureName}.enable =
-            mkBoolOpt (thisFeatureEnabled && thisUserHome) "Enables user specific config feat: ${featureName}";}
-        {thisFlake.userFeatures.${username}.${featureName} = otherOptions});
+        _internal = {
+            featDefault = (systemHasFeat featureName);
+            featDescription = "Enables system wide home config feat: ${featureName}";
+            appendFeatPath = attrSet: {thisFlake.homeFeatures.${featureName} = attrSet;};
+        };
+    };
 
-    hasFeat = {osConfig}: (feat: (elem feat (builtins.attrNames osConfig.thisFlake.systemFeatures)));
+    userFeatureLocalLib = {config, osConfig, username, featureName, ...}: {
+        out = {
+            hasFeat = targetFeat: osConfig.thisFlake.userFeatures.${username}.${targetFeat}.enable or false;
+            systemHasFeat = targetFeat: osConfig.thisFlake.systemFeatures.${targetFeat}.enable or false;
+            moduleIsForThisUser = (username == config.home.username); 
+                #username comes from the module, config is for user under eval
+        };
+            
+        _internal = {
+            featDefault = (systemHasFeat featureName) && moduleIsForThisUser;
+            featDescription = "Enables user specific config feat: ${featureName}";
+            appendFeatPath = attrSet: {thisFlake.userFeatures.${username}.${featureName} = attrSet;};
+        };
+    };
+
+    universalLocalLib = args: 
+    with args;
+    with args.out;
+    with args._internal; 
+    {
+        mkFeature = featureOptions: appendFeatPath (recursiveUpdate
+            {enable = mkBoolOpt featDefault featDescription;}
+            {featureOptions});
+
+        forFeat = targetFeat: featConfig: mkIf (hasFeat targetFeat) featConfig;
+        
+        mkConfig = configSets: mkIf () (mkMerge configSets);
+    };
+
+    mkLocalLib = args@{featureType, ...}: 
+    let
+        typeSpecific = mkMerge [
+            (mkIf (featureType == "system") (systemFeatureLocalLib args))
+            (mkIf (featureType == "home") (homeFeatureLocalLib args))
+            (mkIf (featureType == "user") (userFeatureLocalLib args))
+        ];
+
+        universal = universalLocalLib {{args} // {typeSpecific}};
+    in mkMerge [
+        universal.out
+        typeSpecific.out
+    ];
+    
+
+    
 }

@@ -29,7 +29,7 @@ let
 in {
 
   options = mkSystemFeature {inherit config featureName; 
-  otherOptions = with types;{
+  featureOptions = with types;{
       systemFeatures.${featureName} = {
         
       };

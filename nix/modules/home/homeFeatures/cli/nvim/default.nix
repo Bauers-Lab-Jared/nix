@@ -28,7 +28,7 @@ in {
 
   options = mkHomeFeature {
     inherit osConfig featureName;
-    otherOptions = {
+    featureOptions = {
       thisFlake.homeFeatures.${featureName} = with types; {
         package = mkOpt' attrs baseNeovim;
       };

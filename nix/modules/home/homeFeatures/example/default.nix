@@ -24,12 +24,12 @@ let
   featureName = baseNameOf (toString ./.);
   cfg = config.thisFlake.homeFeatures.${featureName};
 
-  otherOptions = with types; {
+  featureOptions = with types; {
         
   };
   
 in {
-  options = mkHomeFeature {inherit osConfig featureName otherOptions};
+  options = mkHomeFeature {inherit osConfig featureName featureOptions};
   
   config = mkIf cfg.enable {
     

@@ -29,7 +29,7 @@ in {
     
   ];
 
-  options = mkHomeFeature {inherit osConfig featureName; otherOptions = {
+  options = mkHomeFeature {inherit osConfig featureName; featureOptions = {
       thisFlake.homeFeatures.${featureName} = {
         
       };

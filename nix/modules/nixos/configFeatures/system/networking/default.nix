@@ -30,7 +30,7 @@ in {
   ];
 
   options = mkSystemFeature {inherit config featureName; 
-  otherOptions = with types;{
+  featureOptions = with types;{
       thisFlake.systemFeatures.${featureName} = {
         hosts = mkOpt attrs { } "An attribute set to merge with `networking.hosts`";
       };

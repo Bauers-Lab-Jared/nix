@@ -29,7 +29,7 @@ in {
   ];
 
   options = mkSystemFeature {inherit config featureName; 
-  otherOptions = with types;{
+  featureOptions = with types;{
     thisFlake.systemFeatures.${featureName}.extraInit = mkOption {
         type = attrsOf (oneOf [ str path (listOf (either str path)) ]);
         apply = mapAttrs (n: v:

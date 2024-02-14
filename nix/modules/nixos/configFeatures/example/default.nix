@@ -20,17 +20,32 @@
 }: with lib;
 with lib.thisFlake;
 let
-  featureName = baseNameOf (toString ./.);
-  cfg = config.thisFlake.systemFeatures.${featureName};
-
-  otherOptions = with types;{
-        
+  locals = {
+    inherit config;
+    featureType = "system";
+    featureName = baseNameOf (toString ./.);
   };
-
-in {
-  options = mkSystemFeature {inherit config featureName otherOptions};
-  
-  config = mkIf cfg.enable {
+  localLib = mkLocalLib {locals};
+in
+with localLib;
+with locals;
+let
+  featureOptions = with types; {
     
   };
+
+  configSets = [
+    {
+      #configuration for this feature
+    }
+    #forFeat otherFeatureName 
+    {
+      #configuration for other feature paired with this feature
+    }
+  ];
+
+in {
+  #import = {};
+  options = mkSystemFeature featureOptions;
+  config = mkSystemConfig configSets;
 }

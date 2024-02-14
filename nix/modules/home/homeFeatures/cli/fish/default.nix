@@ -23,15 +23,15 @@ with lib.thisFlake;
 let
   featureName = baseNameOf (toString ./.);
   cfg = config.thisFlake.homeFeatures.${featureName};
-  hasFeat = lib.thisFlake.hasFeat {inherit osConfig;};
-  hasNeovim = hasFeat "nvim";
+  systemFeatEnabled = lib.thisFlake.systemFeatEnabled {inherit osConfig;};
+  hasNeovim = systemFeatEnabled "nvim";
 in {
 
   imports = [      
     
   ];
 
-  options = mkHomeFeature {inherit osConfig featureName; otherOptions = {
+  options = mkHomeFeature {inherit osConfig featureName; featureOptions = {
       thisFlake.homeFeatures.${featureName} = {
         
       };

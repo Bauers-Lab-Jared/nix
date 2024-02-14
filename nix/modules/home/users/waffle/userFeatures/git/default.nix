@@ -27,7 +27,7 @@ let
 in 
 {
 
-  options = mkUserFeature {inherit config osConfig username featureName; otherOptions = {
+  options = mkUserFeature {inherit config osConfig username featureName; featureOptions = {
       userFeatures.${username}.${featureName} = {
         
       };
