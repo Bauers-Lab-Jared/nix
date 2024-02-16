@@ -14,13 +14,13 @@ with lib.thisFlake; let
 in
 with localLib;
 with locals; let
-  featureOptions = with types; {
-  };
+
+  featureFiles = nixFilesIn ./.;
+
+  featureOptions = featureFiles.${featureName}.options;
 
   configSets = [
-    {
-      #configuration for this feature
-    }
+    featureFiles.${feat}.config # will need to break out to list of attrs for each feat
     #forFeat otherFeatureName
     {
       #configuration for other feature paired with this feature

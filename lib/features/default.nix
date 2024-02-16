@@ -16,93 +16,63 @@
     enable = false;
   };
 
-  systemFeatureLocalLib = {
-    config,
-    featureName,
-    ...
-  }: {
-    out = {
-      osConfig = config;
-      hasFeat = targetFeat: osConfig.thisFlake.systemFeatures.${targetFeat}.enable or false;
-      systemHasFeat = hasFeat;
-    };
-
-    _internal = {
-      featDefault = false;
-      featDescription = "Enables system config feat: ${featureName}";
-      appendFeatPath = attrSet: {thisFlake.systemFeatures.${featureName} = attrSet;};
-    };
+  mkLocalLib = moduleArgs: featModule: 
+  with moduleArgs;
+  with lib;
+  with lib.thisFlake; let universal = {
+    osConfig = osConfig or config;
+    requiredFeats = if featModule ? subFeatName then 
+      [featModule.featureName featModule.subFeatName] else
+        [featModule.featureName];
+    systemHasFeat = targetFeat: osConfig.thisFlake.systemFeatures.${targetFeat}.enable or false;
+    systemHasReqFeats = !(elem false (map systemHasFeat requiredFeats));
+    combinedFeatName = concatStringsSep "." requiredFeats;
   };
-
-  homeFeatureLocalLib = {
-    osConfig,
-    featureName,
-    ...
-  }: {
-    out = {
-      hasFeat = targetFeat: osConfig.thisFlake.homeFeatures.${targetFeat}.enable or false;
-      systemHasFeat = targetFeat: osConfig.thisFlake.systemFeatures.${targetFeat}.enable or false;
-    };
-
-    _internal = {
-      featDefault = systemHasFeat featureName;
-      featDescription = "Enables system wide home config feat: ${featureName}";
-      appendFeatPath = attrSet: {thisFlake.homeFeatures.${featureName} = attrSet;};
-    };
-  };
-
-  userFeatureLocalLib = {
-    config,
-    osConfig,
-    username,
-    featureName,
-    ...
-  }: {
-    out = {
-      hasFeat = targetFeat: osConfig.thisFlake.userFeatures.${username}.${targetFeat}.enable or false;
-      systemHasFeat = targetFeat: osConfig.thisFlake.systemFeatures.${targetFeat}.enable or false;
+  in
+  with universal;
+  let
+    typeSpecific = if featModule.moduleType == "system" then {
+      withModuleAttrPath = attrSet: {thisFlake.systemFeatures.${combinedFeatName} = attrSet;};
+      featEnableDefault = false;
+      featEnableDesc = "Enables this system feature: ";
+    } else if featModule.moduleType == "home" then {
+      withModuleAttrPath = attrSet: {thisFlake.homeFeatures.${combinedFeatName} = attrSet;};
+      featEnableDefault = systemHasReqFeats;
+      featEnableDesc = "Enables this home-manager feature, system-wide: ";
+    } else if featModule.moduleType == "user" then {
+      withModuleAttrPath = attrSet: {thisFlake.userFeatures.${username}.${combinedFeatName} = attrSet;};
+      
       moduleIsForThisUser = username == config.home.username;
-      #username comes from the module, config is for user under eval
-    };
+      #username comes from the module, config is specific to user
 
-    _internal = {
-      featDefault = (systemHasFeat featureName) && moduleIsForThisUser;
-      featDescription = "Enables user specific config feat: ${featureName}";
-      appendFeatPath = attrSet: {thisFlake.userFeatures.${username}.${featureName} = attrSet;};
-    };
-  };
+      featEnableDefault = systemHasReqFeats && moduleIsForThisUser;
+      featEnableDesc = "Enables this home-manager feature, just for this user: ";
+    } else {};
+  in
+  (universal // typeSpecific);
 
-  universalLocalLib = {
-    args,
-    typeSpecific,
-    ...
-  }:
-    with args;
-    with typeSpecific.out;
-    with typeSpecific._internal; {
-      mkFeature = featureOptions:
-        appendFeatPath (recursiveUpdate
-          {enable = mkBoolOpt featDefault featDescription;}
-          featureOptions);
+  mkFeatureOptions = moduleArgs: moduleOptions: 
+  with moduleArgs;
+  with lib;
+  #with lib.thisFlake;
+  withModuleAttrPath (recursiveUpdate
+      {enable = mkBoolOpt featEnableDefault featEnableDesc;}
+      moduleOptions);
 
-      forFeat = targetFeat: featConfig: mkIf (hasFeat targetFeat) featConfig;
+  mkFeatures = featureTemplate: moduleType: moduleArgs: featuresRaw: let
+    evaluatedAttrs = mapAttrs (outerFeat: outerS: 
+      (forEach outerS.featModules (innerFeat: let
+        featModule = {
+          path = innerFeat.value;
+          featureName = outerFeat;
+          subFeatName = innerFeat.name;
+          inherit moduleType;
+        };
+        scope = moduleArgs //{inherit featModule;};
+      in
+      evalModules {modules = [ (import featureTemplate) ]; specialArgs = {inherit scope;}; class = null;}))) featuresRaw;
+  in flatten (collect isList evaluatedAttrs);
+    
 
-      mkConfig = configSets: mkIf hasFeat (mkMerge configSets);
-    };
-
-  mkLocalLib = args:
-    with args; let
-      typeSpecific = mkMerge [
-        (mkIf (featureType == "system") (systemFeatureLocalLib args))
-        (mkIf (featureType == "home") (homeFeatureLocalLib args))
-        (mkIf (featureType == "user") (userFeatureLocalLib args))
-      ];
-
-      universal = universalLocalLib {inherit args typeSpecific;};
-    in
-      mkMerge [
-        universal.out
-        typeSpecific.out
-      ];
 }
 
