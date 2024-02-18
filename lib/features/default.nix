@@ -23,7 +23,7 @@ with builtins; rec {
   #####
   moduleInfoFromPath = path: let
     matchedList = matchFeatPath path;
-    lst = n: elemAt (traceVal matchedList) n;
+    lst = n: elemAt matchedList n;
     moduleType = lst 0;
     featTier = lst 1;
     username = lst 2;
@@ -42,7 +42,7 @@ with builtins; rec {
       else {}
     );
   #####
-  moduleInfoFromPathList = pathList: map moduleInfoFromPath pathList;
+  moduleInfoFromPathList = pathList: map (x: moduleInfoFromPath x) pathList;
   #####
   modulePathsFromDir = dir: let
     rawPaths = filesystem.listFilesRecursive dir;
@@ -68,22 +68,23 @@ with builtins; rec {
             else true
           );
       };
-      withFeatNames = attrSet:
-        if moduleInfo ? subFeatName
-        then {${moduleInfo.featureName} = attrSet;}
-        else {${moduleInfo.featureName}.${moduleInfo.subFeatName} = attrSet;};
-      fromFeatNames = attrSet:
-        if moduleInfo ? subFeatName
-        then attrSet.${moduleInfo.featureName}
-        else attrSet.${moduleInfo.featureName}.${moduleInfo.subFeatName};
-    in
-      with universal; let
+      in
+      with universal;
+      let
+        withFeatNames = attrSet:
+          if moduleInfo ? subFeatName
+          then {${moduleInfo.featureName}.${moduleInfo.subFeatName} = attrSet;}
+          else {${moduleInfo.featureName} = attrSet;};
+        fromFeatNames = attrSet:
+          if moduleInfo ? subFeatName
+          then attrSet.${moduleInfo.featureName}.${moduleInfo.subFeatName}
+          else attrSet.${moduleInfo.featureName};
         typeSpecific =
           if moduleInfo.moduleType == "system"
           then {
             featEnableDefault = false;
             featEnableDesc = "Enables this system feature: ";
-            withModuleAttrPath = attrSet: withFeatNames {thisFlake.systemFeatures = attrSet;};
+            withModuleAttrPath = attrSet: {thisFlake.systemFeatures = withFeatNames attrSet;};
             fromModuleAttrPath = fromFeatNames config.thisFlake.systemFeatures;
             cfgHasFeat = systemHasFeat;
           }
@@ -91,7 +92,7 @@ with builtins; rec {
           then {
             featEnableDefault = systemHasReqFeats;
             featEnableDesc = "Enables this home-manager feature, system-wide: ";
-            withModuleAttrPath = attrSet: withFeatNames {thisFlake.homeFeatures = attrSet;};
+            withModuleAttrPath = attrSet: {thisFlake.homeFeatures = withFeatNames attrSet;};
             fromModuleAttrPath = fromFeatNames config.thisFlake.homeFeatures;
             cfgHasFeat = targetFeat: config.thisFlake.homeFeatures.${targetFeat}.enable or false;
           }
@@ -102,7 +103,7 @@ with builtins; rec {
 
             featEnableDefault = systemHasReqFeats && moduleIsForThisUser;
             featEnableDesc = "Enables this home-manager feature, just for this user: ";
-            withModuleAttrPath = attrSet: withFeatNames {thisFlake.userFeatures.${moduleInfo.username} = attrSet;};
+            withModuleAttrPath = attrSet: {thisFlake.userFeatures.${moduleInfo.username} = withFeatNames attrSet;};
             fromModuleAttrPath = fromFeatNames config.thisFlake.userFeatures.${moduleInfo.username};
             cfgHasFeat = targetFeat: config.thisFlake.userFeatures.${moduleInfo.username}.${targetFeat}.enable or false;
           }
@@ -131,16 +132,12 @@ with builtins; rec {
   in
     moduleArgs // moduleArgs.lib // moduleArgs.lib.thisFlake // localLib;
   #####
-  mkFeatureFile = {
-    scope,
-    options,
-    config,
-  }:
-    with scope; {
-      options = withModuleAttrPath (recursiveUpdate
-        {enable = mkBoolOpt featEnableDefault featEnableDesc;}
-        options);
-
-      config = mkIf thisFeatEnabled config;
-    };
+  mkFeatureFile = {scope, options, config}: with scope;
+  {
+    options = withModuleAttrPath (recursiveUpdate
+      {enable = mkBoolOpt featEnableDefault featEnableDesc;}
+      options);
+      
+    config = mkIf thisFeatEnabled config;
+  };
 }
