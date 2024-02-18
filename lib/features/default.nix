@@ -57,7 +57,7 @@ with builtins; rec {
     with moduleArgs.lib;
     with moduleArgs.lib.thisFlake; let
       universal = rec {
-        moduleInfo = moduleInfoFromPath moduleFilePath;
+        moduleInfo = traceVal(moduleInfoFromPath moduleFilePath);
         osConfig = osConfig or config;
         systemHasFeat = targetFeat: osConfig.thisFlake.systemFeatures.${targetFeat}.enable or false;
         systemHasReqFeats =
