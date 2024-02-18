@@ -19,16 +19,16 @@ with builtins; rec {
   };
 
   ##### current
-  matchFeatPath = match ".*\/([^\/]+)Features\/(features|featSets|systemDefs)\/([^\/]+\/)*([^\/]+)\/([^\/]+).nix$";
+  matchFeatPath = match ".*\/([^\/]+)\/([^\/]+)Features\/(features|featSets|systemDefs)\/([^\/]+\/)*([^\/]+)\/([^\/]+).nix$";
   #####
   moduleInfoFromPath = path: let
     matchedList = matchFeatPath path;
     lst = n: elemAt matchedList n;
-    moduleType = lst 0;
-    featTier = lst 1;
-    username = lst 2;
-    featureName = lst 3;
-    subFeatName = lst 4;
+    username = lst 0;
+    moduleType = lst 1;
+    featTier = lst 2;
+    featureName = lst 4;
+    subFeatName = lst 5;
   in
     {inherit moduleType featTier featureName path;}
     // (
@@ -57,9 +57,9 @@ with builtins; rec {
     with moduleArgs.lib;
     with moduleArgs.lib.thisFlake; let
       universal = rec {
-        moduleInfo = traceVal(moduleInfoFromPath moduleFilePath);
-        osConfig = osConfig or config;
-        systemHasFeat = targetFeat: osConfig.thisFlake.systemFeatures.${targetFeat}.enable or false;
+        moduleInfo = moduleInfoFromPath moduleFilePath;
+        osC = if moduleArgs ? osConfig then osConfig else config;
+        systemHasFeat = targetFeat: osC.thisFlake.systemFeatures.${targetFeat}.enable or false;
         systemHasReqFeats =
           (systemHasFeat moduleInfo.featureName)
           && (
@@ -102,7 +102,7 @@ with builtins; rec {
             featEnableDefault = systemHasReqFeats && moduleIsForThisUser;
             featEnableDesc = "Enables this home-manager feature, just for this user: ";
             withModuleAttrPath = attrSet: {thisFlake.userFeatures.${moduleInfo.username} = withFeatNames attrSet;};
-            cfg = config.thisFlake.userFeatures.${moduleInfo.username};
+            fromModuleAttrPathBase = config.thisFlake.userFeatures.${moduleInfo.username};
           }
           else {};
       in
@@ -112,8 +112,10 @@ with builtins; rec {
             // rec {
               cfg = fromFeatNames fromModuleAttrPathBase;
               cfgHasFeat = targetFeat: (fromModuleAttrPathBase).${targetFeat}.enable or false;
+
               thisFeatEnabled =
-                (cfgHasFeat moduleInfo.featureName)
+                if (moduleInfo ? featureName)  then
+                  (cfgHasFeat moduleInfo.featureName) else false
                 && (
                   if moduleInfo ? subFeatName
                   then cfgHasFeat moduleInfo.subFeatName

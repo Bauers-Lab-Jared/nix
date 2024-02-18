@@ -1,4 +1,4 @@
-{
+moduleArgs@{
     # Snowfall Lib provides a customized `lib` instance with access to your flake's library
     # as well as the libraries available from your flake's inputs.
     lib,
@@ -18,26 +18,20 @@
     config,
     osConfig,
     ...
-}: with lib;
-with lib.thisFlake;
+}:
+with moduleArgs.lib.thisFlake;
 let
-  featureName = baseNameOf (toString ./.);
-  username = baseNameOf (toString ../../.);
-  cfg = config.thisFlake.userFeatures.${username}.${featureName};
-in 
-{
+  scope = mkFeatureScope {moduleFilePath = __curPos.file; inherit moduleArgs;};
+in with scope;
+let
+  imports = with inputs; [
+  ];
 
-  options = mkUserFeature {inherit config osConfig username featureName; featureOptions = {
-      userFeatures.${username}.${featureName} = {
-        
-      };
-    };
+  featOptions = with types; {
+
   };
 
-  config = mkIf cfg.enable {
-    programs.git = {
-      userName = "Jared";
-      userEmail = "127258074+Bauers-Lab-Jared@users.noreply.github.com";
-    };
+  featConfig = {
+      
   };
-}
+in mkFeatureFile {inherit scope featOptions featConfig imports;}
