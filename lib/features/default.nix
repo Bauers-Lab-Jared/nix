@@ -18,16 +18,17 @@ with builtins; rec {
   };
 
 ##### current
-  matchFeatPath = match ".*\/(.*)Features\/features\/([^\/]+\/)*([^\/]+)\/([^\/]+).nix$";
+  matchFeatPath = match ".*\/([^\/]+)Features\/(features|featSets|systemDefs)\/([^\/]+\/)*([^\/]+)\/([^\/]+).nix$";
 #####
   moduleInfoFromPath = path: let
       matchedList = matchFeatPath path;
       lst = n: elemAt matchedList n;
       moduleType = lst 0;
-      username = lst 1;
-      featureName = lst 2;
-      subFeatName = lst 3;
-  in {inherit moduleType featureName path;} 
+      featTier = lst 1;
+      username = lst 2;
+      featureName = lst 3;
+      subFeatName = lst 4;
+  in {inherit moduleType featTier featureName path;} 
       // (if (featureName != subFeatName) then {inherit subFeatName;} else {})
       // (if (moduleType == "user") then {inherit username;} else {});
 #####

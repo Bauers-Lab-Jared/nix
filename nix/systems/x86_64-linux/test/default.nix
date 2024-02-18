@@ -34,7 +34,7 @@ in {
       };
 
       systemFeatures = genAttrs [
-        "test"
+        "example"
       ] (n: enabled);
 
       thisConfig = {
