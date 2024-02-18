@@ -34,6 +34,7 @@ in {
       };
 
       systemFeatures = genAttrs [
+        "wsl"
         "example"
       ] (n: enabled);
 

@@ -12,6 +12,6 @@ let
   };
 
   config = {
-      
+    wsl.usbip.enable = true;
   };
 in mkFeatureFile {inherit scope options config imports;}

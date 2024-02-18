@@ -85,16 +85,14 @@ with builtins; rec {
             featEnableDefault = false;
             featEnableDesc = "Enables this system feature: ";
             withModuleAttrPath = attrSet: {thisFlake.systemFeatures = withFeatNames attrSet;};
-            fromModuleAttrPath = fromFeatNames config.thisFlake.systemFeatures;
-            cfgHasFeat = systemHasFeat;
+            fromModuleAttrPathBase = config.thisFlake.systemFeatures;
           }
           else if moduleInfo.moduleType == "home"
           then {
             featEnableDefault = systemHasReqFeats;
             featEnableDesc = "Enables this home-manager feature, system-wide: ";
             withModuleAttrPath = attrSet: {thisFlake.homeFeatures = withFeatNames attrSet;};
-            fromModuleAttrPath = fromFeatNames config.thisFlake.homeFeatures;
-            cfgHasFeat = targetFeat: config.thisFlake.homeFeatures.${targetFeat}.enable or false;
+            fromModuleAttrPathBase = config.thisFlake.homeFeatures;
           }
           else if moduleInfo.moduleType == "user"
           then rec {
@@ -104,15 +102,16 @@ with builtins; rec {
             featEnableDefault = systemHasReqFeats && moduleIsForThisUser;
             featEnableDesc = "Enables this home-manager feature, just for this user: ";
             withModuleAttrPath = attrSet: {thisFlake.userFeatures.${moduleInfo.username} = withFeatNames attrSet;};
-            fromModuleAttrPath = fromFeatNames config.thisFlake.userFeatures.${moduleInfo.username};
-            cfgHasFeat = targetFeat: config.thisFlake.userFeatures.${moduleInfo.username}.${targetFeat}.enable or false;
+            cfg = config.thisFlake.userFeatures.${moduleInfo.username};
           }
           else {};
       in
         with typeSpecific; let
           universalExt =
             universal
-            // {
+            // rec {
+              cfg = fromFeatNames fromModuleAttrPathBase;
+              cfgHasFeat = targetFeat: (fromModuleAttrPathBase ${targetFeat}.enable) or false;
               thisFeatEnabled =
                 (cfgHasFeat moduleInfo.featureName)
                 && (
@@ -132,8 +131,10 @@ with builtins; rec {
   in
     moduleArgs // moduleArgs.lib // moduleArgs.lib.thisFlake // localLib;
   #####
-  mkFeatureFile = {scope, options, config}: with scope;
+  mkFeatureFile = {scope, options, config, imports}: with scope;
   {
+    inherit imports;
+    
     options = withModuleAttrPath (recursiveUpdate
       {enable = mkBoolOpt featEnableDefault featEnableDesc;}
       options);

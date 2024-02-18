@@ -5,6 +5,7 @@ let
 in with scope;
 let
   imports = with inputs; [
+    nixos-wsl.nixosModules.wsl
   ];
 
   options = {
@@ -12,6 +13,9 @@ let
   };
 
   config = {
-      
+    wsl = {
+      enable = true;
+      defaultUser = lib.mkDefault mainUser;
+    };
   };
 in mkFeatureFile {inherit scope options config imports;}
