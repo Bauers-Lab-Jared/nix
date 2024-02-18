@@ -37,11 +37,8 @@ in {
         "wsl"
         "env"
         "fish"
-        "nvim"
-        "cli-utils"
+        "neovim"
         "nix-utils"
-        "tmux"
-        "yubikey"
       ] (n: enabled);
 
       thisConfig = {

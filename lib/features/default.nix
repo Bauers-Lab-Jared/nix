@@ -111,7 +111,7 @@ with builtins; rec {
             universal
             // rec {
               cfg = fromFeatNames fromModuleAttrPathBase;
-              cfgHasFeat = targetFeat: (fromModuleAttrPathBase ${targetFeat}.enable) or false;
+              cfgHasFeat = targetFeat: (fromModuleAttrPathBase).${targetFeat}.enable or false;
               thisFeatEnabled =
                 (cfgHasFeat moduleInfo.featureName)
                 && (
@@ -131,14 +131,14 @@ with builtins; rec {
   in
     moduleArgs // moduleArgs.lib // moduleArgs.lib.thisFlake // localLib;
   #####
-  mkFeatureFile = {scope, options, config, imports}: with scope;
+  mkFeatureFile = {scope, featOptions, featConfig, imports}: with scope;
   {
     inherit imports;
     
     options = withModuleAttrPath (recursiveUpdate
       {enable = mkBoolOpt featEnableDefault featEnableDesc;}
-      options);
+      featOptions);
       
-    config = mkIf thisFeatEnabled config;
+    config = mkIf thisFeatEnabled featConfig;
   };
 }

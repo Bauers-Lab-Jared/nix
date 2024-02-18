@@ -1,4 +1,4 @@
-{
+moduleArgs@{
     # Snowfall Lib provides a customized `lib` instance with access to your flake's library
     # as well as the libraries available from your flake's inputs.
     lib,
@@ -17,26 +17,32 @@
     # All other arguments come from the module system.
     config,
     ...
-}: with lib;
-with lib.thisFlake;
+}:
+with moduleArgs.lib.thisFlake;
 let
-  featureName = baseNameOf (toString ./.);
-  cfg = config.thisFlake.systemFeatures.${featureName};
-in {
-
-  imports = [      
-   
+  scope = mkFeatureScope {moduleFilePath = __curPos.file; inherit moduleArgs;};
+in with scope;
+let
+  imports = with inputs; [
   ];
 
-  options = mkSystemFeature {inherit config featureName; 
-  featureOptions = with types;{
-      systemFeatures.${featureName} = {
-        
-      };
-    };
+  featOptions = {
+
   };
-  
-  config = mkIf cfg.enable {
-    # check home modules
+
+  fup-repl = pkgs.writeShellScriptBin "fup-repl" ''
+    ${pkgs.fup-repl}/bin/repl ''${@}
+  '';
+
+  featConfig = {
+    environment.systemPackages = with pkgs; [
+      snowfallorg.flake
+      snowfallorg.thaw
+      fup-repl
+      comma
+      nix-melt
+      deploy-rs
+    ];
   };
-}
+in mkFeatureFile {inherit scope featOptions featConfig imports;}
+
