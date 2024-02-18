@@ -1,6 +1,7 @@
-moduleArgs:
-with moduleArgs;
-{
+moduleArgs: let
+  scope = lib.thisFlake.mkFeatureScope {moduleFilePath = __curPos; inherit moduleArgs;};
+in with scope;
+let
   options = {
 
   };
@@ -8,4 +9,4 @@ with moduleArgs;
   config = {
       
   };
-}
+in mkFeatureFile {inherit scope options config;} 
