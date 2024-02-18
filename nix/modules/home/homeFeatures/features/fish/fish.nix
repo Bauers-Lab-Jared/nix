@@ -1,4 +1,4 @@
-{
+moduleArgs@{
     # Snowfall Lib provides a customized `lib` instance with access to your flake's library
     # as well as the libraries available from your flake's inputs.
     lib,
@@ -18,27 +18,22 @@
     config,
     osConfig,
     ...
-}: with lib;
-with lib.thisFlake;
+}:
+with moduleArgs.lib.thisFlake;
 let
-  featureName = baseNameOf (toString ./.);
-  cfg = config.thisFlake.homeFeatures.${featureName};
-  systemFeatEnabled = lib.thisFlake.systemFeatEnabled {inherit osConfig;};
-  hasNeovim = systemFeatEnabled "nvim";
-in {
-
-  imports = [      
-    
+  scope = mkFeatureScope {moduleFilePath = __curPos.file; inherit moduleArgs;};
+in with scope;
+let
+  imports = with inputs; [
   ];
 
-  options = mkHomeFeature {inherit osConfig featureName; featureOptions = {
-      thisFlake.homeFeatures.${featureName} = {
-        
-      };
-    };
+  featOptions = {
+
   };
-  
-  config = mkIf cfg.enable {
+
+  hasNeovim = systemHasFeat "neovim";
+
+  featConfig = {
     programs.fish = {
       enable = mkDefault true;
 
@@ -74,8 +69,4 @@ in {
       };
     };
   };
-}
-
-#This module will be made available on your flake’s nixosModules,
-# darwinModules, or homeModules output with the same name as the directory
-# that you created.
+in mkFeatureFile {inherit scope featOptions featConfig imports;}

@@ -1,4 +1,4 @@
-{
+moduleArgs@{
     # Snowfall Lib provides a customized `lib` instance with access to your flake's library
     # as well as the libraries available from your flake's inputs.
     lib,
@@ -18,40 +18,24 @@
     config,
     osConfig,
     ...
-}: with lib;
-with lib.thisFlake;
+}:
+with moduleArgs.lib.thisFlake;
 let
-  featureName = baseNameOf (toString ./.);
-  cfg = config.thisFlake.homeFeatures.${featureName};
-in {
-
-  imports = [      
-    
+  scope = mkFeatureScope {moduleFilePath = __curPos.file; inherit moduleArgs;};
+in with scope;
+let
+  imports = with inputs; [
   ];
-
-  options = mkHomeFeature {inherit osConfig featureName; featureOptions = {
-      thisFlake.homeFeatures.${featureName} = {
-        
-      };
-    };
-  };
   
-  config = mkIf cfg.enable {
+  baseNeovim = inputs.neovim-flake.packages.${system}.maximal;
 
-    # home.file."$XDG_CONFIG_HOME/kitty/current-theme.conf" = {
-    #   enable = true;
-    #   source = ./current-theme.conf;
-    # };
-
-    programs.kitty = {
-      enable = mkDefault true;
-      shellIntegration.mode = mkDefault true;
-      theme = mkDefault "Catppuccin-Mocha";
-
-      settings = mkDefault {
-        scrollback_lines = 10000;
-        enable_audio_bell = false;
-      };
-    };
+  featOptions = with types; {
+    package = mkOpt' attrs baseNeovim;
   };
-}
+
+  featConfig = {
+    home.packages = [
+      cfg.package
+    ];
+  };
+in mkFeatureFile {inherit scope featOptions featConfig imports;}
