@@ -58,27 +58,29 @@ with builtins; rec {
     with moduleArgs.lib.thisFlake; let
       universal = rec {
         moduleInfo = moduleInfoFromPath moduleFilePath;
-        osC = if moduleArgs ? osConfig then osConfig else config;
-        systemHasFeat = targetFeat: osC.thisFlake.systemFeatures.${targetFeat}.enable or false;
+        osC =
+          if moduleArgs ? osConfig
+          then osConfig
+          else config;
+        systemHasFeat = featTier: targetFeat: osC.thisFlake.systemFeatures.${featTier}.${targetFeat}.enable or false;
         systemHasReqFeats =
-          (systemHasFeat moduleInfo.featureName)
+          (systemHasFeat moduleInfo.featTier moduleInfo.featureName)
           && (
             if moduleInfo ? subFeatName
-            then systemHasFeat moduleInfo.subFeatName
+            then systemHasFeat moduleInfo.featTier moduleInfo.subFeatName
             else true
           );
       };
-      in
-      with universal;
-      let
+    in
+      with universal; let
         withFeatNames = attrSet:
           if moduleInfo ? subFeatName
-          then {${moduleInfo.featureName}.${moduleInfo.subFeatName} = attrSet;}
-          else {${moduleInfo.featureName} = attrSet;};
+          then {${moduleInfo.featTier}.${moduleInfo.featureName}.${moduleInfo.subFeatName} = attrSet;}
+          else {${moduleInfo.featTier}.${moduleInfo.featureName} = attrSet;};
         fromFeatNames = attrSet:
           if moduleInfo ? subFeatName
-          then attrSet.${moduleInfo.featureName}.${moduleInfo.subFeatName}
-          else attrSet.${moduleInfo.featureName};
+          then attrSet.${moduleInfo.featTier}.${moduleInfo.featureName}.${moduleInfo.subFeatName}
+          else attrSet.${moduleInfo.featTier}.${moduleInfo.featureName};
         typeSpecific =
           if moduleInfo.moduleType == "system"
           then {
@@ -111,16 +113,18 @@ with builtins; rec {
             universal
             // rec {
               cfg = fromFeatNames fromModuleAttrPathBase;
-              cfgHasFeat = targetFeat: (fromModuleAttrPathBase).${targetFeat}.enable or false;
+              cfgHasFeat = targetFeat: fromModuleAttrPathBase.${moduleInfo.featTier}.${targetFeat}.enable or false;
 
               thisFeatEnabled =
-                if (moduleInfo ? featureName)  then
-                  (cfgHasFeat moduleInfo.featureName) else false
-                && (
-                  if moduleInfo ? subFeatName
-                  then cfgHasFeat moduleInfo.subFeatName
-                  else true
-                );
+                if (moduleInfo ? featureName)
+                then (cfgHasFeat moduleInfo.featureName)
+                else
+                  false
+                  && (
+                    if moduleInfo ? subFeatName
+                    then cfgHasFeat moduleInfo.subFeatName
+                    else true
+                  );
             };
         in
           universalExt // typeSpecific;
@@ -133,14 +137,19 @@ with builtins; rec {
   in
     moduleArgs // moduleArgs.lib // moduleArgs.lib.thisFlake // localLib;
   #####
-  mkFeatureFile = {scope, featOptions, featConfig, imports}: with scope;
-  {
-    inherit imports;
-    
-    options = withModuleAttrPath (recursiveUpdate
-      {enable = mkBoolOpt featEnableDefault featEnableDesc;}
-      featOptions);
-      
-    config = mkIf thisFeatEnabled featConfig;
-  };
+  mkFeatureFile = {
+    scope,
+    featOptions,
+    featConfig,
+    imports,
+  }:
+    with scope; {
+      inherit imports;
+
+      options = withModuleAttrPath (recursiveUpdate
+        {enable = mkBoolOpt featEnableDefault featEnableDesc;}
+        featOptions);
+
+      config = mkIf thisFeatEnabled featConfig;
+    };
 }
