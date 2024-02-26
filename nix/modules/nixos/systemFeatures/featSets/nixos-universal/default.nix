@@ -21,7 +21,10 @@
 with lib.thisFlake;
 {
     
-    thisFlake.systemFeatures."git" = enabled;
+    thisFlake.systemFeatures.features = genAttrs [
+      "env-vars"
+      "xdg"
+    ] (n: enabled);
 
     i18n = {
         defaultLocale = mkDefault "en_US.UTF-8";
@@ -31,10 +34,6 @@ with lib.thisFlake;
     };
 
     time.timeZone = mkDefault "US/Eastern";
-
-    environment.systemPackages = with pkgs; [
-        alejandra # Nix formatting tool
-    ];
     
     # don't allow users to be created
     users.mutableUsers = mkDefault false;

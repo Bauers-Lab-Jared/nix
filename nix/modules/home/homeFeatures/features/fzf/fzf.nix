@@ -16,6 +16,7 @@ moduleArgs@{
 
     # All other arguments come from the module system.
     config,
+    osConfig,
     ...
 }:
 with moduleArgs.lib.thisFlake;
@@ -31,6 +32,8 @@ let
   };
 
   featConfig = {
-      
+    programs.fzf = {
+      enable = mkDefault true;
+    };
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

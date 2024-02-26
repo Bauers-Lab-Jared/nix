@@ -32,20 +32,9 @@ let
   };
 
   featConfig = {
-    # home.file."$XDG_CONFIG_HOME/kitty/current-theme.conf" = {
-    #   enable = true;
-    #   source = ./current-theme.conf;
-    # };
-
-    programs.kitty = {
-      enable = mkDefault true;
-      shellIntegration.mode = mkDefault true;
-      theme = mkDefault "Catppuccin-Mocha";
-
-      settings = mkDefault {
-        scrollback_lines = 10000;
-        enable_audio_bell = false;
+      programs.bash = {
+        enable = mkDefault true;
+        
       };
-    };
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

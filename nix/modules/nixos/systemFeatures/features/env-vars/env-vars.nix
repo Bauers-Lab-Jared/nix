@@ -16,7 +16,6 @@ moduleArgs@{
 
     # All other arguments come from the module system.
     config,
-    osConfig,
     ...
 }:
 with moduleArgs.lib.thisFlake;
@@ -27,46 +26,23 @@ let
   imports = with inputs; [
   ];
 
-  featOptions = {
-
+  featOptions = with types; {
+    extraInit = mkOption {
+      type = attrsOf (oneOf [ str path (listOf (either str path)) ]);
+      apply = mapAttrs (n: v:
+        if isList v then
+          concatMapStringsSep ":" (x: toString x) v
+        else
+          (toString v));
+      default = { };
+      description = "A set of environment variables to set.";
+    };
   };
 
-  hasNeovim = systemHasFeat "neovim";
-
   featConfig = {
-    programs.fish = {
-      enable = mkDefault true;
-
-      shellAbbrs = mkDefault rec {
-        jqless = "jq -C | less -r";
-
-        n = "nix";
-        nd = "nix develop -c $SHELL";
-        ns = "nix shell";
-        nsn = "nix shell nixpkgs#";
-        nb = "nix build";
-        nbn = "nix build nixpkgs#";
-        nf = "nix flake";
-
-        nr = "nixos-rebuild --flake .";
-        nrs = "nixos-rebuild --flake . switch";
-        snr = "sudo nixos-rebuild --flake .";
-        snrs = "sudo nixos-rebuild --flake . switch";
-        hm = "home-manager --flake .";
-        hms = "home-manager --flake . switch";
-
-        vim = mkIf hasNeovim "nvim";
-        vi = vim;
-        v = vim;
-      };
-      shellAliases = mkDefault {
-        # Clear screen and scrollback
-        clear = "printf '\\033[2J\\033[3J\\033[1;1H'";
-      };
-      functions = mkDefault {
-        # Disable greeting
-        fish_greeting = "echo This is the fish shell with some general configuration.";
-      };
+    environment = {
+      extraInit = concatStringsSep "\n"
+        (mapAttrsToList (n: v: ''export ${n}="${v}"'') cfg.extraInit);
     };
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

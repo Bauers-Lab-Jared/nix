@@ -31,6 +31,12 @@ let
   };
 
   featConfig = {
-    programs.tmux.enable = true; 
+      thisFlake.systemFeatures.featSets = genAttrs [
+      "nixos-universal"
+    ] (n: enabled);
+
+    thisFlake.systemFeatures.features = genAttrs [
+      "wsl"
+    ] (n: enabled);
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

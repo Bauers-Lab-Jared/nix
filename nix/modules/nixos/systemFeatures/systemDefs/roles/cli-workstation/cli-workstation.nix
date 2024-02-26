@@ -31,24 +31,9 @@ let
   };
 
   featConfig = {
-    programs.fish = {
-      enable = true;
-      vendor = {
-        completions.enable = true;
-        config.enable = true;
-        functions.enable = true;
-      };
-    };
-
-    environment.systemPackages = with pkgs; [
-      fishPlugins.done
-      fishPlugins.fzf-fish
-      fzf
-      fishPlugins.grc
-      grc
-    ];
-
-    # Set default shell to fish global
-    users.defaultUserShell = pkgs.fish;
+      thisFlake.systemFeatures.featSets = genAttrs [
+      "base-cli-tools"
+      "nix-utils"
+    ] (n: enabled);
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}
