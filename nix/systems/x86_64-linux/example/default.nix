@@ -41,17 +41,19 @@ in {
         ];
       };
 
-      systemFeatures = genAttrs [
-      ] (n: enabled);
+      systemFeatures = {
+        features = genAttrs [
+        ] (n: enabled);
 
-      featSets = genAttrs [
-        "boot"
-        "networking"
-      ] (n: enabled);
+        featSets = genAttrs [
+          "boot"
+          "networking"
+        ] (n: enabled);
 
-      systemDefs = genAttrs [
-        "Minimal-desktop"
-      ] (n: enabled);
+        systemDefs = genAttrs [
+          "Minimal-desktop"
+        ] (n: enabled);
+      };
 
       thisConfig = {
         inherit systemName mainUser;
