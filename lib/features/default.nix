@@ -157,7 +157,7 @@ with builtins; rec {
       inherit imports;
 
       options = withModuleAttrPath (recursiveUpdate
-        {enable = traceValSeqN 1 (mkBoolOpt featEnableDefault featEnableDesc);}
+        {enable = mkBoolOpt featEnableDefault featEnableDesc;}
         featOptions);
 
       config = mkIf thisFeatEnabled featConfig;
