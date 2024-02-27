@@ -23,14 +23,15 @@ with builtins; rec {
   #####
   moduleInfoFromPath = path: let
     matchedList = matchFeatPath path;
-    lst = n: elemAt matchedList n;
+    lst = n: if matchedList != null then elemAt matchedList n
+      else null;
     username = lst 0;
     moduleType = lst 1;
     featTier = lst 2;
     featureName = lst 4;
     subFeatName = lst 5;
-  in
-    {inherit moduleType featTier featureName path;}
+
+    outAttrs = {inherit moduleType featTier featureName path;}
     // (
       if (featureName != subFeatName)
       then {inherit subFeatName;}
@@ -41,13 +42,18 @@ with builtins; rec {
       then {inherit username;}
       else {}
     );
+  in if any (x: x == null) (attrValues outAttrs) then null
+    else outAttrs;
+    
   #####
-  moduleInfoFromPathList = pathList: map (x: moduleInfoFromPath x) pathList;
+  moduleInfoFromPathList = pathList: let
+    raw = map (x: moduleInfoFromPath x) pathList;
+  in filter (y: y != null) raw;
   #####
   modulePathsFromDir = dir: let
     rawPaths = filesystem.listFilesRecursive dir;
   in
-    filter (x: !(hasSuffix "default.nix" x) && (hasSuffix ".nix" x)) (map toString rawPaths);
+    filter (x: !(hasSuffix "default.nix" x) && !(hasSuffix "example.nix" x) && (hasSuffix ".nix" x)) (map toString rawPaths);
   #####
   mkLocalLib = {
     moduleArgs,
@@ -146,9 +152,9 @@ with builtins; rec {
     with scope; {
       inherit imports;
 
-      options = withModuleAttrPath (recursiveUpdate
+      options = traceValSeqN 4 (withModuleAttrPath (recursiveUpdate
         {enable = mkBoolOpt featEnableDefault featEnableDesc;}
-        featOptions);
+        featOptions));
 
       config = mkIf thisFeatEnabled featConfig;
     };
