@@ -87,18 +87,22 @@ with builtins; rec {
           if moduleInfo ? subFeatName
           then attrSet.${moduleInfo.featTier}.${moduleInfo.featureName}.${moduleInfo.subFeatName}
           else attrSet.${moduleInfo.featTier}.${moduleInfo.featureName};
+        featNames = 
+          if moduleInfo ? subFeatName
+          then "${moduleInfo.featTier}.${moduleInfo.featureName}.${moduleInfo.subFeatName}"
+          else "${moduleInfo.featTier}.${moduleInfo.featureName}";
         typeSpecific =
           if moduleInfo.moduleType == "system"
           then {
             featEnableDefault = false;
-            featEnableDesc = "Enables this system feature: ";
+            featEnableDesc = "Enables this system feature: ${featNames}";
             withModuleAttrPath = attrSet: {thisFlake.systemFeatures = withFeatNames attrSet;};
             fromModuleAttrPathBase = config.thisFlake.systemFeatures;
           }
           else if moduleInfo.moduleType == "home"
           then {
             featEnableDefault = systemHasReqFeats;
-            featEnableDesc = "Enables this home-manager feature, system-wide: ";
+            featEnableDesc = "Enables this home-manager feature, system-wide: ${featNames}";
             withModuleAttrPath = attrSet: {thisFlake.homeFeatures = withFeatNames attrSet;};
             fromModuleAttrPathBase = config.thisFlake.homeFeatures;
           }
@@ -108,7 +112,7 @@ with builtins; rec {
             #username comes from the module, config is specific to user
 
             featEnableDefault = systemHasReqFeats && moduleIsForThisUser;
-            featEnableDesc = "Enables this home-manager feature, just for this user: ";
+            featEnableDesc = "Enables this home-manager feature, just for this user: ${featNames}";
             withModuleAttrPath = attrSet: {thisFlake.userFeatures.${moduleInfo.username} = withFeatNames attrSet;};
             fromModuleAttrPathBase = config.thisFlake.userFeatures.${moduleInfo.username};
           }
@@ -152,9 +156,9 @@ with builtins; rec {
     with scope; {
       inherit imports;
 
-      options = traceValSeqN 4 (withModuleAttrPath (recursiveUpdate
-        {enable = mkBoolOpt featEnableDefault featEnableDesc;}
-        featOptions));
+      options = withModuleAttrPath (recursiveUpdate
+        {enable = traceValSeqN 1 (mkBoolOpt featEnableDefault featEnableDesc);}
+        featOptions);
 
       config = mkIf thisFeatEnabled featConfig;
     };
