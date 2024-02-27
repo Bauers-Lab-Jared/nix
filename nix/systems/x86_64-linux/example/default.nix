@@ -18,7 +18,7 @@
 }:
 with lib;
 with lib.thisFlake; let
-  mainUser = "waffle";
+  mainUser = "username";
   systemName = baseNameOf (toString ./.);
 in {
   imports = [

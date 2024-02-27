@@ -21,6 +21,7 @@ with lib.thisFlake; let
   mainUser = "waffle";
   systemName = baseNameOf (toString ./.);
 in {
+
   config = {
     thisFlake = {
       users.${mainUser} = {
@@ -33,20 +34,25 @@ in {
         ];
       };
 
-      systemFeatures = genAttrs [
-        "wsl"
-        "env"
-        "fish"
-        "neovim"
-        "nix-utils"
-      ] (n: enabled);
+      systemFeatures = {
+        features = genAttrs [
+          
+        ] (n: enabled);
+
+        featSets = genAttrs [
+
+        ] (n: enabled);
+
+        systemDefs = genAttrs [
+          "wsl"
+          "cli-workstation"
+        ] (n: enabled);
+      };
 
       thisConfig = {
         inherit systemName mainUser;
       };
     };
-
-    wsl.usbip.autoAttach = ["11-4"]; # for yubikey pass through
 
     # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
     system.stateVersion = "23.11";
