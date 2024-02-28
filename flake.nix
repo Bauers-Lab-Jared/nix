@@ -26,90 +26,6 @@
     # Generate System Images
     nixos-generators.url = "github:nix-community/nixos-generators";
     nixos-generators.inputs.nixpkgs.follows = "nixpkgs";
-
-    #simplified command line calls for flakes
-    snowfall-flake = {
-      url = "github:snowfallorg/flake?ref=v1.1.0";
-      inputs.nixpkgs.follows = "unstable";
-    };
-
-    snowfall-thaw = {
-      url = "github:snowfallorg/thaw";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    neovim-flake.url = "github:bauers-lab-jared/neovim-flake?ref=main-dev";
-
-    #It's for a friend, I swear...
-    vscode-server = {
-      url = "github:nix-community/nixos-vscode-server";
-      inputs.nixpkgs.follows = "unstable";
-    };
-
-    #When life gives you windows...
-    nixos-wsl = {
-      url = "github:nix-community/NixOS-WSL";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    #allows you to run a command from nixpkgs
-    #in a single use shell. EX: ", cowsay neato"
-    comma.url = "github:nix-community/comma";
-    comma.inputs.nixpkgs.follows = "unstable";
-
-    # System Deployment
-    deploy-rs.url = "github:serokell/deploy-rs";
-    deploy-rs.inputs.nixpkgs.follows = "unstable";
-
-    # Run unpatched dynamically compiled binaries
-    nix-ld.url = "github:Mic92/nix-ld";
-    nix-ld.inputs.nixpkgs.follows = "unstable";
-
-    # This hosts a nix binary cache in a S3
-    # Provider, which can be hosted with ceph
-    attic = {
-      url = "github:zhaofengli/attic";
-      inputs.nixpkgs.follows = "unstable";
-      inputs.nixpkgs-stable.follows = "nixpkgs";
-    };
-
-    # Hashicorp Vault Integration (secrets management)
-    vault-service = {
-      url = "github:DeterminateSystems/nixos-vault-service";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    # # Flake Hygiene
-    # flake-checker = {
-    #   url = "github:DeterminateSystems/flake-checker";
-    #   inputs.nixpkgs.follows = "unstable";
-    # };
-
-    # Discord Replugged
-    replugged.url = "github:LunNova/replugged-nix-flake";
-    replugged.inputs.nixpkgs.follows = "unstable";
-
-    # Discord Replugged plugins / themes
-    discord-tweaks = {
-      url = "github:NurMarvin/discord-tweaks";
-      flake = false;
-    };
-    discord-nord-theme = {
-      url = "github:DapperCore/NordCord";
-      flake = false;
-    };
-
-    # Yubikey Guide
-    yubikey-guide = {
-      url = "github:drduh/YubiKey-Guide";
-      flake = false;
-    };
-
-    # GPG default configuration
-    gpg-base-conf = {
-      url = "github:drduh/config";
-      flake = false;
-    };
   };
 
   outputs = inputs:
@@ -142,19 +58,15 @@
         };
       };
 
-      channels-config.allowUnfree = true;
+      #channels-config.allowUnfree = true;
 
       overlays = with inputs; [
-        snowfall-thaw.overlays.default
-        snowfall-flake.overlays.default
-        #attic.overlays.default
+
       ];
 
       # modules to apply to all nixos systems
       systems.modules.nixos = with inputs; [
         home-manager.nixosModules.home-manager
-        # nix-ld.nixosModules.nix-ld
-        # attic.nixosModules.atticd
       ];
 
       deploy = inputs.lib.mkDeploy {inherit (inputs) self;};
