@@ -35,18 +35,18 @@ in {
       };
 
       systemFeatures = {
-        features = genAttrs [
+        features = enableFeatList [
           
-        ] (n: enabled);
+        ];
 
-        featSets = genAttrs [
+        featSets = enableFeatList [
 
-        ] (n: enabled);
+        ];
 
-        systemDefs = genAttrs [
+        systemDefs = enableFeatList [
           "wsl"
           "cli-workstation"
-        ] (n: enabled);
+        ];
       };
 
       thisConfig = {

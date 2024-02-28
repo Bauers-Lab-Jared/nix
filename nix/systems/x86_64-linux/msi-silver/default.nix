@@ -48,17 +48,17 @@ in {
       };
 
       systemFeatures = {
-        features = genAttrs [
-        ] (n: enabled);
+        features = enableFeatList [
+        ];
 
-        featSets = genAttrs [
+        featSets = enableFeatList [
           "boot"
           #"networking"
-        ] (n: enabled);
+        ];
 
-        systemDefs = genAttrs [
+        systemDefs = enableFeatList [
           #"Minimal-desktop"
-        ] (n: enabled);
+        ];
       };
 
       thisConfig = {
