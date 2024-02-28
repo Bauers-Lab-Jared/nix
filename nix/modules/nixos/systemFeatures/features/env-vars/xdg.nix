@@ -45,6 +45,6 @@ let
         LESSHISTFILE = "$XDG_CACHE_HOME/less.history";
         WGETRC = "$XDG_CONFIG_HOME/wgetrc";
       };
-    };      
+    };  
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}
