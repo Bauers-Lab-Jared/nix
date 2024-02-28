@@ -33,16 +33,20 @@ in {
         ];
       };
 
-      configFeatures = genAttrs [
-        "wsl"
-        "env"
-        "fish"
-        "nvim"
-        "cli-utils"
-        "nix-utils"
-        "tmux"
-        "yubikey"
-      ] (n: enabled);
+      systemFeatures = {
+        features = enableFeatList [
+          
+        ];
+
+        featSets = enableFeatList [
+
+        ];
+
+        systemDefs = enableFeatList [
+          "wsl"
+          "cli-workstation"
+        ];
+      };
 
       thisConfig = {
         inherit systemName mainUser;
