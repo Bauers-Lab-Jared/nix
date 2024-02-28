@@ -18,7 +18,7 @@
 }:
 with lib;
 with lib.thisFlake; let
-  mainUser = "username";
+  mainUser = "waffle";
   systemName = baseNameOf (toString ./.);
 in {
 

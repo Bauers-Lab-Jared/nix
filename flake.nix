@@ -2,22 +2,22 @@
 #https://jdisaacs.com/blog/nixos-config/
 #https://snowfall.org/guides/lib/quickstart/
 #https://github.com/jakehamilton/config
-rec {
+{
   description = "Bauer's Lab Flake";
 
   inputs = {
     #The SOURCE
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.05";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
     unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
     #provides a flake framework
     snowfall-lib = {
-        url = "github:snowfallorg/lib?ref=v2.1.1";
-        inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:snowfallorg/lib?ref=v2.1.1";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     #provides a set of sub module systems for handling each home
-    home-manager.url = "github:nix-community/home-manager/release-23.05";
+    home-manager.url = "github:nix-community/home-manager/release-23.11";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     # Hardware Configuration Library
@@ -29,9 +29,16 @@ rec {
 
     #simplified command line calls for flakes
     snowfall-flake = {
-			url = "github:snowfallorg/flake?ref=v1.1.0";
-			inputs.nixpkgs.follows = "unstable";
-		};
+      url = "github:snowfallorg/flake?ref=v1.1.0";
+      inputs.nixpkgs.follows = "unstable";
+    };
+
+    snowfall-thaw = {
+      url = "github:snowfallorg/thaw";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    neovim-flake.url = "github:bauers-lab-jared/neovim-flake?ref=main-dev";
 
     #It's for a friend, I swear...
     vscode-server = {
@@ -45,12 +52,6 @@ rec {
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    #Do you even vim, bruv?
-    nixvim = {
-      url = "github:nix-community/nixvim/nixos-23.05";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    
     #allows you to run a command from nixpkgs
     #in a single use shell. EX: ", cowsay neato"
     comma.url = "github:nix-community/comma";
@@ -63,13 +64,6 @@ rec {
     # Run unpatched dynamically compiled binaries
     nix-ld.url = "github:Mic92/nix-ld";
     nix-ld.inputs.nixpkgs.follows = "unstable";
-
-    # Tmux
-    tmux.url = "github:jakehamilton/tmux";
-    tmux.inputs = {
-      nixpkgs.follows = "nixpkgs";
-      unstable.follows = "unstable";
-    };
 
     # This hosts a nix binary cache in a S3
     # Provider, which can be hosted with ceph
@@ -116,9 +110,6 @@ rec {
       url = "github:drduh/config";
       flake = false;
     };
-
-    #util.url = "path:./flake/util";
-    #util.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   outputs = inputs:
@@ -133,30 +124,30 @@ rec {
 
       # Configure Snowfall Lib, all of these settings are optional.
       snowfall = {
-          # Tell Snowfall Lib to look in the `./nix/` directory for your
-          # Nix files.
-          root = ./nix;
+        # Tell Snowfall Lib to look in the `./nix/` directory for your
+        # Nix files.
+        root = ./nix;
 
-          # Choose a namespace to use for your flake's packages, library,
-          # and overlays.
-          namespace = "thisFlake";
+        # Choose a namespace to use for your flake's packages, library,
+        # and overlays.
+        namespace = "thisFlake";
 
-          # Add flake metadata that can be processed by tools like Snowfall Frost.
-          meta = {
-              # A slug to use in documentation when displaying things like file paths.
-              name = "bauers-lab-flake";
+        # Add flake metadata that can be processed by tools like Snowfall Frost.
+        meta = {
+          # A slug to use in documentation when displaying things like file paths.
+          name = "bauers-lab-flake";
 
-              # A title to show for your flake, typically the name.
-              title = "Bauer's Lab Flake";
-          };
+          # A title to show for your flake, typically the name.
+          title = "Bauer's Lab Flake";
+        };
       };
 
       channels-config.allowUnfree = true;
 
       overlays = with inputs; [
-        tmux.overlay
+        snowfall-thaw.overlays.default
         snowfall-flake.overlays.default
-        attic.overlays.default
+        #attic.overlays.default
       ];
 
       # modules to apply to all nixos systems
@@ -177,9 +168,9 @@ rec {
       # The outputs builder receives an attribute set of your available NixPkgs channels.
       # These are every input that points to a NixPkgs instance (even forks). In this
       outputs-builder = channels: {
-          # Outputs in the outputs builder are transformed to support each system. This
-          # entry will be turned into multiple different outputs like `formatter.x86_64-linux.*`.
-          # EX: formatter = channels.nixpkgs.alejandra;
+        # Outputs in the outputs builder are transformed to support each system. This
+        # entry will be turned into multiple different outputs like `formatter.x86_64-linux.*`.
+        # EX: formatter = channels.nixpkgs.alejandra;
       };
     };
 }

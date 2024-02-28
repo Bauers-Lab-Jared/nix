@@ -21,6 +21,9 @@ with lib.thisFlake; let
   mainUser = "username";
   systemName = baseNameOf (toString ./.);
 in {
+  imports = [
+    ./hardware-configuration.nix
+  ];
 
   config = {
     thisFlake = {
@@ -31,21 +34,24 @@ in {
         email = "${mainUser}@${systemName}";
         extraGroups = [
           "wheel"
+          "video"
+          "audio"
+          "disk"
+          "input"
         ];
       };
 
       systemFeatures = {
         features = genAttrs [
-          
         ] (n: enabled);
 
         featSets = genAttrs [
-
+          "boot"
+          "networking"
         ] (n: enabled);
 
         systemDefs = genAttrs [
-          "wsl"
-          "cli-workstation"
+          "Minimal-desktop"
         ] (n: enabled);
       };
 
