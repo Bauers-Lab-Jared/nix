@@ -126,16 +126,16 @@ with builtins; rec {
             universal
             // rec {
               cfg = fromFeatNames fromModuleAttrPathBase;
-              cfgHasFeat = targetFeat: fromModuleAttrPathBase.${moduleInfo.featTier}.${targetFeat}.enable or false;
+              cfgHasFeat = featTier: targetFeat: fromModuleAttrPathBase.${featTier}.${targetFeat}.enable or false;
 
               thisFeatEnabled =
                 if (moduleInfo ? featureName)
-                then (cfgHasFeat moduleInfo.featureName)
+                then (cfgHasFeat moduleInfo.featTier moduleInfo.featureName)
                 else
                   false
                   && (
                     if moduleInfo ? subFeatName
-                    then cfgHasFeat moduleInfo.subFeatName
+                    then cfgHasFeat moduleInfo.featTier moduleInfo.subFeatName
                     else true
                   );
             };
