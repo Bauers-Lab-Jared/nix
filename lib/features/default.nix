@@ -18,7 +18,10 @@ with builtins; rec {
     enable = false;
   };
 
-  ##### current
+  enableFeatList = featList: genAttrs featList (n: enabled);
+  disableFeatList = featList: genAttrs featList (n: disabled);
+
+  #####
   matchFeatPath = match ".*\/([^\/]+)\/([^\/]+)Features\/(features|featSets|systemDefs)\/([^\/]+\/)*([^\/]+)\/([^\/]+).nix$";
   #####
   moduleInfoFromPath = path: let
