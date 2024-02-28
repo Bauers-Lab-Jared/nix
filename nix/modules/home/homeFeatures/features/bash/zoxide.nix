@@ -16,6 +16,7 @@ moduleArgs@{
 
     # All other arguments come from the module system.
     config,
+    osConfig,
     ...
 }:
 with moduleArgs.lib.thisFlake;
@@ -27,24 +28,17 @@ let
   ];
 
   featOptions = {
-
+    #enableFzfIntegration = mkBoolOpt (cfgHasFeat "features" "fzf");
   };
 
-  featConfig = {
-    environment = {
-      sessionVariables = {
-        XDG_CACHE_HOME = "$HOME/.cache";
-        XDG_CONFIG_HOME = "$HOME/.config";
-        XDG_DATA_HOME = "$HOME/.local/share";
-        XDG_BIN_HOME = "$HOME/.local/bin";
-        # To prevent firefox from creating ~/Desktop.
-        XDG_DESKTOP_DIR = "$HOME";
-      };
-      variables = {
-        # Make some programs "XDG" compliant.
-        LESSHISTFILE = "$XDG_CACHE_HOME/less.history";
-        WGETRC = "$XDG_CONFIG_HOME/wgetrc";
-      };
-    };      
+  featConfig = let
+    #mkDef = mkDefault' 1;
+    #mkIfFzf = v: mkIf cfg.enableFzfIntegration v;
+  in {
+    programs.bash = {
+      initExtra = ''
+        eval "$(zoxide init --cmd cd bash)"
+      '';
+    };
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}
