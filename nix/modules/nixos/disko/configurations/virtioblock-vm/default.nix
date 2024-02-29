@@ -23,7 +23,7 @@ with lib.thisFlake;
 let
   configName = baseNameOf (toString ./.);
   cfg = config.thisFlake.systemFeatures.features.disko;
-  isSelected = cfg.enable && (cfg.selectedConfig == ${configName});
+  isSelected = cfg.enable && (cfg.selectedConfig == "${configName}");
 in
 {
 
