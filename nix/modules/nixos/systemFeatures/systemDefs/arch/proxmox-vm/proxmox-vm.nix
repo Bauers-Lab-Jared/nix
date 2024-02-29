@@ -31,8 +31,14 @@ let
   };
 
   featConfig = {
-      thisFlake.systemFeatures.features = enableFeatList [
+      thisFlake.systemFeatures.featSets = enableFeatList [
+      "nixos-universal"
       "impermanence"
+    ];
+
+    thisFlake.systemFeatures.features = enableFeatList [
+      "systemd-boot"
+      "openssh"
     ];
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

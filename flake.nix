@@ -23,6 +23,15 @@
     # Hardware Configuration Library
     nixos-hardware.url = "github:nixos/nixos-hardware";
 
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    impermanence = {
+       url = "github:nix-community/impermanence";
+    };
+
     # Generate System Images
     nixos-generators.url = "github:nix-community/nixos-generators";
     nixos-generators.inputs.nixpkgs.follows = "nixpkgs";
@@ -85,31 +94,31 @@
     #   inputs.nixpkgs.follows = "unstable";
     # };
 
-    # Discord Replugged
-    replugged.url = "github:LunNova/replugged-nix-flake";
-    replugged.inputs.nixpkgs.follows = "unstable";
+    # # Discord Replugged
+    # replugged.url = "github:LunNova/replugged-nix-flake";
+    # replugged.inputs.nixpkgs.follows = "unstable";
 
-    # Discord Replugged plugins / themes
-    discord-tweaks = {
-      url = "github:NurMarvin/discord-tweaks";
-      flake = false;
-    };
-    discord-nord-theme = {
-      url = "github:DapperCore/NordCord";
-      flake = false;
-    };
+    # # Discord Replugged plugins / themes
+    # discord-tweaks = {
+    #   url = "github:NurMarvin/discord-tweaks";
+    #   flake = false;
+    # };
+    # discord-nord-theme = {
+    #   url = "github:DapperCore/NordCord";
+    #   flake = false;
+    # };
 
-    # Yubikey Guide
-    yubikey-guide = {
-      url = "github:drduh/YubiKey-Guide";
-      flake = false;
-    };
+    # # Yubikey Guide
+    # yubikey-guide = {
+    #   url = "github:drduh/YubiKey-Guide";
+    #   flake = false;
+    # };
 
-    # GPG default configuration
-    gpg-base-conf = {
-      url = "github:drduh/config";
-      flake = false;
-    };
+    # # GPG default configuration
+    # gpg-base-conf = {
+    #   url = "github:drduh/config";
+    #   flake = false;
+    # };
   };
 
   outputs = inputs:

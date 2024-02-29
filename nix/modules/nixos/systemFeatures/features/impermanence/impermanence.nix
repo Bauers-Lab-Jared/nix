@@ -24,6 +24,7 @@ let
 in with scope;
 let
   imports = with inputs; [
+    impermanence.nixosModules.impermanence
   ];
 
   featOptions = {
@@ -31,8 +32,20 @@ let
   };
 
   featConfig = {
-      thisFlake.systemFeatures.features = enableFeatList [
-      "impermanence"
-    ];
+    fileSystems."/persist".neededForBoot = true;
+    environment.persistence."/persist/system" = {
+      hideMounts = true;
+      directories = [
+        "/etc/nixos"
+        "/var/log"
+        "/var/lib/nixos"
+        "/var/lib/systemd/coredump"
+        { directory = "/var/lib/colord"; user = "colord"; group = "colord"; mode = "u=rwx,g=rx,o="; }
+      ];
+      files = [
+        "/etc/machine-id"
+        { file = "/var/keys/secret_file"; parentDirectory = { mode = "u=rwx,g=,o="; }; }
+      ];
+    };
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

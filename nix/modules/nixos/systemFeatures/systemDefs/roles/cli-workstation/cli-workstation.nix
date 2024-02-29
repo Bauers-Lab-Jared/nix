@@ -31,9 +31,9 @@ let
   };
 
   featConfig = {
-      thisFlake.systemFeatures.featSets = genAttrs [
+      thisFlake.systemFeatures.featSets = enableFeatList [
       "base-cli-tools"
       "nix-utils"
-    ] (n: enabled);
+    ];
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

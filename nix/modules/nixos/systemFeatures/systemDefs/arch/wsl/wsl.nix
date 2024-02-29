@@ -31,12 +31,12 @@ let
   };
 
   featConfig = {
-      thisFlake.systemFeatures.featSets = genAttrs [
+      thisFlake.systemFeatures.featSets = enableFeatList [
       "nixos-universal"
-    ] (n: enabled);
+    ];
 
-    thisFlake.systemFeatures.features = genAttrs [
+    thisFlake.systemFeatures.features = enableFeatList [
       "wsl"
-    ] (n: enabled);
+    ];
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

@@ -16,6 +16,7 @@ moduleArgs@{
 
     # All other arguments come from the module system.
     config,
+    osConfig,
     ...
 }:
 with moduleArgs.lib.thisFlake;
@@ -24,6 +25,7 @@ let
 in with scope;
 let
   imports = with inputs; [
+    impermanence.nixosModules.home-manager.impermanence
   ];
 
   featOptions = {
@@ -31,8 +33,6 @@ let
   };
 
   featConfig = {
-      thisFlake.systemFeatures.features = enableFeatList [
-      "impermanence"
-    ];
+      
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

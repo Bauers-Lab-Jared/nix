@@ -31,8 +31,6 @@ let
   };
 
   featConfig = {
-      thisFlake.systemFeatures.features = enableFeatList [
-      "impermanence"
-    ];
+      services.openssh.enable = true;
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

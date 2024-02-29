@@ -24,15 +24,14 @@ let
 in with scope;
 let
   imports = with inputs; [
+    disko.nixosModules.default
   ];
 
-  featOptions = {
-
+  featOptions = with types; {
+    selectedConfig = mkOpt str "";
   };
 
   featConfig = {
-      thisFlake.systemFeatures.features = enableFeatList [
-      "impermanence"
-    ];
+      
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}
