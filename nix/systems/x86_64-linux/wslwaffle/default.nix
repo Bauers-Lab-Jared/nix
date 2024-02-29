@@ -21,7 +21,6 @@ with lib.thisFlake; let
   mainUser = "waffle";
   systemName = baseNameOf (toString ./.);
 in {
-
   config = {
     thisFlake = {
       users.${mainUser} = {
@@ -31,8 +30,11 @@ in {
         email = "${mainUser}@${systemName}";
         extraGroups = [
           "wheel"
+          "storage"
         ];
       };
+
+      hardwareConfigs.wsl.enable = true;
 
       systemFeatures = {
         features = enableFeatList [
@@ -40,7 +42,7 @@ in {
         ];
 
         featSets = enableFeatList [
-
+          #"impermanence"
         ];
 
         systemDefs = enableFeatList [

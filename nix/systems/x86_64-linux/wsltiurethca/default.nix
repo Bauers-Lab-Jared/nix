@@ -21,6 +21,10 @@ with lib.thisFlake; let
   mainUser = "tiurethca";
   systemName = baseNameOf (toString ./.);
 in {
+  imports = [
+		./hardware-configuration.nix
+	];
+  
   config = {
     thisFlake = {
       users.${mainUser} = {
@@ -32,6 +36,8 @@ in {
           "wheel"
         ];
       };
+
+      hardwareConfigs.wsl.enable = true;
 
       systemFeatures = {
         features = enableFeatList [

@@ -24,7 +24,6 @@ let
 in with scope;
 let
   imports = with inputs; [
-    nixos-wsl.nixosModules.wsl
   ];
 
   featOptions = {
@@ -32,21 +31,6 @@ let
   };
 
   featConfig = {
-    wsl = {
-      enable = true;
-      defaultUser = mkDefault scope.config.thisFlake.thisConfig.mainUser;
-      interop.includePath = mkDefault false;
-      wslConf = {
-        automount.enabled = mkDefault false;
-        automount.root = mkDefault "/wsl";
-        interop = {
-          enabled = mkDefault false;
-          appendWindowsPath = mkDefault false;
-        };
-        network = {
-          generateHosts = mkDefault false;
-        };
-      };
-    };
+      
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}
