@@ -33,7 +33,6 @@ let
   featConfig = {
       thisFlake.systemFeatures.featSets = enableFeatList [
       "nixos-universal"
-      "impermanence"
     ];
 
     thisFlake.systemFeatures.features = enableFeatList [

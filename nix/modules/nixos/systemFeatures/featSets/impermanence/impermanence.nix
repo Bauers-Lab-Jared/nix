@@ -33,6 +33,7 @@ let
   featConfig = {
       thisFlake.systemFeatures.features = enableFeatList [
       "impermanence"
+      "disko"
     ];
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}
