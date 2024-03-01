@@ -31,12 +31,7 @@ let
   };
 
   featConfig = {
-      thisFlake.systemFeatures.featSets = enableFeatList [
-      "nixos-universal"
-    ];
-
-    thisFlake.systemFeatures.features = enableFeatList [
-      "systemd-boot"
+      thisFlake.systemFeatures.features = enableFeatList [
       "networking"
       "openssh"
     ];

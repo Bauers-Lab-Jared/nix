@@ -31,14 +31,7 @@ let
   };
 
   featConfig = {
-      thisFlake.systemFeatures.featSets = enableFeatList [
-      "nixos-universal"
-    ];
-
-    thisFlake.systemFeatures.features = enableFeatList [
-      "systemd-boot"
-      "networking"
-      "openssh"
-    ];
+      networking.hostName = mkDefault systemName;
+      networking.useDHCP = lib.mkDefault true;
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

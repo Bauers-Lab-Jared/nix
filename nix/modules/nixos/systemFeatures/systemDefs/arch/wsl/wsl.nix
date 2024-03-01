@@ -37,6 +37,7 @@ let
 
     thisFlake.systemFeatures.features = enableFeatList [
       "wsl"
+      "networking"
     ];
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}
