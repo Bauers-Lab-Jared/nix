@@ -31,7 +31,7 @@ let
   };
 
   featConfig = {
-      networking.hostName = mkDefault systemName;
+      networking.hostName = mkDefault config.thisFlake.thisConfig.systemName;
       networking.useDHCP = lib.mkDefault true;
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}
