@@ -37,14 +37,9 @@ let
       defaultUser = mkDefault scope.config.thisFlake.thisConfig.mainUser;
       interop.includePath = mkDefault false;
       wslConf = {
-        automount.enabled = mkDefault false;
         automount.root = mkDefault "/wsl";
         interop = {
-          enabled = mkDefault false;
           appendWindowsPath = mkDefault false;
-        };
-        network = {
-          generateHosts = mkDefault false;
         };
       };
     };
