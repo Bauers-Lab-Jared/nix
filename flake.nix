@@ -163,8 +163,6 @@
 
       # modules to apply to all nixos systems
       systems.modules.nixos = with inputs; [
-        home-manager.nixosModules.home-manager
-        sops-nix.nixosModules.sops
         # nix-ld.nixosModules.nix-ld
         # attic.nixosModules.atticd
       ];

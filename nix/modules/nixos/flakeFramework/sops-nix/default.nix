@@ -24,6 +24,10 @@ let
     cfg = config.thisFlake.sops;
 in 
 {
+    imports = with inputs; [
+        sops-nix.nixosModules.sops
+    ];
+
     options.thisFlake.sops = with types; 
     { 
         

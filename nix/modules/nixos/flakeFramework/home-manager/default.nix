@@ -5,7 +5,10 @@ with lib.thisFlake;
 let cfg = config.thisFlake.home;
 in
 {
-
+  imports = with inputs; [
+    home-manager.nixosModules.home-manager
+  ];
+  
   options.thisFlake.home = with types; {
     file = mkOpt attrs { }
       (mdDoc "A set of files to be managed by home-manager's `home.file`.");
