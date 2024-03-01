@@ -46,7 +46,7 @@ let
     };
 
     users.users.root.openssh.authorizedKeys.keys = [
-      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHCfau/nsDvu2ryn4QDaLLCdzREXeZ7pUL6zuzTNYfwh"
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHCfau/nsDvu2ryn4QDaLLCdzREXeZ7pUL6zuzTNYfwh waffle@waffle"
     ];
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}
