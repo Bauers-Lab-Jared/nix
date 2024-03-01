@@ -36,7 +36,6 @@ let
     environment.persistence."/persist/system" = {
       hideMounts = true;
       directories = [
-        "/etc/nixos"
         "/var/log"
         "/var/lib/nixos"
         "/var/lib/systemd/coredump"
