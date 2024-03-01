@@ -1,4 +1,4 @@
-moduleArgs@{
+{
     # Snowfall Lib provides a customized `lib` instance with access to your flake's library
     # as well as the libraries available from your flake's inputs.
     lib,
@@ -17,32 +17,28 @@ moduleArgs@{
     # All other arguments come from the module system.
     config,
     ...
-}:
-with moduleArgs.lib.thisFlake;
+}: 
+with lib;
+with lib.thisFlake; 
 let
-  scope = mkFeatureScope {moduleFilePath = __curPos.file; inherit moduleArgs;};
-in with scope;
-let
-  imports = with inputs; [
-    impermanence.nixosModules.impermanence
-  ];
-
-  featOptions = {
-
-  };
-
-  featConfig = {
-    fileSystems."/persist".neededForBoot = true;
-    environment.persistence."/persist/system" = {
-      hideMounts = true;
-      directories = [
-        "/var/log"
-        "/var/lib/nixos"
-        "/var/lib/systemd/coredump"
-      ];
-      files = [
-        { file = "/var/keys/sops.txt"; parentDirectory = { mode = "u=rwx,g=,o="; }; }
-      ];
+    cfg = config.thisFlake.sops;
+in 
+{
+    options.thisFlake.sops = with types; 
+    { 
+        
     };
-  };
-in mkFeatureFile {inherit scope featOptions featConfig imports;}
+
+    config = {
+        sops.defaultSopsFile = ./secrets/secrets.yaml;
+        sops.defaultSopsFormat = "yaml";
+        sops.age.keyFile = "/var/keys/sops.txt";
+
+        sops.secrets.example-key = {};
+        sops.secrets."myservice/my_subdir/my_secret" = {};
+    };
+}
+
+#This module will be made available on your flake’s nixosModules,
+# darwinModules, or homeModules output with the same name as the directory
+# that you created.

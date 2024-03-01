@@ -32,6 +32,8 @@
        url = "github:nix-community/impermanence";
     };
 
+    sops-nix.url = "github:Mic92/sops-nix";
+
     # Generate System Images
     nixos-generators.url = "github:nix-community/nixos-generators";
     nixos-generators.inputs.nixpkgs.follows = "nixpkgs";
@@ -82,11 +84,11 @@
       inputs.nixpkgs-stable.follows = "nixpkgs";
     };
 
-    # Hashicorp Vault Integration (secrets management)
-    vault-service = {
-      url = "github:DeterminateSystems/nixos-vault-service";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # # Hashicorp Vault Integration (secrets management)
+    # vault-service = {
+    #   url = "github:DeterminateSystems/nixos-vault-service";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
 
     # # Flake Hygiene
     # flake-checker = {
@@ -162,6 +164,7 @@
       # modules to apply to all nixos systems
       systems.modules.nixos = with inputs; [
         home-manager.nixosModules.home-manager
+        sops-nix.nixosModules.sops
         # nix-ld.nixosModules.nix-ld
         # attic.nixosModules.atticd
       ];
