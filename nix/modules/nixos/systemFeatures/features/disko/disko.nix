@@ -28,7 +28,10 @@ let
   ];
 
   featOptions = with types; {
-    selectedConfig = mkOpt str "";
+    selectedConfig = mkOption {
+      type = str;
+      default = "";
+    };
   };
 
   featConfig = {
