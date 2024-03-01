@@ -31,7 +31,7 @@ let
   };
 
   featConfig = {
-    boot.initrd.postDeviceCommands = mkIf (mkAfter ''
+    boot.initrd.postDeviceCommands = mkIf cfg.enableInitrdWipeScript (mkAfter ''
       mkdir /btrfs_tmp
       mount /dev/root_vg/root /btrfs_tmp
       if [[ -e /btrfs_tmp/root ]]; then
