@@ -22,10 +22,10 @@
 with lib;
 with lib.thisFlake; 
 let
-  cfg = config.thisFlake.hardwareConfigs.wsl;
+  cfg = config.thisFlake.hardwareConfigs.virtioblock-vm;
 in 
 {
-  options.thisFlake.hardwareConfigs.wsl = with types; 
+  options.thisFlake.hardwareConfigs.virtioblock-vm = with types; 
   { 
       enable = mkBoolOpt' false;
   };
