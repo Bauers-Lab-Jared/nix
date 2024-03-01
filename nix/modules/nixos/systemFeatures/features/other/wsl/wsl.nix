@@ -35,13 +35,6 @@ let
     wsl = {
       enable = true;
       defaultUser = mkDefault scope.config.thisFlake.thisConfig.mainUser;
-      interop.includePath = mkDefault false;
-      wslConf = {
-        automount.root = mkDefault "/wsl";
-        interop = {
-          appendWindowsPath = mkDefault false;
-        };
-      };
     };
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}
