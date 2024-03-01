@@ -38,7 +38,7 @@ in {
 
       systemFeatures = {
         features = enableFeatList [
-          
+          "openssh"
         ];
 
         featSets = enableFeatList [

@@ -31,6 +31,22 @@ let
   };
 
   featConfig = {
-      services.openssh.enable = true;
+    services.openssh = {
+      enable = true;
+      settings = {
+        # Harden
+        PasswordAuthentication = false;
+        KbdInteractiveAuthentication = false;
+        PermitRootLogin = "prohibit-password";
+        # Automatically remove stale sockets
+        StreamLocalBindUnlink = "yes";
+        # Allow forwarding ports to everywhere
+        GatewayPorts = "clientspecified";
+      };
+    };
+
+    users.users.root.openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHCfau/nsDvu2ryn4QDaLLCdzREXeZ7pUL6zuzTNYfwh"
+    ];
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}
