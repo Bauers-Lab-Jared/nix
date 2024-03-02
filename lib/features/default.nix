@@ -58,6 +58,28 @@ with builtins; rec {
   in
     filter (x: !(hasSuffix "default.nix" x) && !(hasSuffix "example.nix" x) && (hasSuffix ".nix" x)) (map toString rawPaths);
   #####
+  mkFeatRefs = args: info: with args; let
+    osC = if args ? osConfig
+      then config else osConfig;
+
+    username = if info ? username
+      then info.username else null;
+    
+  in {
+    system = osC.thisFlake.systemFeatures;
+    home = config.thisFlake.homeFeatures;
+    user = mkIf (username != null) config.thisFlake.userFeatures.${username};
+  };
+  #####
+  mkFeatPaths = args: info: with args; let
+    username = if info ? username
+      then info.username else null;    
+  in {
+    system = attrSet: {thisFlake.systemFeatures = attrSet;};
+    home = attrSet: {thisFlake.homeFeatures = attrSet;};
+    user = mkIf (username != null) (attrSet: {thisFlake.userFeatures.${username} = attrSet;});
+  };
+  #####
   mkLocalLib = {
     moduleArgs,
     moduleFilePath,
@@ -67,18 +89,14 @@ with builtins; rec {
     with moduleArgs.lib.thisFlake; let
       universal = rec {
         moduleInfo = moduleInfoFromPath moduleFilePath;
-        osC =
-          if moduleArgs ? osConfig
-          then osConfig
-          else config;
-        systemHasFeat = featTier: targetFeat: osC.thisFlake.systemFeatures.${featTier}.${targetFeat}.enable or false;
-        systemHasReqFeats =
+        featConf = mkFeatRefs moduleArgs moduleInfo;
+        withFeatPath = mkFeatPaths moduleArgs moduleInfo;
+        systemHasFeat = featTier: targetFeat: featConf.sys.${featTier}.${targetFeat}.enable or false;
+        systemHasReqFeats = 
           (systemHasFeat moduleInfo.featTier moduleInfo.featureName)
-          && (
-            if moduleInfo ? subFeatName
+          && ( if moduleInfo ? subFeatName
             then systemHasFeat moduleInfo.featTier moduleInfo.subFeatName
-            else true
-          );
+            else true);
       };
     in
       with universal; let
@@ -86,7 +104,7 @@ with builtins; rec {
           if moduleInfo ? subFeatName
           then {${moduleInfo.featTier}.${moduleInfo.featureName}.${moduleInfo.subFeatName} = attrSet;}
           else {${moduleInfo.featTier}.${moduleInfo.featureName} = attrSet;};
-        fromFeatNames = attrSet:
+        withFeatNamesFrom = attrSet:
           if moduleInfo ? subFeatName
           then attrSet.${moduleInfo.featTier}.${moduleInfo.featureName}.${moduleInfo.subFeatName}
           else attrSet.${moduleInfo.featTier}.${moduleInfo.featureName};
@@ -99,15 +117,11 @@ with builtins; rec {
           then {
             featEnableDefault = false;
             featEnableDesc = "Enables this system feature: ${featNames}";
-            withModuleAttrPath = attrSet: {thisFlake.systemFeatures = withFeatNames attrSet;};
-            fromModuleAttrPathBase = config.thisFlake.systemFeatures;
           }
           else if moduleInfo.moduleType == "home"
           then {
             featEnableDefault = systemHasReqFeats;
             featEnableDesc = "Enables this home-manager feature, system-wide: ${featNames}";
-            withModuleAttrPath = attrSet: {thisFlake.homeFeatures = withFeatNames attrSet;};
-            fromModuleAttrPathBase = config.thisFlake.homeFeatures;
           }
           else if moduleInfo.moduleType == "user"
           then rec {
@@ -116,17 +130,17 @@ with builtins; rec {
 
             featEnableDefault = systemHasReqFeats && moduleIsForThisUser;
             featEnableDesc = "Enables this home-manager feature, just for this user: ${featNames}";
-            withModuleAttrPath = attrSet: {thisFlake.userFeatures.${moduleInfo.username} = withFeatNames attrSet;};
-            fromModuleAttrPathBase = config.thisFlake.userFeatures.${moduleInfo.username};
           }
           else {};
       in
         with typeSpecific; let
+          featConfPath = featConf.${moduleInfo.moduleType};
           universalExt =
             universal
             // rec {
-              cfg = fromFeatNames fromModuleAttrPathBase;
-              cfgHasFeat = featTier: targetFeat: fromModuleAttrPathBase.${featTier}.${targetFeat}.enable or false;
+              withModuleAttrPath = attrSet: withFeatPath.${moduleInfo.moduleType} withFeatNames attrSet;
+              cfg = withFeatNamesFrom featConfPath;
+              cfgHasFeat = featTier: targetFeat: featConfPath.${featTier}.${targetFeat}.enable or false;
 
               thisFeatEnabled =
                 if (moduleInfo ? featureName)
