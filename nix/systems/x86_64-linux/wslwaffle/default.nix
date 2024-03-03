@@ -34,11 +34,12 @@ in {
         ];
       };
 
-      hardwareConfigs.wsl.enable = true;
-
       systemFeatures = {
-        features = enableFeatList [
+        features = {
+          hw-configs.selectedConfig = "wsl";
+        } // enableFeatList [
           "openssh"
+          "hw-configs"
         ];
 
         featSets = enableFeatList [

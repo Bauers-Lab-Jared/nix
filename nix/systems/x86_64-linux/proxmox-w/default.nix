@@ -34,12 +34,14 @@ in {
         ];
       };
 
-      hardwareConfigs.virtioblock-vm.enable = true;
-
       systemFeatures = {
         features = {
           disko.selectedConfig = "virtioblock-vm";
-        };
+          hw-configs.selectedConfig = "virtioblock-vm";
+        } // enableFeatList [
+          "disko"
+          "hw-configs"
+        ];
 
         featSets = enableFeatList [
           "impermanence"

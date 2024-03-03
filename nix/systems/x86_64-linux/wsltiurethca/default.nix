@@ -37,11 +37,11 @@ in {
         ];
       };
 
-      hardwareConfigs.wsl.enable = true;
-
       systemFeatures = {
-        features = enableFeatList [
-          
+        features = {
+          hw-configs.selectedConfig = "wsl";
+        } // enableFeatList [
+          "hw-configs"
         ];
 
         featSets = enableFeatList [
