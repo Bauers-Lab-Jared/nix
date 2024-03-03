@@ -140,7 +140,7 @@ with builtins; rec {
   let 
   universal = rec {
     inherit moduleInfo;
-    withFeatPath = traceValSeq (mkFeatPath moduleArgs moduleInfo);
+    withFeatPath = mkFeatPath moduleArgs moduleInfo;
   } // featRefs;
   in
   with universal;
