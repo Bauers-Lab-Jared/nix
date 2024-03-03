@@ -27,7 +27,7 @@ let
     impermanence.nixosModules.impermanence
   ];
 
-  featOptions = {
+  featOptions = with types; {
     persistDir = mkOpt str "/persist" "The base dir for impermanence to use for persistance";
   };
 

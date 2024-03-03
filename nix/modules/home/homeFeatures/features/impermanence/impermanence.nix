@@ -28,7 +28,7 @@ let
     impermanence.nixosModules.home-manager.impermanence
   ];
 
-  featOptions = {
+  featOptions = with types; {
 
   };
 

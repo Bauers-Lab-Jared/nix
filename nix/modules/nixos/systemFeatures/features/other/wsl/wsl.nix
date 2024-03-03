@@ -27,7 +27,7 @@ let
     nixos-wsl.nixosModules.wsl
   ];
 
-  featOptions = {
+  featOptions = with types; {
 
   };
 

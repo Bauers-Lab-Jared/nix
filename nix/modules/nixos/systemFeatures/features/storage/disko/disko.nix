@@ -36,5 +36,6 @@ let
 
   featConfig = {
 
-  } // import "./configs/${cfg.selectedConfig}.nix" scope;
+  };
+
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

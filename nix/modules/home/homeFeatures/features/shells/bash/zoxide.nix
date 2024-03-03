@@ -27,7 +27,7 @@ let
   imports = with inputs; [
   ];
 
-  featOptions = {
+  featOptions = with types; {
     #enableFzfIntegration = mkBoolOpt (cfgHasFeat "features" "fzf");
   };
 

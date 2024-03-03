@@ -26,14 +26,15 @@ let
   imports = with inputs; [
   ];
 
-  featOptions = {
+  featOptions = with types;{
     selectedConfig = mkOption {
       type = str;
       default = "";
     };
   };
-
+  
   featConfig = {
-      
-  } // import "./configs/${cfg.selectedConfig}.nix" scope;
+
+  };
+  
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

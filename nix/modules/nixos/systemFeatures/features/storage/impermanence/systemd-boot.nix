@@ -26,7 +26,7 @@ let
   imports = with inputs; [
   ];
 
-  featOptions = {
+  featOptions = with types; {
     enableInitrdWipeScript = mkBoolOpt' true;
   };
 
