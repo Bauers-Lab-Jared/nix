@@ -38,7 +38,5 @@ let
     featSets = enableFeatList [
       "nixos-universal"
     ];
-    } // {
-      
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

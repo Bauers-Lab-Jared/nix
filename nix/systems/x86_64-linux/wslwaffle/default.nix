@@ -21,7 +21,7 @@ with lib.thisFlake; let
   mainUser = "waffle";
   systemName = baseNameOf (toString ./.);
 in {
-  config = WITH_SYSTEM_FEAT_PATH {
+  config = mkMerge [(WITH_SYSTEM_FEAT_PATH {
     features = {
       hw-configs.selectedConfig = "wsl";
     } // enableFeatList [
@@ -35,7 +35,7 @@ in {
       "wsl"
       "cli-workstation"
     ];
-    } // {
+    }) {
     thisFlake = {
       users.${mainUser} = {
         name = mainUser;
@@ -55,7 +55,7 @@ in {
 
     # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
     system.stateVersion = "23.11";
-  };
+  }];
 }
 #This system will be made available on your flake’s nixosConfigurations,
 # darwinConfigurations, or one of Snowfall Lib’s virtual *Configurations outputs

@@ -34,7 +34,5 @@ let
     features = enableFeatList [
       "networking"
       "openssh"
-    ];} // {
-      
-    };
+    ];};
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

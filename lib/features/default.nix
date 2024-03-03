@@ -187,13 +187,15 @@ with builtins; rec {
     featConfig,
     imports,
   }:
-    with scope; {
+  with scope; let
+    finalFeatConfig = if isList featConfig then mkMerge featConfig else featConfig;
+  in {
       inherit imports;
 
       options = withFeatPath (recursiveUpdate
         {enable = mkBoolOpt featEnableDefault featEnableDesc;}
         featOptions);
 
-      config = mkIf thisFeatEnabled featConfig;
+      config = mkIf thisFeatEnabled finalFeatConfig;
     };
 }

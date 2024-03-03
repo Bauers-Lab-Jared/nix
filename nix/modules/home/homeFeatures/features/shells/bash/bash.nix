@@ -31,11 +31,11 @@ let
 
   };
 
-  featConfig = WITH_HOME_FEAT_PATH {
+  featConfig = [(WITH_HOME_FEAT_PATH {
     features = enableFeatList [
       "starship"
     ];
-  } // {
+  })  {
     programs.bash = {
       enable = mkDefault true;
       historyControl = mkDefault ["erasedups" "ignoredups" "ignorespace"];
@@ -108,5 +108,5 @@ let
         rebootforce="sudo shutdown -r -n now";
       };
     };
-  };
+  }];
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

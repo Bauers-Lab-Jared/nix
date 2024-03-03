@@ -34,7 +34,5 @@ let
     features = enableFeatList [
       "impermanence"
       "disko"
-    ];} // {
-      
-    };
+    ];};
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

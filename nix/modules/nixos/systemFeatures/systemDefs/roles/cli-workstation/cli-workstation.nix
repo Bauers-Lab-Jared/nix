@@ -35,7 +35,5 @@ let
       "base-cli-tools"
       "nix-utils"
     ];
-    } // {
-      
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

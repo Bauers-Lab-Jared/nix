@@ -30,11 +30,11 @@ let
 
   };
 
-  featConfig = WITH_SYSTEM_FEAT_PATH {
+  featConfig = [(WITH_SYSTEM_FEAT_PATH {
     features = enableFeatList [
       "env-vars"
       "xdg"
-    ];} // {
+    ];}) {
 
     i18n = {
         defaultLocale = mkDefault "en_US.UTF-8";
@@ -91,5 +91,5 @@ let
         value = "1048576";
         }
     ];
-  };
+  }];
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

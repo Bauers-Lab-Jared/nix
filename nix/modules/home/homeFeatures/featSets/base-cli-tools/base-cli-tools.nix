@@ -38,7 +38,5 @@ let
       "fzf"
       "zoxide"
     ];
-  } // {
-    
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}
