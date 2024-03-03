@@ -28,20 +28,17 @@ let
   ];
 
   featOptions = {
-
+    persistDir = mkOpt str "/persist" "The base dir for impermanence to use for persistance";
   };
 
   featConfig = {
-    fileSystems."/persist".neededForBoot = true;
-    environment.persistence.${SYSTEM_PERSIST} = {
+    fileSystems.${cfg.persistDir}.neededForBoot = true;
+    environment.persistence.${cfg.persistDir + SYSTEM_PERSIST} = {
       hideMounts = true;
       directories = [
         "/var/log"
         "/var/lib/nixos"
         "/var/lib/systemd/coredump"
-      ];
-      files = [
-        { file = "/var/keys/sops.txt"; parentDirectory = { mode = "u=rwx,g=,o="; }; }
       ];
     };
   };

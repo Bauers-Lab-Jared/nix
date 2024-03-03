@@ -2,8 +2,8 @@
 with lib;
 with builtins; rec {
   
-  SYSTEM_PERSIST = "/persist/system";
-  HOME_PERSIST = username: "persist/home/${username}";
+  SYSTEM_PERSIST = "/system";
+  HOME_PERSIST = username: "/home/${username}";
 
   
 }
