@@ -33,7 +33,7 @@ let
 
   featConfig = {
     fileSystems."/persist".neededForBoot = true;
-    environment.persistence."/persist/system" = {
+    environment.persistence.${SYSTEM_PERSIST} = {
       hideMounts = true;
       directories = [
         "/var/log"
