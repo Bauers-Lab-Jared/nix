@@ -21,7 +21,22 @@ with lib.thisFlake; let
   mainUser = "waffle";
   systemName = baseNameOf (toString ./.);
 in {
-  config = {
+  config = WITH_SYSTEM_FEAT_PATH {
+    features = {
+      disko.selectedConfig = "virtioblock-vm";
+      hw-configs.selectedConfig = "virtioblock-vm";
+    } // enableFeatList [
+      "disko"
+          "hw-configs"
+    ];
+    featSets = enableFeatList [
+      "impermanence"
+    ];
+    systemDefs = enableFeatList [
+      "proxmox-vm"
+      "cli-workstation"
+    ];
+    } // {
     thisFlake = {
       users.${mainUser} = {
         name = mainUser;
@@ -31,25 +46,6 @@ in {
         extraGroups = [
           "wheel"
           "storage"
-        ];
-      };
-
-      systemFeatures = {
-        features = {
-          disko.selectedConfig = "virtioblock-vm";
-          hw-configs.selectedConfig = "virtioblock-vm";
-        } // enableFeatList [
-          "disko"
-          "hw-configs"
-        ];
-
-        featSets = enableFeatList [
-          "impermanence"
-        ];
-
-        systemDefs = enableFeatList [
-          "proxmox-vm"
-          "cli-workstation"
         ];
       };
 

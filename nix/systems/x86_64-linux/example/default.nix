@@ -25,7 +25,18 @@ in {
     ./hardware-configuration.nix
   ];
 
-  config = {
+  config = WITH_SYSTEM_FEAT_PATH {
+    features = enableFeatList [
+
+    ];
+    featSets = enableFeatList [
+      "boot"
+      "networking"
+    ];
+    systemDefs = enableFeatList [
+      "Minimal-desktop"
+    ];
+    } // {
     thisFlake = {
       users.${mainUser} = {
         name = mainUser;
@@ -40,21 +51,6 @@ in {
           "input"
         ];
       };
-
-      systemFeatures = {
-        features = enableFeatList [
-        ];
-
-        featSets = enableFeatList [
-          "boot"
-          "networking"
-        ];
-
-        systemDefs = enableFeatList [
-          "Minimal-desktop"
-        ];
-      };
-
       thisConfig = {
         inherit systemName mainUser;
       };

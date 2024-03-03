@@ -26,7 +26,20 @@ in {
 	];
   
   config = {
-    thisFlake = {
+    thisFlake = WITH_SYSTEM_FEAT_PATH {
+    features = {
+      hw-configs.selectedConfig = "wsl";
+    } // enableFeatList [
+      "hw-configs"
+    ];
+    featSets = enableFeatList [
+      
+    ];
+    systemDefs = enableFeatList [
+      "wsl"
+      "cli-workstation"
+    ];
+    } // {
       users.${mainUser} = {
         name = mainUser;
         fullName = mainUser;
@@ -34,23 +47,6 @@ in {
         email = "${mainUser}@${systemName}";
         extraGroups = [
           "wheel"
-        ];
-      };
-
-      systemFeatures = {
-        features = {
-          hw-configs.selectedConfig = "wsl";
-        } // enableFeatList [
-          "hw-configs"
-        ];
-
-        featSets = enableFeatList [
-
-        ];
-
-        systemDefs = enableFeatList [
-          "wsl"
-          "cli-workstation"
         ];
       };
 

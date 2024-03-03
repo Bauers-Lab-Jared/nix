@@ -30,11 +30,11 @@ let
 
   };
 
-  featConfig = {
-    thisFlake.systemFeatures.features = genAttrs [
+  featConfig = WITH_SYSTEM_FEAT_PATH {
+    features = enableFeatList [
       "env-vars"
       "xdg"
-    ] (n: enabled);
+    ];} // {
 
     i18n = {
         defaultLocale = mkDefault "en_US.UTF-8";

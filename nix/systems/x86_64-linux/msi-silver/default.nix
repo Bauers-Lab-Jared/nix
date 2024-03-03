@@ -27,11 +27,18 @@ in {
 		./hardware-configuration.nix
 	];
 
-  config = {
-    users = {
-      #extraUsers."root".hashedPassword = "$y$j9T$nMoJ8XuxRO5UJkUU3njPo1$mr6yrVNOb6gSNtigGEr57Zecb4AcDeJg.UInX4pqIo0";
-      #users.${mainUser}.hashedPassword = "$y$j9T$nMoJ8XuxRO5UJkUU3njPo1$mr6yrVNOb6gSNtigGEr57Zecb4AcDeJg.UInX4pqIo0";
-    };
+  config = WITH_SYSTEM_FEAT_PATH {
+    features = enableFeatList [
+
+    ];
+    featSets = enableFeatList [
+      "boot"
+      #"networking"
+    ];
+    systemDefs = enableFeatList [
+      #"Minimal-desktop"
+    ];
+    } // {
     thisFlake = {
       users.${mainUser} = {
         name = mainUser;
@@ -44,20 +51,6 @@ in {
           "audio"
           "disk"
           "input"
-        ];
-      };
-
-      systemFeatures = {
-        features = enableFeatList [
-        ];
-
-        featSets = enableFeatList [
-          "boot"
-          #"networking"
-        ];
-
-        systemDefs = enableFeatList [
-          #"Minimal-desktop"
         ];
       };
 

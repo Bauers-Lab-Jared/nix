@@ -30,10 +30,11 @@ let
 
   };
 
-  featConfig = {
-      thisFlake.systemFeatures.features = enableFeatList [
+  featConfig = WITH_SYSTEM_FEAT_PATH {
+    features = enableFeatList [
       "networking"
       "openssh"
-    ];
-  };
+    ];} // {
+      
+    };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

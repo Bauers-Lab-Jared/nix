@@ -30,10 +30,12 @@ let
 
   };
 
-  featConfig = {
-      thisFlake.systemFeatures.featSets = enableFeatList [
+  featConfig = WITH_SYSTEM_FEAT_PATH {
+    featSets = enableFeatList [
       "base-cli-tools"
       "nix-utils"
     ];
+    } // {
+      
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

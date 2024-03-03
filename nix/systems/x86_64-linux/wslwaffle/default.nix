@@ -21,7 +21,21 @@ with lib.thisFlake; let
   mainUser = "waffle";
   systemName = baseNameOf (toString ./.);
 in {
-  config = {
+  config = WITH_SYSTEM_FEAT_PATH {
+    features = {
+      hw-configs.selectedConfig = "wsl";
+    } // enableFeatList [
+      "openssh"
+      "hw-configs"
+    ];
+    featSets = enableFeatList [
+      
+    ];
+    systemDefs = enableFeatList [
+      "wsl"
+      "cli-workstation"
+    ];
+    } // {
     thisFlake = {
       users.${mainUser} = {
         name = mainUser;
@@ -31,24 +45,6 @@ in {
         extraGroups = [
           "wheel"
           "storage"
-        ];
-      };
-
-      systemFeatures = {
-        features = {
-          hw-configs.selectedConfig = "wsl";
-        } // enableFeatList [
-          "openssh"
-          "hw-configs"
-        ];
-
-        featSets = enableFeatList [
-          #"impermanence"
-        ];
-
-        systemDefs = enableFeatList [
-          "wsl"
-          "cli-workstation"
         ];
       };
 

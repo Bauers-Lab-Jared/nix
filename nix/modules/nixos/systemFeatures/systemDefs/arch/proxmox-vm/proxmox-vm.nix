@@ -30,15 +30,17 @@ let
 
   };
 
-  featConfig = {
-      thisFlake.systemFeatures.featSets = enableFeatList [
-      "nixos-universal"
-    ];
-
-    thisFlake.systemFeatures.features = enableFeatList [
+  featConfig = WITH_SYSTEM_FEAT_PATH {
+    features = enableFeatList [
       "systemd-boot"
       "networking"
       "openssh"
     ];
+    featSets = enableFeatList [
+      "nixos-universal"
+    ];
+    } // {
+      
   };
+  
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

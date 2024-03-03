@@ -31,12 +31,14 @@ let
 
   };
 
-  featConfig = {
-    thisFlake.homeFeatures.features = genAttrs [
+  featConfig = WITH_HOME_FEAT_PATH {
+    features = enableFeatList [
       "bash"
       "git"
       "fzf"
       "zoxide"
-    ] (n: enabled);
+    ];
+  } // {
+    
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

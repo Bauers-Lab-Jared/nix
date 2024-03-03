@@ -31,9 +31,11 @@ let
 
   };
 
-  featConfig = {
-    thisFlake.homeFeatures.features.starship.enable = mkDefault true;
-
+  featConfig = WITH_HOME_FEAT_PATH {
+    features = enableFeatList [
+      "starship"
+    ];
+  } // {
     programs.bash = {
       enable = mkDefault true;
       historyControl = mkDefault ["erasedups" "ignoredups" "ignorespace"];
