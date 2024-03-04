@@ -27,11 +27,18 @@ let
   ];
 
   featOptions = with types; {
-
+    hosts = mkOpt attrs { } "An attribute set to merge with `networking.hosts`";
   };
 
   featConfig = {
-      networking.hostName = mkDefault config.thisFlake.thisConfig.systemName;
-      networking.useDHCP = lib.mkDefault true;
+    thisFlake.users.${config.thisFlake.thisConfig.mainUser}.extraGroups = 
+      mkIf config.networking.networkmanager.enable [ "networkmanager" ];
+
+    networking = {
+      hostName = mkDefault config.thisFlake.thisConfig.systemName;
+      hosts = {
+        "127.0.0.1" = [ "local.test" ] ++ (cfg.hosts."127.0.0.1" or [ ]);
+      } // cfg.hosts;
+    };
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

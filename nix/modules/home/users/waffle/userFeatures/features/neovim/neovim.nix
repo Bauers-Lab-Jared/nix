@@ -1,4 +1,4 @@
-{
+moduleArgs@{
     # Snowfall Lib provides a customized `lib` instance with access to your flake's library
     # as well as the libraries available from your flake's inputs.
     lib,
@@ -16,33 +16,26 @@
 
     # All other arguments come from the module system.
     config,
+    osConfig,
     ...
-}: 
-with lib;
-with lib.thisFlake; 
+}:
+with moduleArgs.lib.thisFlake;
 let
-    cfg = config.thisFlake.sops;
-in 
-{
-    imports = with inputs; [
-        sops-nix.nixosModules.sops
+  scope = mkFeatureScope {moduleFilePath = __curPos.file; inherit moduleArgs;};
+in with scope;
+let
+  imports = with inputs; [
+  ];
+  
+  baseNeovim = inputs.neovim-flake.packages.${system}.maximal;
+
+  featOptions = with types; {
+    package = mkOpt' attrs baseNeovim;
+  };
+
+  featConfig = {
+    home.packages = [
+      cfg.package
     ];
-
-    options.thisFlake.sops = with types; 
-    { 
-        
-    };
-
-    config = {
-        sops.defaultSopsFile = ./secrets/secrets.yaml;
-        sops.defaultSopsFormat = "yaml";
-        sops.age.keyFile = "/var/keys/sops.txt";
-
-        sops.secrets.example-key = {};
-        sops.secrets."myservice/my_subdir/my_secret" = {};
-    };
-}
-
-#This module will be made available on your flake’s nixosModules,
-# darwinModules, or homeModules output with the same name as the directory
-# that you created.
+  };
+in mkFeatureFile {inherit scope featOptions featConfig imports;}

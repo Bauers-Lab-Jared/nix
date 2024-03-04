@@ -16,6 +16,7 @@ moduleArgs@{
 
     # All other arguments come from the module system.
     config,
+    osConfig,
     ...
 }:
 with moduleArgs.lib.thisFlake;
@@ -24,22 +25,15 @@ let
 in with scope;
 let
   imports = with inputs; [
-    impermanence.nixosModules.impermanence
   ];
 
   featOptions = with types; {
-    persistDir = mkOpt str "/persist" "The base dir for impermanence to use for persistance";
+
   };
-  
-  featConfig = {
-    fileSystems.${cfg.persistDir}.neededForBoot = true;
-    environment.persistence.${cfg.persistDir + SYSTEM_PERSIST} = {
-      hideMounts = true;
-      directories = [
-        "/var/log"
-        "/var/lib/nixos"
-        "/var/lib/systemd/coredump"
-      ];
-    };
+
+  featConfig = WITH_USER_FEAT_PATH moduleInfo.username {
+    features = enableFeatList [
+      "neovim"
+    ];
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

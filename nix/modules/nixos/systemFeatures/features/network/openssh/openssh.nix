@@ -23,6 +23,15 @@ let
   scope = mkFeatureScope {moduleFilePath = __curPos.file; inherit moduleArgs;};
 in with scope;
 let
+  inherit (config.networking) hostName;
+  hosts = systems;
+  # # Sops needs acess to the keys before the persist dirs are even mounted; so
+  # # just persisting the keys won't work, we must point at /persist
+  persistDir = (FROM_SYSTEM_FEAT_PATH config).features.sops.persistDir or "";
+  pubKey = host: (
+    snowfall.fs.get-snowfall-file 
+    "systems/${systems.${host}.system}/${host}/ssh_host_ed25519_key.pub");
+
   imports = with inputs; [
   ];
 
@@ -31,6 +40,7 @@ let
   };
 
   featConfig = {
+    networking.firewall.allowedTCPPorts = [ 22 ];
     services.openssh = {
       enable = true;
       settings = {
@@ -43,10 +53,32 @@ let
         # Allow forwarding ports to everywhere
         GatewayPorts = "clientspecified";
       };
+
+      hostKeys = [{
+        path = "${persistDir}/etc/ssh/ssh_host_ed25519_key";
+        type = "ed25519";
+      }];
+    };
+
+    programs.ssh = {
+    # Each hosts public key
+      knownHosts = mapAttrs
+      (name: _: {
+        publicKeyFile = pubKey name;
+        extraHostNames =
+          (lib.optional (name == hostName) "localhost");
+      })
+      hosts;
     };
 
     users.users.root.openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHCfau/nsDvu2ryn4QDaLLCdzREXeZ7pUL6zuzTNYfwh waffle@waffle"
     ];
+    users.users.waffle.openssh.authorizedKeys.keys = [
+      "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHCfau/nsDvu2ryn4QDaLLCdzREXeZ7pUL6zuzTNYfwh waffle@waffle"
+    ];
+
+    # Passwordless sudo when SSH'ing with keys
+    security.pam.enableSSHAgentAuth = true;
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

@@ -24,21 +24,17 @@ let
 in with scope;
 let
   imports = with inputs; [
-    impermanence.nixosModules.impermanence
   ];
 
   featOptions = with types; {
-    persistDir = mkOpt str "/persist" "The base dir for impermanence to use for persistance";
   };
-  
+
+  persistDir = (FROM_SYSTEM_FEAT_PATH config).features.impermanence.persistDir;
+
   featConfig = {
-    fileSystems.${cfg.persistDir}.neededForBoot = true;
-    environment.persistence.${cfg.persistDir + SYSTEM_PERSIST} = {
-      hideMounts = true;
-      directories = [
-        "/var/log"
-        "/var/lib/nixos"
-        "/var/lib/systemd/coredump"
+    environment.persistence.${persistDir + SYSTEM_PERSIST} = {
+      files = [
+        { file = config.sops.age.keyFile; parentDirectory = { mode = "u=rwx,g=,o="; }; }
       ];
     };
   };

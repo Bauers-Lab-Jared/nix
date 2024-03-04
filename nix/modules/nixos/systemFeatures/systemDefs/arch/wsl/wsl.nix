@@ -30,7 +30,7 @@ let
 
   };
 
-  featConfig = WITH_SYSTEM_FEAT_PATH {
+  featConfig = [(WITH_SYSTEM_FEAT_PATH {
     features = enableFeatList [
       "wsl"
       "networking"
@@ -38,5 +38,7 @@ let
     featSets = enableFeatList [
       "nixos-universal"
     ];
-  };
+  }) {
+    networking.useDHCP = lib.mkDefault true;
+  }];
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

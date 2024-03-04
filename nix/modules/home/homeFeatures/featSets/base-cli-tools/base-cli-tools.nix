@@ -37,6 +37,8 @@ let
       "git"
       "fzf"
       "zoxide"
+      "sops"
+      "neovim"
     ];
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

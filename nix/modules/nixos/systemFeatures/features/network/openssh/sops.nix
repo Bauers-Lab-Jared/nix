@@ -23,23 +23,20 @@ let
   scope = mkFeatureScope {moduleFilePath = __curPos.file; inherit moduleArgs;};
 in with scope;
 let
+  isEd25519 = k: k.type == "ed25519";
+  getKeyPath = k: k.path;
+  keys = builtins.filter isEd25519 config.services.openssh.hostKeys;
+  keyPaths = map getKeyPath keys;
+
   imports = with inputs; [
-    impermanence.nixosModules.impermanence
   ];
 
   featOptions = with types; {
-    persistDir = mkOpt str "/persist" "The base dir for impermanence to use for persistance";
   };
-  
+
   featConfig = {
-    fileSystems.${cfg.persistDir}.neededForBoot = true;
-    environment.persistence.${cfg.persistDir + SYSTEM_PERSIST} = {
-      hideMounts = true;
-      directories = [
-        "/var/log"
-        "/var/lib/nixos"
-        "/var/lib/systemd/coredump"
-      ];
-    };
+    sops.age.sshKeyPaths = keyPaths;
+
+    sops.secrets = attrsets.mergeAttrsList (map (p: mkSecretByHost config.networking.hostName "ssh/${getEndOfPath p}" p) keyPaths);
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

@@ -24,22 +24,16 @@ let
 in with scope;
 let
   imports = with inputs; [
-    impermanence.nixosModules.impermanence
+    sops-nix.nixosModules.sops
   ];
 
   featOptions = with types; {
-    persistDir = mkOpt str "/persist" "The base dir for impermanence to use for persistance";
+
   };
-  
+
   featConfig = {
-    fileSystems.${cfg.persistDir}.neededForBoot = true;
-    environment.persistence.${cfg.persistDir + SYSTEM_PERSIST} = {
-      hideMounts = true;
-      directories = [
-        "/var/log"
-        "/var/lib/nixos"
-        "/var/lib/systemd/coredump"
-      ];
-    };
+    sops.defaultSopsFile = ./secrets/secrets.yaml;
+    sops.defaultSopsFormat = "yaml";
+    sops.age.keyFile = "/var/keys/sops.txt";
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

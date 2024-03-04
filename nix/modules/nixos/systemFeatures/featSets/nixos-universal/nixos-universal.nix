@@ -34,6 +34,7 @@ let
     features = enableFeatList [
       "env-vars"
       "xdg"
+      "sops"
     ];}) {
 
     i18n = {
