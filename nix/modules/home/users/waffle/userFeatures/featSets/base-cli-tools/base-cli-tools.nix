@@ -31,7 +31,7 @@ let
 
   };
 
-  featConfig = WITH_USER_FEAT_PATH moduleInfo.username {
+  featConfig = WITH_HOME_FEAT_PATH {
     features = enableFeatList [
       "neovim"
     ];

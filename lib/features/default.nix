@@ -2,16 +2,17 @@
 with lib;
 with builtins; rec {
   DEBUG = {
-    MODULE_INGEST = false;
-    FEATS_USE = true;
+    MODULE_INGEST = true;
+    FEATS_ENA = true;
+    FEATS_PATH = false;
   };
 #defines
   WITH_SYSTEM_FEAT_PATH = attrSet: {thisFlake.systemFeatures = attrSet;};
   WITH_HOME_FEAT_PATH = attrSet: {thisFlake.homeFeatures = attrSet;};
-  WITH_USER_FEAT_PATH = username: attrSet: {thisFlake.userFeatures.${username} = attrSet;};
+  WITH_USER_FEAT_PATH = username: attrSet: {thisFlake.${username}.userFeatures = attrSet;};
   FROM_SYSTEM_FEAT_PATH = osConfig: osConfig.thisFlake.systemFeatures;
   FROM_HOME_FEAT_PATH = config: config.thisFlake.homeFeatures;
-  FROM_USER_FEAT_PATH = username: config: config.thisFlake.userFeatures.${username};
+  FROM_USER_FEAT_PATH = username: config: config.thisFlake.${username}.userFeatures;
 
   mkOpt = type: default: description:
     mkOption {inherit type default description;};
@@ -78,28 +79,26 @@ with builtins; rec {
     osC = if args ? osConfig
       then osConfig else config;
 
-    username = if info ? username
-      then info.username else null;
-
     withFeatNamesFrom = attrSet:
       if info ? subFeatName
       then attrSet.${info.featTier}.${info.featureName}.${info.subFeatName}
       else attrSet.${info.featTier}.${info.featureName};
   in rec {
-    featConf = {
+    fromFeatPath = {
       system = FROM_SYSTEM_FEAT_PATH osC;
       home = FROM_HOME_FEAT_PATH config;
-      user = mkIf (username != null) (FROM_USER_FEAT_PATH username config);
+      user = FROM_USER_FEAT_PATH info.username config;
     };
 
-    cfg = withFeatNamesFrom featConf.${info.moduleType};
+    cfg = withFeatNamesFrom fromFeatPath.${info.moduleType};
 
-    hasFeat = featType: featTier: targetFeat: featConf.${featType}.${featTier}.${targetFeat}.enable or false;
+    hasFeat = featType: featTier: targetFeat: fromFeatPath.${featType}.${featTier}.${targetFeat}.enable or false;
     cfgHasFeat = hasFeat info.moduleType;
     systemHasFeat = hasFeat "system";
 
     systemHasReqFeats = 
-      (systemHasFeat info.featTier info.featureName)
+      (if (info ? featureName) then systemHasFeat info.featTier info.featureName
+        else false )
       && ( if info ? subFeatName
         then systemHasFeat info.featTier info.subFeatName
         else true);
@@ -153,7 +152,7 @@ with builtins; rec {
       then "${moduleInfo.featTier}.${moduleInfo.featureName}.${moduleInfo.subFeatName}"
       else "${moduleInfo.featTier}.${moduleInfo.featureName}";
 
-    typeSpecific =
+    typeSpecific = 
       if moduleInfo.moduleType == "system"
       then {
         featEnableDefault = false;
@@ -166,7 +165,7 @@ with builtins; rec {
       }
       else if moduleInfo.moduleType == "user"
       then rec {
-        moduleIsForThisUser = moduleInfo.username == config.home.username;
+        moduleIsForThisUser = (moduleInfo.username == config.home.username);
         #username comes from the module, config is specific to user
 
         featEnableDefault = systemHasReqFeats && moduleIsForThisUser;
@@ -195,13 +194,14 @@ with builtins; rec {
   in {
       inherit imports;
 
-      options = withFeatPath (recursiveUpdate
-        {enable = mkBoolOpt featEnableDefault featEnableDesc;}
-        featOptions);
+      options = withFeatPath (recursiveUpdate 
+          {enable = mkBoolOpt featEnableDefault featEnableDesc;} 
+          featOptions);
 
-      config = mkIf (traceIf DEBUG.FEATS_USE (
-        "FEAT:${moduleInfo.moduleType}"
-        + (optionalString (moduleInfo ? username) ".${moduleInfo.username}")
+      config = mkIf (traceIf DEBUG.FEATS_ENA (
+        "FEAT: "
+        + (optionalString (moduleInfo ? username) "${moduleInfo.username}(${config.home.username}).")
+        + "${moduleInfo.moduleType}Features"
         + ".${moduleInfo.featTier}.${moduleInfo.featureName}"
         + (optionalString (moduleInfo ? subFeatName) ".${moduleInfo.subFeatName}")
         + ": "

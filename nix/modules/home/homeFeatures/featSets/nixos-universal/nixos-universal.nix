@@ -31,13 +31,7 @@ let
 
   };
 
-  featConfig = WITH_HOME_FEAT_PATH {
-    features = enableFeatList [
-      "bash"
-      "git"
-      "fzf"
-      "zoxide"
-      "sops"
-    ];
+  featConfig = {
+      home.stateVersion = mkDefault osConfig.system.stateVersion;
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}
