@@ -28,11 +28,14 @@ let
     impermanence.nixosModules.home-manager.impermanence
   ];
 
+  systemPersistDir = (FROM_SYSTEM_FEAT_PATH osConfig).features.impermanence.persistDir;
   featOptions = with types; {
-
+    homePersistDir = mkOpt str 
+      (systemPersistDir + "/home/${config.home.username}")
+      "The base dir for impermanence to use for persistence specific to this user";
   };
 
   featConfig = {
-      
+      home.persistence.allowOther = true;
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

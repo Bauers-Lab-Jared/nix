@@ -16,6 +16,7 @@ moduleArgs@{
 
     # All other arguments come from the module system.
     config,
+    osConfig,
     ...
 }:
 with moduleArgs.lib.thisFlake;
@@ -24,23 +25,18 @@ let
 in with scope;
 let
   imports = with inputs; [
-    impermanence.nixosModules.impermanence
   ];
 
-  featOptions = with types; {
-    persistDir = mkOpt str "/persist" "The base dir for impermanence to use for persistence";
-  };
   
+  featOptions = with types; {
+  };
+
+  persistDir = (FROM_HOME_FEAT_PATH config).features.impermanence.homePersistDir;
   featConfig = {
-    fileSystems.${cfg.persistDir}.neededForBoot = true;
-    programs.fuse.userAllowOther = true;
-    environment.persistence.${cfg.persistDir + SYSTEM_PERSIST} = {
-      hideMounts = true;
-      directories = [
-        "/var/log"
-        "/var/lib/nixos"
-        "/var/lib/systemd/coredump"
-      ];
-    };
+      home.persistence.${persistDir} = {
+        files = [
+          ".local/share/zoxide/db.zo"
+        ];
+      };
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

@@ -26,16 +26,17 @@ in with scope;
 let
   imports = with inputs; [
   ];
-  
-  baseNeovim = inputs.neovim-flake.packages.${system}.maximal;
 
+  
   featOptions = with types; {
-    package = mkOpt' attrs baseNeovim;
   };
 
+  persistDir = (FROM_HOME_FEAT_PATH config).features.impermanence.homePersistDir;
   featConfig = {
-    home.packages = [
-      cfg.package
-    ];
+      home.persistence.${persistDir} = {
+        files = [
+          ".cache/bash.history"
+        ];
+      };
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}
