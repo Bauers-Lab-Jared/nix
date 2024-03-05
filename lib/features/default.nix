@@ -2,8 +2,8 @@
 with lib;
 with builtins; rec {
   DEBUG = {
-    MODULE_INGEST = true;
-    FEATS_ENA = true;
+    MODULE_INGEST = false;
+    FEATS_ENA = false;
     FEATS_PATH = false;
   };
 #defines

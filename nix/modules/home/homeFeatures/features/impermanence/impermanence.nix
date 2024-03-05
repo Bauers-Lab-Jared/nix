@@ -36,6 +36,6 @@ let
   };
 
   featConfig = {
-      home.persistence.allowOther = true;
+      home.persistence.${cfg.homePersistDir}.allowOther = true;
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}
