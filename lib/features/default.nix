@@ -1,6 +1,7 @@
 {lib, ...}:
 with lib;
 with builtins; rec {
+  DEBUG = true;
 #defines
   WITH_SYSTEM_FEAT_PATH = attrSet: {thisFlake.systemFeatures = attrSet;};
   WITH_HOME_FEAT_PATH = attrSet: {thisFlake.homeFeatures = attrSet;};
@@ -53,8 +54,10 @@ with builtins; rec {
       then {inherit username;}
       else {}
     );
-  in if any (x: x == null) (attrValues outAttrs) then null
-    else outAttrs;
+    output = if any (x: x == null) (attrValues outAttrs) then null
+      else outAttrs;
+    debugOut = if DEBUG then traceValSeqN 2 output else output;
+  in debugOut;
     
   #####
   moduleInfoFromPathList = pathList: let
@@ -191,6 +194,11 @@ with builtins; rec {
         {enable = mkBoolOpt featEnableDefault featEnableDesc;}
         featOptions);
 
-      config = mkIf thisFeatEnabled finalFeatConfig;
+      config = mkIf (traceIf DEBUG (
+        "FEAT:${moduleInfo.moduleType}.${moduleInfo.featTier}.${moduleInfo.featureName}."
+        + (optionalString (moduleInfo ? subFeatName) moduleInfo.subFeatName)
+        + ": "
+        + (optionalString thisFeatEnabled "Enabled")
+      ) thisFeatEnabled) finalFeatConfig;
     };
 }
