@@ -97,15 +97,10 @@ with builtins; rec {
         else true);
 
     thisFeatEnabled =
-      if (info ? featureName)
-      then (cfgHasFeat info.featTier info.featureName)
-      else
-        false
-        && (
-          if info ? subFeatName
-          then cfgHasFeat info.featTier info.subFeatName
-          else true
-        );
+      (if (info ? featureName) then (cfgHasFeat info.featTier info.featureName)
+        else false )
+      && ( if info ? subFeatName then cfgHasFeat info.featTier info.subFeatName
+        else true );
   };
   #####
   mkFeatPath = args: info: with args; let
