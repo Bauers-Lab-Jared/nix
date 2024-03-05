@@ -1,7 +1,10 @@
 {lib, ...}:
 with lib;
 with builtins; rec {
-  DEBUG = true;
+  DEBUG = {
+    MODULE_INGEST = false;
+    FEATS_USE = true;
+  };
 #defines
   WITH_SYSTEM_FEAT_PATH = attrSet: {thisFlake.systemFeatures = attrSet;};
   WITH_HOME_FEAT_PATH = attrSet: {thisFlake.homeFeatures = attrSet;};
@@ -53,10 +56,12 @@ with builtins; rec {
       if (moduleType == "user")
       then {inherit username;}
       else {}
-    );
+    )
+    // (optionalAttrs DEBUG.MODULE_INGEST {inherit matchedList;});
+
     output = if any (x: x == null) (attrValues outAttrs) then null
       else outAttrs;
-    debugOut = if DEBUG then traceValSeqN 2 output else output;
+    debugOut = if DEBUG.MODULE_INGEST then traceValSeqN 2 output else output;
   in debugOut;
     
   #####
@@ -194,9 +199,11 @@ with builtins; rec {
         {enable = mkBoolOpt featEnableDefault featEnableDesc;}
         featOptions);
 
-      config = mkIf (traceIf DEBUG (
-        "FEAT:${moduleInfo.moduleType}.${moduleInfo.featTier}.${moduleInfo.featureName}."
-        + (optionalString (moduleInfo ? subFeatName) moduleInfo.subFeatName)
+      config = mkIf (traceIf DEBUG.FEATS_USE (
+        "FEAT:${moduleInfo.moduleType}"
+        + (optionalString (moduleInfo ? username) ".${moduleInfo.username}")
+        + ".${moduleInfo.featTier}.${moduleInfo.featureName}"
+        + (optionalString (moduleInfo ? subFeatName) ".${moduleInfo.subFeatName}")
         + ": "
         + (optionalString thisFeatEnabled "Enabled")
       ) thisFeatEnabled) finalFeatConfig;
