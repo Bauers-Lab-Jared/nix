@@ -31,14 +31,9 @@ let
 
   };
 
-  featConfig = WITH_HOME_FEAT_PATH {
-    features = enableFeatList [
-      "bash"
-      "git"
-      "fzf"
-      "zoxide"
-      "sops"
-      "tree"
+  featConfig = {
+    home.packages = [
+      pkgs.tree
     ];
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}
