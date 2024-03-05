@@ -32,7 +32,7 @@ let
   };
 
   featConfig = let
-    hasXdg = systemHasFeat "features" "xdg";
+    hasXdg = hasFeat "system" "features" "xdg";
   in {
     home.sessionVariables = mkIf hasXdg {
       STARSHIP_CONFIG = "$XDG_CONFIG_HOME/starship.toml";

@@ -39,7 +39,7 @@ let
     programs.bash = {
       enable = mkDefault true;
       historyControl = mkDefault ["erasedups" "ignoredups" "ignorespace"];
-      historyFile = mkIf (systemHasFeat "features" "xdg") (mkDefault "$XDG_CACHE_HOME/bash.history");
+      historyFile = mkIf (hasFeat "system" "features" "xdg") (mkDefault "$XDG_CACHE_HOME/bash.history");
       historyIgnore = mkDefault [ "ls" "exit"];
       shellOptions = mkDefault [
         "histappend"

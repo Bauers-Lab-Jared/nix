@@ -94,13 +94,12 @@ with builtins; rec {
 
     hasFeat = featType: featTier: targetFeat: fromFeatPath.${featType}.${featTier}.${targetFeat}.enable or false;
     cfgHasFeat = hasFeat info.moduleType;
-    systemHasFeat = hasFeat "system";
 
-    systemHasReqFeats = 
-      (if (info ? featureName) then systemHasFeat info.featTier info.featureName
+    hasReqFeats = featType:
+      (if (info ? featureName) then hasFeat featType info.featTier info.featureName
         else false )
       && ( if info ? subFeatName
-        then systemHasFeat info.featTier info.subFeatName
+        then hasFeat featType info.featTier info.subFeatName
         else true);
 
     thisFeatEnabled =
@@ -160,7 +159,7 @@ with builtins; rec {
       }
       else if moduleInfo.moduleType == "home"
       then {
-        featEnableDefault = systemHasReqFeats;
+        featEnableDefault = hasReqFeats "system";
         featEnableDesc = "Enables this home-manager feature, system-wide: ${featNames}";
       }
       else if moduleInfo.moduleType == "user"
@@ -168,7 +167,7 @@ with builtins; rec {
         moduleIsForThisUser = (moduleInfo.username == config.home.username);
         #username comes from the module, config is specific to user
 
-        featEnableDefault = systemHasReqFeats && moduleIsForThisUser;
+        featEnableDefault = (hasReqFeats "system" || hasReqFeats "home") && moduleIsForThisUser;
         featEnableDesc = "Enables this home-manager feature, just for ${moduleInfo.username}: ${featNames}";
       }
       else {};
