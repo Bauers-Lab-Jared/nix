@@ -28,13 +28,10 @@ let
   ];
 
   featOptions = with types; {
-    #enableFzfIntegration = mkBoolOpt (cfgHasFeat "features" "fzf");
+    
   };
 
-  featConfig = let
-    #mkDef = mkDefault' 1;
-    #mkIfFzf = v: mkIf cfg.enableFzfIntegration v;
-  in {
+  featConfig = {
     programs.bash = {
       initExtra = ''
         eval "$(zoxide init --cmd cd bash)"

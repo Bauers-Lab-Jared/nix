@@ -31,12 +31,10 @@ let
 
   };
 
-  featConfig = let
-    hasXdg = hasFeat "system" "features" "xdg";
-  in {
-    home.sessionVariables = mkIf hasXdg {
+  featConfig = {
+    home.sessionVariables = {
       STARSHIP_CONFIG = "$XDG_CONFIG_HOME/starship.toml";
-      STARSHIP_CACHE = "$XDG_CACHE_HOME/.starship/cache";
+      STARSHIP_CACHE = "$XDG_CACHE_HOME/starship/cache";
     };
 
     programs.starship = mkDefaultEach {

@@ -36,15 +36,17 @@ let
       "starship"
     ];
   })  {
+    home.sessionVariables = { HISTFILE = "$XDG_CACHE_HOME/bash/bash.history"; };
+
     programs.bash = {
       enable = mkDefault true;
       historyControl = mkDefault ["erasedups" "ignoredups" "ignorespace"];
-      historyFile = mkIf (hasFeat "system" "features" "xdg") (mkDefault "$XDG_CACHE_HOME/bash.history");
       historyIgnore = mkDefault [ "ls" "exit"];
       shellOptions = mkDefault [
         "histappend"
         "checkwinsize"
         "extglob"
+        "dotglob"
         "globstar"
         "checkjobs"
       ];

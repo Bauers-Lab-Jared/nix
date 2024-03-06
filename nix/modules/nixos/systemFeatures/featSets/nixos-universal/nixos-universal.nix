@@ -32,10 +32,22 @@ let
 
   featConfig = [(WITH_SYSTEM_FEAT_PATH {
     features = enableFeatList [
-      "env-vars"
-      "xdg"
       "sops"
     ];}) {
+
+    environment = {
+      sessionVariables = {
+        XDG_CACHE_HOME = "$HOME/.cache";
+        XDG_CONFIG_HOME = "$HOME/.config";
+        XDG_DATA_HOME = "$HOME/.local/share";
+        XDG_BIN_HOME = "$HOME/.local/bin";
+      };
+      variables = {
+        # Make some programs "XDG" compliant.
+        LESSHISTFILE = "$XDG_CACHE_HOME/less.history";
+        WGETRC = "$XDG_CONFIG_HOME/wgetrc";
+      };
+    };
 
     i18n = {
         defaultLocale = mkDefault "en_US.UTF-8";
@@ -51,24 +63,24 @@ let
 
     nix = {
         settings = {
-        trusted-users = mkDefault [ "root" "@wheel" ];
-        auto-optimise-store = mkDefault true;
-        experimental-features = mkDefault [ "nix-command" "flakes" "repl-flake" ];
-        warn-dirty = mkDefault false;
+          trusted-users = mkDefault [ "root" "@wheel" ];
+          auto-optimise-store = mkDefault true;
+          experimental-features = mkDefault [ "nix-command" "flakes" "repl-flake" ];
+          warn-dirty = mkDefault false;
         };
 
         # Weekly garbage collection
         gc = {
-        automatic = mkDefault true;
-        dates = mkDefault "weekly";
-        # Keep the last 3 generations
-        options = mkDefault "--delete-older-than +3";
+          automatic = mkDefault true;
+          dates = mkDefault "weekly";
+          # Keep the last 3 generations
+          options = mkDefault "--delete-older-than +3";
         };
         
         # Enable optimisation
         optimise = {
-        automatic = mkOverride 900 true;
-        dates = mkDefault ["weekly"];
+          automatic = mkOverride 900 true;
+          dates = mkDefault ["weekly"];
         };
 
         # Add each flake input as a registry
@@ -80,16 +92,16 @@ let
     # Increase open file limit for sudoers
     security.pam.loginLimits = [
         {
-        domain = "@wheel";
-        item = "nofile";
-        type = "soft";
-        value = "524288";
+          domain = "@wheel";
+          item = "nofile";
+          type = "soft";
+          value = "524288";
         }
         {
-        domain = "@wheel";
-        item = "nofile";
-        type = "hard";
-        value = "1048576";
+          domain = "@wheel";
+          item = "nofile";
+          type = "hard";
+          value = "1048576";
         }
     ];
   }];

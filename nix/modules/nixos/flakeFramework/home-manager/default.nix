@@ -14,6 +14,8 @@ in
       (mdDoc "A set of files to be managed by home-manager's `home.file`.");
     configFile = mkOpt attrs { }
       (mdDoc "A set of files to be managed by home-manager's `xdg.configFile`.");
+    dataFile = mkOpt attrs { }
+      (mdDoc "A set of files to be managed by home-manager's `xdg.dataFile`.");
     extraOptions = mkOpt attrs { } "Options to pass directly to home-manager.";
   };
 
@@ -22,7 +24,21 @@ in
       home.stateVersion = config.system.stateVersion;
       home.file = mkAliasDefinitions options.thisFlake.home.file;
       xdg.enable = true;
+      xdg.dataFile = mkAliasDefinitions options.thisFlake.home.dataFile;
       xdg.configFile = mkAliasDefinitions options.thisFlake.home.configFile;
+      xdg.userDirs = {
+        enable = true;
+        createDirectories = true;
+        music = null;
+        pictures = null;
+        publicShare = null;
+        templates = null;
+        videos = null;
+
+        extraConfig = {
+          XDG_PERSIST_DIR = "$HOME" + PERSIST_SYSTEM_HOMES;
+        };
+      };
     };
 
     home-manager = {
@@ -32,11 +48,8 @@ in
       users = mapAttrs' (n: v: nameValuePair (v.name) ({
         home = {
           username = v.name;
-          homeDirectory = "/home/${v.name}";
-          sessionPath = mkDefault [ "$HOME/.local/bin" ];
-          sessionVariables = {
-            FLAKE = mkDefault "$HOME/NixConfig";
-          };
+          homeDirectory = v.home;
+          sessionPath = mkDefault [ "$XDG_BIN_HOME" ];
         };
       } // mkAliasDefinitions options.thisFlake.home.extraOptions)) config.thisFlake.users;
     };

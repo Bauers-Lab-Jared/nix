@@ -37,5 +37,6 @@ let
     home.packages = [
       cfg.package
     ];
+    home.sessionVariables = { EDITOR = "nvim"; };
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}
