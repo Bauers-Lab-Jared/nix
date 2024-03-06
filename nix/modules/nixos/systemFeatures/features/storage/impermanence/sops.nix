@@ -29,10 +29,8 @@ let
   featOptions = with types; {
   };
 
-  persistDir = (FROM_SYSTEM_FEAT_PATH config).features.impermanence.persistDir;
-
   featConfig = {
-    environment.persistence.${persistDir + SYSTEM_PERSIST} = {
+    environment.persistence.${PERSIST_SYSTEM} = {
       files = [
         { file = config.sops.age.keyFile; parentDirectory = { mode = "u=rwx,g=,o="; }; }
       ];

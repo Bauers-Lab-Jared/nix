@@ -26,11 +26,12 @@ in {
       disko.selectedConfig = "virtioblock-vm";
       hw-configs.selectedConfig = "virtioblock-vm";
     } // enableFeatList [
+      "impermanence"
       "disko"
-          "hw-configs"
+      "hw-configs"
     ];
     featSets = enableFeatList [
-      "impermanence"
+      
     ];
     systemDefs = enableFeatList [
       "proxmox-vm"

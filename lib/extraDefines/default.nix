@@ -2,8 +2,9 @@
 with lib;
 with builtins; rec {
   
-  SYSTEM_PERSIST = "/system";
-  HOME_PERSIST = username: "/home/${username}";
+  PERSIST_BASE = "/persist";
+  PERSIST_SYSTEM = PERSIST_BASE+"/system";
+  PERSIST_HOME = username: PERSIST_BASE+"/home/${username}";
 
   
 }

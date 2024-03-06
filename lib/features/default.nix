@@ -142,6 +142,7 @@ with builtins; rec {
   universal = rec {
     inherit moduleInfo;
     withFeatPath = mkFeatPath moduleArgs moduleInfo;
+    thisUser = if config ? home.username then config.home.username else null;
   } // featRefs;
   in
   with universal;
@@ -164,7 +165,7 @@ with builtins; rec {
       }
       else if moduleInfo.moduleType == "user"
       then rec {
-        moduleIsForThisUser = (moduleInfo.username == config.home.username);
+        moduleIsForThisUser = (moduleInfo.username == thisUser);
         #username comes from the module, config is specific to user
 
         featEnableDefault = (hasReqFeats "system" || hasReqFeats "home") && moduleIsForThisUser;
@@ -199,7 +200,7 @@ with builtins; rec {
 
       config = mkIf (traceIf DEBUG.FEATS_ENA (
         "FEAT: "
-        + (optionalString (moduleInfo ? username) "${moduleInfo.username}(${config.home.username}).")
+        + (optionalString (moduleInfo ? username) "${moduleInfo.username}(${thisUser}).")
         + "${moduleInfo.moduleType}Features"
         + ".${moduleInfo.featTier}.${moduleInfo.featureName}"
         + (optionalString (moduleInfo ? subFeatName) ".${moduleInfo.subFeatName}")

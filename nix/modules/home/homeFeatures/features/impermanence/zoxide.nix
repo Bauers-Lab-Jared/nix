@@ -16,6 +16,7 @@ moduleArgs@{
 
     # All other arguments come from the module system.
     config,
+    osConfig,
     ...
 }:
 with moduleArgs.lib.thisFlake;
@@ -26,13 +27,15 @@ let
   imports = with inputs; [
   ];
 
+  
   featOptions = with types; {
-
   };
 
-  featConfig = WITH_SYSTEM_FEAT_PATH {
-    features = enableFeatList [
-      "impermanence"
-      "disko"
-    ];};
+  featConfig = {
+      home.persistence.${PERSIST_HOME thisUser} = {
+        files = [
+          ".local/share/zoxide/db.zo"
+        ];
+      };
+  };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

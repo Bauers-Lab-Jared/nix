@@ -31,9 +31,8 @@ let
   featOptions = with types; {
   };
 
-  persistDir = (FROM_HOME_FEAT_PATH config).features.impermanence.homePersistDir;
   featConfig = {
-      home.persistence.${persistDir} = {
+      home.persistence.${PERSIST_HOME thisUser} = {
         files = [
           ".cache/bash.history"
         ];

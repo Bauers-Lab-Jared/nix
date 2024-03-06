@@ -28,13 +28,12 @@ let
   ];
 
   featOptions = with types; {
-    persistDir = mkOpt str "/persist" "The base dir for impermanence to use for persistence";
   };
-  
+
   featConfig = {
-    fileSystems.${cfg.persistDir}.neededForBoot = true;
+    fileSystems.${PERSIST_BASE}.neededForBoot = true;
     programs.fuse.userAllowOther = true;
-    environment.persistence.${cfg.persistDir + SYSTEM_PERSIST} = {
+    environment.persistence.${PERSIST_SYSTEM} = {
       hideMounts = true;
       directories = [
         "/var/log"
