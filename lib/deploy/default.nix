@@ -16,17 +16,17 @@ in {
       hosts = self.nixosConfigurations or { };
       hostNames = builtins.attrNames hosts;
       nodes = lib.foldl
-        (result: hostName:
+        (result: name:
           let
-            host = hosts.${hostName};
+            host = hosts.${name};
             user = host.config.thisFlake.thisConfig.mainUser or null;
             inherit (host.pkgs) system;
           in
           result // {
-            ${hostName} = (overrides.${hostName} or { }) // {
-              hostname = overrides.${hostName}.hostname or "${hostName}";
-              profiles = (overrides.${hostName}.profiles or { }) // {
-                system = (overrides.${hostName}.profiles.system or { }) // {
+            ${name} = (overrides.${name} or { }) // {
+              hostname = overrides.${name}.hostname or "${name}";
+              profiles = (overrides.${name}.profiles or { }) // {
+                system = (overrides.${name}.profiles.system or { }) // {
                   path = deploy-rs.lib.${system}.activate.nixos host;
                 } // lib.optionalAttrs (user != null) {
                 user = "root";
