@@ -33,13 +33,26 @@ let
   featConfig = {
     fileSystems.${PERSIST_BASE}.neededForBoot = true;
     programs.fuse.userAllowOther = true;
-    environment.persistence.${PERSIST_SYSTEM} = {
-      hideMounts = true;
-      directories = [
-        "/var/log"
-        "/var/lib/nixos"
-        "/var/lib/systemd/coredump"
-      ];
+    environment.persistence = {
+      ${PERSIST_SYSTEM} = {
+        hideMounts = true;
+        directories = [
+          "/var/log"
+          "/var/lib/nixos"
+          "/var/lib/systemd/coredump"
+        ];
+      };
+      ${PERSIST_BASE} = {
+        users = mapAttrs
+        (u: v: {
+          directories = [{
+            directory = PERSIST_SYSTEM_HOMES;
+            user = u;
+            group = "users";
+          }];
+        })
+        config.thisFlake.users;
+      };
     };
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

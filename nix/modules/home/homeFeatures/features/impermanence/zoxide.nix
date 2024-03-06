@@ -32,10 +32,8 @@ let
   };
 
   featConfig = {
-      home.persistence.${PERSIST_HOME thisUser} = {
-        files = [
-          ".local/share/zoxide/db.zo"
-        ];
-      };
+    home.sessionVariables = {
+      _ZO_DATA_DIR = "$XDG_PERSIST_DIR/zoxide";
+    };
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

@@ -34,7 +34,7 @@ let
   featConfig = {
       home.persistence.${PERSIST_HOME thisUser} = {
         files = [
-          ".cache/bash.history"
+          (config.xdg.cacheHome+"/bash/bash.history")
         ];
       };
   };
