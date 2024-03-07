@@ -27,7 +27,6 @@ let
   hosts = systems;
   # # Sops needs acess to the keys before the persist dirs are even mounted; so
   # # just persisting the keys won't work, we must point at /persist
-  persistDir = (FROM_SYSTEM_FEAT_PATH config).features.sops.persistDir or "";
   pubKey = host: (
     snowfall.fs.get-snowfall-file 
     "systems/${systems.${host}.system}/${host}/ssh_host_ed25519_key.pub");
@@ -55,7 +54,7 @@ let
       };
 
       hostKeys = [{
-        path = "${persistDir}/etc/ssh/ssh_host_ed25519_key";
+        path = "/etc/ssh/ssh_host_ed25519_key";
         type = "ed25519";
       }];
     };

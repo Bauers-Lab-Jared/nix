@@ -123,8 +123,8 @@
     # };
   };
 
-  outputs = inputs:
-    inputs.snowfall-lib.mkFlake {
+  outputs = inputs: let
+    lib = inputs.snowfall-lib.mkLib{
       # You must provide our flake inputs to Snowfall Lib.
       inherit inputs;
 
@@ -152,6 +152,9 @@
           title = "Bauer's Lab Flake";
         };
       };
+    };
+  in 
+    lib.mkFlake {
 
       channels-config.allowUnfree = true;
 
@@ -167,20 +170,12 @@
         # attic.nixosModules.atticd
       ];
 
-      deploy = inputs.lib.mkDeploy {inherit (inputs) self;};
+      deploy = lib.mkDeploy {inherit (inputs) self;};
 
       checks =
         builtins.mapAttrs
         (system: deploy-lib:
           deploy-lib.deployChecks inputs.self.deploy)
         inputs.deploy-rs.lib;
-
-      # The outputs builder receives an attribute set of your available NixPkgs channels.
-      # These are every input that points to a NixPkgs instance (even forks). In this
-      outputs-builder = channels: {
-        # Outputs in the outputs builder are transformed to support each system. This
-        # entry will be turned into multiple different outputs like `formatter.x86_64-linux.*`.
-        # EX: formatter = channels.nixpkgs.alejandra;
-      };
     };
 }

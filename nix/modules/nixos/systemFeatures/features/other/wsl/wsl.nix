@@ -35,6 +35,10 @@ let
     wsl = {
       enable = true;
       defaultUser = mkDefault scope.config.thisFlake.thisConfig.mainUser;
+      wslConf.network = {
+        generateHosts = false;
+        generateResolvConf = false;
+      };
     };
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

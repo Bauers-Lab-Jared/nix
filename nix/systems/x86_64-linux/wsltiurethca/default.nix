@@ -21,9 +21,6 @@ with lib.thisFlake; let
   mainUser = "tiurethca";
   systemName = baseNameOf (toString ./.);
 in {
-  imports = [
-		./hardware-configuration.nix
-	];
   
   config = mkMerge [(WITH_SYSTEM_FEAT_PATH {
     features = {

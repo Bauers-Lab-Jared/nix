@@ -10,7 +10,7 @@
     snowfall-inputs,
 }: let
   inherit (inputs) deploy-rs;
-in {
+in rec {
   mkDeploy = { self, overrides ? { } }:
     let
       hosts = self.nixosConfigurations or { };
@@ -30,7 +30,7 @@ in {
                   path = deploy-rs.lib.${system}.activate.nixos host;
                 } // lib.optionalAttrs (user != null) {
                 user = "root";
-                sshUser = user;
+                sshUser = "root";
               } // lib.optionalAttrs
                 (host.config.thisFlake.security.doas.enable or false)
                 {
