@@ -93,7 +93,9 @@ with builtins; rec {
     cfg = withFeatNamesFrom fromFeatPath.${info.moduleType};
 
     hasFeat = featType: featTier: targetFeat: fromFeatPath.${featType}.${featTier}.${targetFeat}.enable or false;
+    hasFeat' = featType: targetFeat: hasFeat featType "features" targetFeat;
     cfgHasFeat = hasFeat info.moduleType;
+    cfgHasFeat' = hasFeat' info.moduleType;
 
     hasReqFeats = featType:
       (if (info ? featureName) then hasFeat featType info.featTier info.featureName
