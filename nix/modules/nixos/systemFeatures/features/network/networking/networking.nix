@@ -39,6 +39,10 @@ let
       hosts = {
         "127.0.0.1" = [ "local.test" ] ++ (cfg.hosts."127.0.0.1" or [ ]);
       } // cfg.hosts;
+      
+      nameservers = [
+        "10.131.245.1"
+      ];
     };
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

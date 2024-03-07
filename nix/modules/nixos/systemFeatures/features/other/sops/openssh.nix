@@ -37,6 +37,6 @@ let
   featConfig = {
     sops.age.sshKeyPaths = keyPaths;
 
-    sops.secrets = attrsets.mergeAttrsList (map (p: mkSecretByHost config.networking.hostName "ssh/${getEndOfPath p}" p) keyPaths);
-  };
+    sops.secrets = (mkSecretByHost config.networking.hostName "ssh/ssh_host_ed25519_key" "/etc/ssh/ssh_host_ed25519_key");
+  };#
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

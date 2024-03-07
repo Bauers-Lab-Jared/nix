@@ -25,11 +25,11 @@ in with scope;
 let
   inherit (config.networking) hostName;
   hosts = systems;
-  # # Sops needs acess to the keys before the persist dirs are even mounted; so
-  # # just persisting the keys won't work, we must point at /persist
   pubKey = host: (
     snowfall.fs.get-snowfall-file 
     "systems/${systems.${host}.system}/${host}/ssh_host_ed25519_key.pub");
+  
+  usePersistPath = (cfgHasFeat' "sops") && (cfgHasFeat' "impermanence");  
 
   imports = with inputs; [
   ];
@@ -54,7 +54,9 @@ let
       };
 
       hostKeys = [{
-        path = "/etc/ssh/ssh_host_ed25519_key";
+        # Sops needs acess to the keys before the persist dirs are even mounted;
+        path = (optionalString usePersistPath PERSIST_SYSTEM)
+          + "/etc/ssh/ssh_host_ed25519_key";
         type = "ed25519";
       }];
     };
@@ -77,7 +79,8 @@ let
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHCfau/nsDvu2ryn4QDaLLCdzREXeZ7pUL6zuzTNYfwh waffle@waffle"
     ];
 
-    # Passwordless sudo when SSH'ing with keys
     security.pam.enableSSHAgentAuth = true;
+    security.sudo.wheelNeedsPassword = false;
+    services.openssh.authorizedKeysFiles = [ "/etc/ssh/authorized_keys.d/%u" ];
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

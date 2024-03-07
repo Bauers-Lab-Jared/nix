@@ -30,7 +30,7 @@ in rec {
                   path = deploy-rs.lib.${system}.activate.nixos host;
                 } // lib.optionalAttrs (user != null) {
                 user = "root";
-                sshUser = "root";
+                sshUser = user;
               } // lib.optionalAttrs
                 (host.config.thisFlake.security.doas.enable or false)
                 {
