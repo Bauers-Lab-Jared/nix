@@ -44,6 +44,8 @@ let
         format = concatStrings [
           "[](#3B4252)"
           "$username"
+          "$ssh_symbol"
+          "$hostname"
           "[](bg:#434C5E fg:#3B4252)"
           "$directory"
           "[](fg:#434C5E bg:#4C566A)"
@@ -51,17 +53,21 @@ let
           "$git_status"
           "[](fg:#4C566A bg:#86BBD8)"
           "[ ](fg:#33658A)\n"
-          "$character"
+          "$status"
+          "|>"
         ];
-        character = {
-          success_symbol = "[➜](bold green)";
-          error_symbol = "[➜](bold red)";
+        hostname = {
+          style = "bg:#3B4252";
+          format = "[$ssh_symbol$hostname ]($style)";
+        };
+        status = {
+          disabled = false;
         };
         username = {
           show_always = true;
           style_user = "bg:#3B4252";
           style_root = "bg:#3B4252";
-          format = "[$user ]($style)";
+          format = "[$user]($style)";
         };
         directory = {
           style = "bg:#434C5E";
@@ -76,7 +82,7 @@ let
         };
         git_status = {
           style = "bg:#4C566A";
-          format = "[$all_status$ahead_behind ]($style)";
+          format = "[$all_status $ahead_behind]($style)";
         };
       };
     };
