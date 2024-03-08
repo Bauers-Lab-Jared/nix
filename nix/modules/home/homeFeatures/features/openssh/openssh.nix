@@ -16,6 +16,7 @@ moduleArgs@{
 
     # All other arguments come from the module system.
     config,
+    osConfig,
     ...
 }:
 with moduleArgs.lib.thisFlake;
@@ -24,7 +25,6 @@ let
 in with scope;
 let
   imports = with inputs; [
-    sops-nix.nixosModules.sops
   ];
 
   featOptions = with types; {
@@ -32,8 +32,7 @@ let
   };
 
   featConfig = {
-    sops.defaultSopsFile = ./secrets/secrets.yaml;
-    sops.defaultSopsFormat = "yaml";
-    sops.age.keyFile = "/var/keys/sops.txt";
+      services.ssh-agent.enable = true;
+      programs.ssh.forwardAgent = true;
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

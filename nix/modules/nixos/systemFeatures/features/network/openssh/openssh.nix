@@ -80,6 +80,7 @@ let
     ];
 
     security.pam.enableSSHAgentAuth = true;
+    programs.ssh.startAgent = true;
     security.sudo.wheelNeedsPassword = false;
     services.openssh.authorizedKeysFiles = [ "/etc/ssh/authorized_keys.d/%u" ];
   };
