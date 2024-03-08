@@ -30,7 +30,7 @@ let
 
   };
 
-  featConfig = WITH_SYSTEM_FEAT_PATH {
+  featConfig = mkMerge [(WITH_SYSTEM_FEAT_PATH {
     features = enableFeatList [
       "systemd-boot"
       "networking"
@@ -39,5 +39,7 @@ let
     featSets = enableFeatList [
       "nixos-universal"
     ];
-  };
+  }) (WITH_SYSTEM_FEAT_PATH{
+    features.networking.networkLocation = "grc";
+  })];
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

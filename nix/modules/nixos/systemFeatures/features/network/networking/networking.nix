@@ -28,21 +28,22 @@ let
 
   featOptions = with types; {
     hosts = mkOpt attrs { } "An attribute set to merge with `networking.hosts`";
+    networkLocation = mkOpt' str "";
   };
 
-  featConfig = {
+  featConfig = mkMerge [{
     thisFlake.users.${config.thisFlake.thisConfig.mainUser}.extraGroups = 
       mkIf config.networking.networkmanager.enable [ "networkmanager" ];
 
     networking = {
-      hostName = mkDefault config.thisFlake.thisConfig.systemName;
       hosts = {
         "127.0.0.1" = [ "local.test" ] ++ (cfg.hosts."127.0.0.1" or [ ]);
       } // cfg.hosts;
-      
-      nameservers = [
-        "10.131.245.1"
-      ];
     };
-  };
+
+  } (mkIf (cfg.networkLocation == "grc") {
+    networking = {
+      nameservers = [ "10.131.245.1" ];
+    };
+  })];
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

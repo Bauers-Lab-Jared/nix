@@ -23,6 +23,7 @@ let
   scope = mkFeatureScope {moduleFilePath = __curPos.file; inherit moduleArgs;};
 in with scope;
 let
+  inherit (config.thisFlake.thisConfig) systemName;
   isEd25519 = k: k.type == "ed25519";
   getKeyPath = k: k.path;
   keys = builtins.filter isEd25519 config.services.openssh.hostKeys;
@@ -37,6 +38,6 @@ let
   featConfig = {
     sops.age.sshKeyPaths = keyPaths;
 
-    sops.secrets = (mkSecretByHost config.networking.hostName "ssh/ssh_host_ed25519_key" "/etc/ssh/ssh_host_ed25519_key");
+    sops.secrets = (mkSecretByHost systemName "ssh/ssh_host_ed25519_key" "/etc/ssh/ssh_host_ed25519_key");
   };#
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

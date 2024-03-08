@@ -29,7 +29,12 @@ let
     snowfall.fs.get-snowfall-file 
     "systems/${systems.${host}.system}/${host}/ssh_host_ed25519_key.pub");
   
-  usePersistPath = (cfgHasFeat' "sops") && (cfgHasFeat' "impermanence");  
+  usePersistPath = (cfgHasFeat' "sops") && (cfgHasFeat' "impermanence");
+
+  FQDN = name: with config.thisFlake.thisConfig;
+    if (traceVal allSystems.${name}) ? networking.domain then 
+      "${name}.${allSystems.${name}.networking.domain}" 
+    else name;
 
   imports = with inputs; [
   ];
@@ -63,8 +68,8 @@ let
 
     programs.ssh = {
     # Each hosts public key
-      knownHosts = mapAttrs
-      (name: _: {
+      knownHosts = mapAttrs'
+      (name: _: nameValuePair (FQDN name) {
         publicKeyFile = pubKey name;
         extraHostNames =
           (lib.optional (name == hostName) "localhost");

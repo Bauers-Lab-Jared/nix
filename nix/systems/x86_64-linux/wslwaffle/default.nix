@@ -24,6 +24,7 @@ in {
   config = mkMerge [(WITH_SYSTEM_FEAT_PATH {
     features = {
       hw-configs.selectedConfig = "wsl";
+      networking.networkLocation = "grc";
     } // enableFeatList [
       "openssh"
       "hw-configs"
@@ -34,7 +35,7 @@ in {
     systemDefs = enableFeatList [
       "wsl"
       "cli-workstation"
-    ];
+    ];#
     }) {
     thisFlake = {
       users.${mainUser} = {

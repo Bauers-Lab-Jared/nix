@@ -19,19 +19,41 @@
     ...
 }: 
 with lib;
-with lib.thisFlake; 
+with lib.thisFlake;
+with builtins;
 let
     cfg = config.thisFlake.thisConfig;
+
+    systemsMetaData = with lib.snowfall.fs; let
+        allFiles = get-files-recursive (get-snowfall-file "systems");
+        filteredFiles = filter (fp: hasSuffix "metadata.json" fp) allFiles;
+        getMetaDataJson = name: let
+            targetFile = findSingle 
+                (fp: hasSuffix ("/${name}/metadata.json") fp)
+                null
+                (throw "Multiple metadata.json files found for system: ${name}") 
+                filteredFiles;
+        in if targetFile != null then fromJSON (readFile targetFile) 
+            else {};
+    in mapAttrs'
+        (name: _: nameValuePair name (getMetaDataJson name)) systems;
 in 
 {
     options.thisFlake.thisConfig = with types; 
     { 
         mainUser = mkOpt str "nixos" "Primary user of this system";
         systemName = mkOpt str "nixos" "Name of this system";
+        allSystems = mkOpt attrs systemsMetaData
+            "an attribute set of all meta data imported from metadata.json in each system folder";
     };
 
     config = {
-        
+
+        networking = {
+            hostName = cfg.systemName;
+            domain = mkIf (cfg.allSystems ? ${cfg.systemName}.domain) cfg.allSystems.${cfg.systemName}.domain;
+        };
+
     };
 }
 
