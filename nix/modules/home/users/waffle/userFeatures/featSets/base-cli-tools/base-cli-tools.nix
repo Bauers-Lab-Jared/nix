@@ -31,9 +31,21 @@ let
 
   };
 
-  featConfig = WITH_HOME_FEAT_PATH {
+  featConfig = mkMerge [(WITH_HOME_FEAT_PATH {
     features = enableFeatList [
       "neovim"
     ];
-  };
+  }) {
+    home.packages = with pkgs; [
+      (writeShellApplication {
+        name = "mkkey";
+
+        runtimeInputs = [ openssh ];
+
+        text = ''
+          mkfifo key && ( (cat key ; rm key)&) && (echo y | ssh-keygen -N "" -q -f key > /dev/null)
+        '';
+      })
+    ];
+  }];
 in mkFeatureFile {inherit scope featOptions featConfig imports;}
