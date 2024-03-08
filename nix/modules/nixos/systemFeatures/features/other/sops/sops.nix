@@ -34,6 +34,5 @@ let
   featConfig = {
     sops.defaultSopsFile = ./secrets/secrets.yaml;
     sops.defaultSopsFormat = "yaml";
-    sops.age.keyFile = "/var/keys/sops.txt";
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}
