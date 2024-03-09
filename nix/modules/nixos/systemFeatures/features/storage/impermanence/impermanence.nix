@@ -32,13 +32,12 @@ let
 
   featConfig = {
     fileSystems.${PERSIST_BASE}.neededForBoot = true;
+    fileSystems.${PERSIST_LOG}.neededForBoot = true;
     programs.fuse.userAllowOther = true;
     environment.persistence = {
       ${PERSIST_SYSTEM} = {
         hideMounts = true;
         directories = [
-          "/var/log"
-          "/var/lib/nixos"
           "/var/lib/systemd/coredump"
         ];
       };

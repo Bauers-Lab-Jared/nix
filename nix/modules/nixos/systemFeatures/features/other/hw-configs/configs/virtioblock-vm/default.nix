@@ -26,33 +26,37 @@ with lib.thisFlake; let
 in
 {
   config = mkIf cfg.enable {
-    boot.initrd.availableKernelModules = [ 
-      "virtio_net"
-      "virtio_mmio"
-      "virtio_scsi"
-      "9p"
-      "9pnet_virtio"
-      "ata_piix"
-      "uhci_hcd"
-      "virtio_pci"
-      "sr_mod"
-      "virtio_blk"
-    ];
-    boot.initrd.kernelModules = [ 
-      "dm-snapshot"
-      "virtio_balloon"
-      "virtio_console"
-      "virtio_rng"
-    ];
-    boot.kernelModules = [ ];
-    boot.extraModulePackages = [ ];
+    boot = { 
+      initrd = {
+        availableKernelModules = [ 
+          "virtio_net"
+          "virtio_mmio"
+          "virtio_scsi"
+          "9p"
+          "9pnet_virtio"
+          "ata_piix"
+          "uhci_hcd"
+          "virtio_pci"
+          "sr_mod"
+          "virtio_blk"
+        ];
+        kernelModules = [ 
+          "dm-snapshot"
+          "virtio_balloon"
+          "virtio_console"
+          "virtio_rng"
+        ];
+        postDeviceCommands = lib.mkIf (!config.boot.initrd.systemd.enable)
+        ''
+          # Set the system time from the hardware clock to work around a
+          # bug in qemu-kvm > 1.5.2 (where the VM clock is initialised
+          # to the *boot time* of the host).
+          hwclock -s
+        '';
+      };
 
-    boot.initrd.postDeviceCommands = lib.mkIf (!config.boot.initrd.systemd.enable)
-    ''
-      # Set the system time from the hardware clock to work around a
-      # bug in qemu-kvm > 1.5.2 (where the VM clock is initialised
-      # to the *boot time* of the host).
-      hwclock -s
-    '';
+      kernelModules = [ ];
+      extraModulePackages = [ ];
+    };
   };
 }

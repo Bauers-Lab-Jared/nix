@@ -20,12 +20,12 @@
 }:
 with lib;
 with lib.thisFlake; let
-  configName = baseNameOf (toString ./.);
+  configName = snowfall.path.get-file-name-without-extension __curPos.file;
   cfg = (FROM_SYSTEM_FEAT_PATH config).features.disko;
   activate = cfg.enable && (cfg.selectedConfig == configName);
 in
 {
-  config = mkIf cfg.enable {
+  config = mkIf activate {
     disko.devices = {
       disk.main = {
         device = "/dev/vda";
@@ -60,14 +60,14 @@ in
               size = "100%";
               content = {
                 type = "lvm_pv";
-                vg = "root_vg";
+                vg = "pool";
               };
             };
           };
         };
       };
       lvm_vg = {
-        root_vg = {
+        pool = {
           type = "lvm_vg";
           lvs = {
             root = {
@@ -77,18 +77,24 @@ in
                 extraArgs = ["-f"];
 
                 subvolumes = {
-                  "/root" = {
+                  "root" = {
+                    mountOptions = ["subvol=root" "compress=zstd" "noatime"];
                     mountpoint = "/";
                   };
 
-                  "/persist" = {
-                    mountOptions = ["subvol=persist" "noatime"];
-                    mountpoint = "/persist";
+                  "${PERSIST_BASE}" = {
+                    mountOptions = ["subvol=persist" "compress=zstd" "noatime"];
+                    mountpoint = "${PERSIST_BASE}";
                   };
 
                   "/nix" = {
-                    mountOptions = ["subvol=nix" "noatime"];
+                    mountOptions = ["subvol=nix" "compress=zstd" "noatime"];
                     mountpoint = "/nix";
+                  };
+
+                  "/log" = {
+                    mountOptions = ["subvol=log" "compress=zstd" "noatime"];
+                    mountpoint = "${PERSIST_LOG}";
                   };
                 };
               };
