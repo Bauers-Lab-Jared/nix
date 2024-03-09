@@ -27,33 +27,57 @@ let
   ];
 
   featOptions = with types; {
-    enableInitrdWipeScript = mkBoolOpt' true;
+    
   };
 
-  featConfig = {
-    boot.initrd.postDeviceCommands = mkIf cfg.enableInitrdWipeScript (mkAfter ''
-      mkdir /btrfs_tmp
-      mount /dev/root_vg/root /btrfs_tmp
-      if [[ -e /btrfs_tmp/root ]]; then
-          mkdir -p /btrfs_tmp/old_roots
-          timestamp=$(date --date="@$(stat -c %Y /btrfs_tmp/root)" "+%Y-%m-%-d_%H:%M:%S")
-          mv /btrfs_tmp/root "/btrfs_tmp/old_roots/$timestamp"
-      fi
+  featConfig = let
+      root-reset-src = builtins.readFile (snowfall.fs.get-file "scripts/root-reset.sh");
+      root-diff = pkgs.writeShellApplication {
+        name = "root-diff";
+        runtimeInputs = [ pkgs.btrfs-progs ];
+        text = builtins.readFile (snowfall.fs.get-file "scripts/root-diff.sh");
+      };
+    in {
 
-      delete_subvolume_recursively() {
-          IFS=$'\n'
-          for i in $(btrfs subvolume list -o "$1" | cut -f 9- -d ' '); do
-              delete_subvolume_recursively "/btrfs_tmp/$i"
-          done
-          btrfs subvolume delete "$1"
-      }
+      boot.initrd.systemd.enable = true;
+      boot.initrd.services.lvm.enable = true;
+      boot.initrd.systemd.services.rollback = {
+        description = "Rollback BTRFS root subvolume to a pristine state";
+        wantedBy = [
+          "initrd.target"
+        ];
+        after = [
+          # LUKS/TPM process
+          "systemd-cryptsetup@enc.service"
+        ];
+        before = [
+          "sysroot.mount"
+        ];
+        unitConfig.DefaultDependencies = "no";
+        serviceConfig.Type = "oneshot";
+        script = root-reset-src;
+      };
+      boot.initrd.systemd.services.persisted-files = {
+        description = "Hard-link persisted files from /persist";
+        wantedBy = [
+          "initrd.target"
+        ];
+        after = [
+          "sysroot.mount"
+        ];
+        unitConfig.DefaultDependencies = "no";
+        serviceConfig.Type = "oneshot";
+        script = ''
+          mkdir -p /sysroot/etc/
+          ln -snfT /persist/etc/machine-id /sysroot/etc/machine-id
+        '';
+      };
 
-      for i in $(find /btrfs_tmp/old_roots/ -maxdepth 1 -mtime +30); do
-          delete_subvolume_recursively "$i"
-      done
+    security.sudo.extraConfig = ''
+      # rollback results in sudo lectures after each reboot
+      Defaults lecture = never
+    '';
 
-      btrfs subvolume create /btrfs_tmp/root
-      umount /btrfs_tmp
-    '');
+    environment.systemPackages = lib.mkBefore [ root-diff ];
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

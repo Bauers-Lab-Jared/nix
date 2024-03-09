@@ -25,7 +25,9 @@ in {
     features = {
       disko.selectedConfig = "virtioblock-vm";
       hw-configs.selectedConfig = "virtioblock-vm";
-    } // enableFeatList [
+    };}) (WITH_SYSTEM_FEAT_PATH {
+    features = enableFeatList [
+      "impermanence"
       "disko"
       "hw-configs"
     ];
@@ -52,7 +54,7 @@ in {
         inherit systemName mainUser;
       };
     };
-
+    boot.initrd.systemd.emergencyAccess = true;
     # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
     system.stateVersion = "23.11";
   }];
