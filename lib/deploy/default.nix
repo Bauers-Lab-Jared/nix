@@ -20,11 +20,12 @@ in rec {
           let
             host = hosts.${name};
             user = host.config.thisFlake.thisConfig.mainUser or null;
+            FQDN = host.config.networking.fqdnOrHostName;
             inherit (host.pkgs) system;
           in
           result // {
             ${name} = (overrides.${name} or { }) // {
-              hostname = overrides.${name}.hostname or "${name}";
+              hostname = "${FQDN}";
               profiles = (overrides.${name}.profiles or { }) // {
                 system = (overrides.${name}.profiles.system or { }) // {
                   path = deploy-rs.lib.${system}.activate.nixos host;

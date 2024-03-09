@@ -51,7 +51,9 @@ in
 
         networking = {
             hostName = cfg.systemName;
-            domain = mkIf (cfg.allSystems ? ${cfg.systemName}.domain) cfg.allSystems.${cfg.systemName}.domain;
+            domain = if (cfg.allSystems ? ${cfg.systemName}.networking.domain) then
+                cfg.allSystems.${cfg.systemName}.networking.domain 
+                else null;
         };
 
     };
