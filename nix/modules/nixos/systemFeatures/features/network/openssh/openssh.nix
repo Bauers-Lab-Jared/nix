@@ -32,7 +32,7 @@ let
   usePersistPath = (cfgHasFeat' "sops") && (cfgHasFeat' "impermanence");
 
   FQDN = name: with config.thisFlake.thisConfig;
-    if (traceVal allSystems.${name}) ? networking.domain then 
+    if allSystems.${name} ? networking.domain then 
       "${name}.${allSystems.${name}.networking.domain}" 
     else name;
 
@@ -49,9 +49,9 @@ let
       enable = true;
       settings = {
         # Harden
-        PasswordAuthentication = false;
-        KbdInteractiveAuthentication = false;
-        PermitRootLogin = "prohibit-password";
+        #PasswordAuthentication = false;
+        #KbdInteractiveAuthentication = false;
+        #PermitRootLogin = "prohibit-password";
         # Automatically remove stale sockets
         StreamLocalBindUnlink = "yes";
         # Allow forwarding ports to everywhere
@@ -80,13 +80,16 @@ let
     users.users.root.openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHCfau/nsDvu2ryn4QDaLLCdzREXeZ7pUL6zuzTNYfwh waffle@waffle"
     ];
+    security.pam.services.root.sshAgentAuth = true;
+
     users.users.waffle.openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHCfau/nsDvu2ryn4QDaLLCdzREXeZ7pUL6zuzTNYfwh waffle@waffle"
     ];
+    security.pam.services.waffle.sshAgentAuth = true;
 
     security.pam.enableSSHAgentAuth = true;
     programs.ssh.startAgent = true;
-    security.sudo.wheelNeedsPassword = false;
+    
     services.openssh.authorizedKeysFiles = [ "/etc/ssh/authorized_keys.d/%u" ];
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

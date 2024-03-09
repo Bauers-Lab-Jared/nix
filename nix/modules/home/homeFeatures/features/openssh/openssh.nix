@@ -31,8 +31,4 @@ let
 
   };
 
-  featConfig = {
-      services.ssh-agent.enable = true;
-      programs.ssh.forwardAgent = true;
-  };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}
