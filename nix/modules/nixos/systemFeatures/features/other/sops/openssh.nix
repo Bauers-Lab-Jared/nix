@@ -38,6 +38,7 @@ let
   featConfig = {
     sops.age.sshKeyPaths = keyPaths;
 
-    sops.secrets = (mkSecretByHost systemName "ssh/ssh_host_ed25519_key" "/etc/ssh/ssh_host_ed25519_key");
+    sops.secrets = (mkSecretByHost systemName "ssh/ssh_host_ed25519_key" 
+      ((optionalString (cfgHasFeat' "impermanence") PERSIST_SYSTEM)+"/etc/ssh/ssh_host_ed25519_key"));
   };#
 in mkFeatureFile {inherit scope featOptions featConfig imports;}
