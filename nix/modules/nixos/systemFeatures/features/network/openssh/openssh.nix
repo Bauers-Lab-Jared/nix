@@ -56,6 +56,8 @@ let
         StreamLocalBindUnlink = "yes";
         # Allow forwarding ports to everywhere
         GatewayPorts = "clientspecified";
+        UseDns = true;
+        StrictModes = false;
       };
 
       hostKeys = [{
@@ -89,7 +91,5 @@ let
 
     security.pam.enableSSHAgentAuth = true;
     programs.ssh.startAgent = true;
-    
-    services.openssh.authorizedKeysFiles = [ "/etc/ssh/authorized_keys.d/%u" ];
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}
