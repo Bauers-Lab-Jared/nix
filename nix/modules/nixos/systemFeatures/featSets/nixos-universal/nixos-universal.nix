@@ -35,6 +35,8 @@ let
       "sops"
     ];}) {
 
+    hardware.enableAllFirmware = mkDefault true;
+
     environment = {
       sessionVariables = {
         XDG_CACHE_HOME = "$HOME/.cache";

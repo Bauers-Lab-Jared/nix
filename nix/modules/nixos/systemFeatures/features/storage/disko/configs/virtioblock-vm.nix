@@ -28,7 +28,7 @@ in
   config = mkIf activate {
     disko.devices = {
       disk.main = {
-        device = "/dev/vda";
+        device = "/dev/sda";
         type = "disk";
         content = {
           type = "gpt";
@@ -46,6 +46,7 @@ in
                 type = "filesystem";
                 format = "vfat";
                 mountpoint = "/boot";
+                mountOptions = [ "uid=0" "gid=0" "fmask=0077" "dmask=0077" ];
               };
             };
             swap = {
@@ -82,17 +83,17 @@ in
                     mountpoint = "/";
                   };
 
-                  "${PERSIST_BASE}" = {
+                  "persist" = {
                     mountOptions = ["subvol=persist" "compress=zstd" "noatime"];
                     mountpoint = "${PERSIST_BASE}";
                   };
 
-                  "/nix" = {
+                  "nix" = {
                     mountOptions = ["subvol=nix" "compress=zstd" "noatime"];
                     mountpoint = "/nix";
                   };
 
-                  "/log" = {
+                  "log" = {
                     mountOptions = ["subvol=log" "compress=zstd" "noatime"];
                     mountpoint = "${PERSIST_LOG}";
                   };

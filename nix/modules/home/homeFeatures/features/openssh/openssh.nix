@@ -31,4 +31,8 @@ let
 
   };
 
+  featConfig = {
+
+  };
+
 in mkFeatureFile {inherit scope featOptions featConfig imports;}
