@@ -21,7 +21,22 @@ with lib.thisFlake; let
   mainUser = "waffle";
   systemName = baseNameOf (toString ./.);
 in {
-  config = {
+  config = mkMerge [(WITH_SYSTEM_FEAT_PATH {
+    features = {
+      hw-configs.selectedConfig = "wsl";
+      networking.networkLocation = "grc";
+    } // enableFeatList [
+      "openssh"
+      "hw-configs"
+    ];
+    featSets = enableFeatList [
+      
+    ];
+    systemDefs = enableFeatList [
+      "wsl"
+      "cli-workstation"
+    ];#
+    }) {
     thisFlake = {
       users.${mainUser} = {
         name = mainUser;
@@ -30,30 +45,18 @@ in {
         email = "${mainUser}@${systemName}";
         extraGroups = [
           "wheel"
+          "storage"
         ];
       };
-
-      configFeatures = genAttrs [
-        "wsl"
-        "env"
-        "fish"
-        "nvim"
-        "cli-utils"
-        "nix-utils"
-        "tmux"
-        "yubikey"
-      ] (n: enabled);
 
       thisConfig = {
         inherit systemName mainUser;
       };
     };
 
-    wsl.usbip.autoAttach = ["11-4"]; # for yubikey pass through
-
     # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
     system.stateVersion = "23.11";
-  };
+  }];
 }
 #This system will be made available on your flake’s nixosConfigurations,
 # darwinConfigurations, or one of Snowfall Lib’s virtual *Configurations outputs

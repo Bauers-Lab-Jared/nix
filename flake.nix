@@ -23,6 +23,17 @@
     # Hardware Configuration Library
     nixos-hardware.url = "github:nixos/nixos-hardware";
 
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    impermanence = {
+       url = "github:nix-community/impermanence";
+    };
+
+    sops-nix.url = "github:Mic92/sops-nix";
+
     # Generate System Images
     nixos-generators.url = "github:nix-community/nixos-generators";
     nixos-generators.inputs.nixpkgs.follows = "nixpkgs";
@@ -73,11 +84,11 @@
       inputs.nixpkgs-stable.follows = "nixpkgs";
     };
 
-    # Hashicorp Vault Integration (secrets management)
-    vault-service = {
-      url = "github:DeterminateSystems/nixos-vault-service";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    # # Hashicorp Vault Integration (secrets management)
+    # vault-service = {
+    #   url = "github:DeterminateSystems/nixos-vault-service";
+    #   inputs.nixpkgs.follows = "nixpkgs";
+    # };
 
     # # Flake Hygiene
     # flake-checker = {
@@ -85,35 +96,35 @@
     #   inputs.nixpkgs.follows = "unstable";
     # };
 
-    # Discord Replugged
-    replugged.url = "github:LunNova/replugged-nix-flake";
-    replugged.inputs.nixpkgs.follows = "unstable";
+    # # Discord Replugged
+    # replugged.url = "github:LunNova/replugged-nix-flake";
+    # replugged.inputs.nixpkgs.follows = "unstable";
 
-    # Discord Replugged plugins / themes
-    discord-tweaks = {
-      url = "github:NurMarvin/discord-tweaks";
-      flake = false;
-    };
-    discord-nord-theme = {
-      url = "github:DapperCore/NordCord";
-      flake = false;
-    };
+    # # Discord Replugged plugins / themes
+    # discord-tweaks = {
+    #   url = "github:NurMarvin/discord-tweaks";
+    #   flake = false;
+    # };
+    # discord-nord-theme = {
+    #   url = "github:DapperCore/NordCord";
+    #   flake = false;
+    # };
 
-    # Yubikey Guide
-    yubikey-guide = {
-      url = "github:drduh/YubiKey-Guide";
-      flake = false;
-    };
+    # # Yubikey Guide
+    # yubikey-guide = {
+    #   url = "github:drduh/YubiKey-Guide";
+    #   flake = false;
+    # };
 
-    # GPG default configuration
-    gpg-base-conf = {
-      url = "github:drduh/config";
-      flake = false;
-    };
+    # # GPG default configuration
+    # gpg-base-conf = {
+    #   url = "github:drduh/config";
+    #   flake = false;
+    # };
   };
 
-  outputs = inputs:
-    inputs.snowfall-lib.mkFlake {
+  outputs = inputs: let
+    lib = inputs.snowfall-lib.mkLib{
       # You must provide our flake inputs to Snowfall Lib.
       inherit inputs;
 
@@ -141,6 +152,9 @@
           title = "Bauer's Lab Flake";
         };
       };
+    };
+  in 
+    lib.mkFlake {
 
       channels-config.allowUnfree = true;
 
@@ -152,25 +166,16 @@
 
       # modules to apply to all nixos systems
       systems.modules.nixos = with inputs; [
-        home-manager.nixosModules.home-manager
         # nix-ld.nixosModules.nix-ld
         # attic.nixosModules.atticd
       ];
 
-      deploy = inputs.lib.mkDeploy {inherit (inputs) self;};
+      deploy = lib.mkDeploy {inherit (inputs) self;};
 
       checks =
         builtins.mapAttrs
         (system: deploy-lib:
           deploy-lib.deployChecks inputs.self.deploy)
         inputs.deploy-rs.lib;
-
-      # The outputs builder receives an attribute set of your available NixPkgs channels.
-      # These are every input that points to a NixPkgs instance (even forks). In this
-      outputs-builder = channels: {
-        # Outputs in the outputs builder are transformed to support each system. This
-        # entry will be turned into multiple different outputs like `formatter.x86_64-linux.*`.
-        # EX: formatter = channels.nixpkgs.alejandra;
-      };
     };
 }
