@@ -24,7 +24,7 @@ in {
   imports = [
     ./hardware-configuration.nix
   ];
-
+      #Change the name of this file to "defualt.nix" for it to be loaded by the snowfall lib flake framework
   config = {
     thisFlake = {
       users.${mainUser} = {

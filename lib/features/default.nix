@@ -1,6 +1,19 @@
 {lib, ...}:
 with lib;
 with builtins; rec {
+  DEBUG = {
+    MODULE_INGEST = false;
+    FEATS_ENA = false;
+    FEATS_PATH = false;
+  };
+#defines
+  WITH_SYSTEM_FEAT_PATH = attrSet: {thisFlake.systemFeatures = attrSet;};
+  WITH_HOME_FEAT_PATH = attrSet: {thisFlake.homeFeatures = attrSet;};
+  WITH_USER_FEAT_PATH = username: attrSet: {thisFlake.${username}.userFeatures = attrSet;};
+  FROM_SYSTEM_FEAT_PATH = osConfig: osConfig.thisFlake.systemFeatures;
+  FROM_HOME_FEAT_PATH = config: config.thisFlake.homeFeatures;
+  FROM_USER_FEAT_PATH = username: config: config.thisFlake.${username}.userFeatures;
+
   mkOpt = type: default: description:
     mkOption {inherit type default description;};
 
@@ -44,9 +57,13 @@ with builtins; rec {
       if (moduleType == "user")
       then {inherit username;}
       else {}
-    );
-  in if any (x: x == null) (attrValues outAttrs) then null
-    else outAttrs;
+    )
+    // (optionalAttrs DEBUG.MODULE_INGEST {inherit matchedList;});
+
+    output = if any (x: x == null) (attrValues outAttrs) then null
+      else outAttrs;
+    debugOut = if DEBUG.MODULE_INGEST then traceValSeqN 2 output else output;
+  in debugOut;
     
   #####
   moduleInfoFromPathList = pathList: let
@@ -58,89 +75,107 @@ with builtins; rec {
   in
     filter (x: !(hasSuffix "default.nix" x) && !(hasSuffix "example.nix" x) && (hasSuffix ".nix" x)) (map toString rawPaths);
   #####
+  mkFeatRefs = args: info: with args; let
+    osC = if args ? osConfig
+      then osConfig else config;
+
+    withFeatNamesFrom = attrSet:
+      if info ? subFeatName
+      then attrSet.${info.featTier}.${info.featureName}.${info.subFeatName}
+      else attrSet.${info.featTier}.${info.featureName};
+  in rec {
+    fromFeatPath = {
+      system = FROM_SYSTEM_FEAT_PATH osC;
+      home = FROM_HOME_FEAT_PATH config;
+      user = FROM_USER_FEAT_PATH info.username config;
+    };
+
+    cfg = withFeatNamesFrom fromFeatPath.${info.moduleType};
+
+    hasFeat = featType: featTier: targetFeat: fromFeatPath.${featType}.${featTier}.${targetFeat}.enable or false;
+    hasFeat' = featType: targetFeat: hasFeat featType "features" targetFeat;
+    cfgHasFeat = hasFeat info.moduleType;
+    cfgHasFeat' = hasFeat' info.moduleType;
+
+    hasReqFeats = featType:
+      (if (info ? featureName) then hasFeat featType info.featTier info.featureName
+        else false )
+      && ( if info ? subFeatName
+        then hasFeat featType info.featTier info.subFeatName
+        else true);
+
+    thisFeatEnabled =
+      (if (info ? featureName) then (cfgHasFeat info.featTier info.featureName)
+        else false )
+      && ( if info ? subFeatName then cfgHasFeat info.featTier info.subFeatName
+        else true );
+  };
+  #####
+  mkFeatPath = args: info: with args; let
+    username = if info ? username
+      then info.username else null;
+
+    withFeatNames = attrSet:
+      if info ? subFeatName
+      then {${info.featTier}.${info.featureName}.${info.subFeatName} = attrSet;}
+      else {${info.featTier}.${info.featureName} = attrSet;};
+
+    out = {
+      system = attrSet: WITH_SYSTEM_FEAT_PATH (withFeatNames attrSet);
+      home = attrSet: WITH_HOME_FEAT_PATH (withFeatNames attrSet);
+      user = attrSet: WITH_USER_FEAT_PATH username (withFeatNames attrSet);
+    };
+  in 
+  out.${info.moduleType};
+  #####
   mkLocalLib = {
     moduleArgs,
     moduleFilePath,
   }:
-    with moduleArgs;
-    with moduleArgs.lib;
-    with moduleArgs.lib.thisFlake; let
-      universal = rec {
-        moduleInfo = moduleInfoFromPath moduleFilePath;
-        osC =
-          if moduleArgs ? osConfig
-          then osConfig
-          else config;
-        systemHasFeat = featTier: targetFeat: osC.thisFlake.systemFeatures.${featTier}.${targetFeat}.enable or false;
-        systemHasReqFeats =
-          (systemHasFeat moduleInfo.featTier moduleInfo.featureName)
-          && (
-            if moduleInfo ? subFeatName
-            then systemHasFeat moduleInfo.featTier moduleInfo.subFeatName
-            else true
-          );
-      };
-    in
-      with universal; let
-        withFeatNames = attrSet:
-          if moduleInfo ? subFeatName
-          then {${moduleInfo.featTier}.${moduleInfo.featureName}.${moduleInfo.subFeatName} = attrSet;}
-          else {${moduleInfo.featTier}.${moduleInfo.featureName} = attrSet;};
-        fromFeatNames = attrSet:
-          if moduleInfo ? subFeatName
-          then attrSet.${moduleInfo.featTier}.${moduleInfo.featureName}.${moduleInfo.subFeatName}
-          else attrSet.${moduleInfo.featTier}.${moduleInfo.featureName};
-        featNames = 
-          if moduleInfo ? subFeatName
-          then "${moduleInfo.featTier}.${moduleInfo.featureName}.${moduleInfo.subFeatName}"
-          else "${moduleInfo.featTier}.${moduleInfo.featureName}";
-        typeSpecific =
-          if moduleInfo.moduleType == "system"
-          then {
-            featEnableDefault = false;
-            featEnableDesc = "Enables this system feature: ${featNames}";
-            withModuleAttrPath = attrSet: {thisFlake.systemFeatures = withFeatNames attrSet;};
-            fromModuleAttrPathBase = config.thisFlake.systemFeatures;
-          }
-          else if moduleInfo.moduleType == "home"
-          then {
-            featEnableDefault = systemHasReqFeats;
-            featEnableDesc = "Enables this home-manager feature, system-wide: ${featNames}";
-            withModuleAttrPath = attrSet: {thisFlake.homeFeatures = withFeatNames attrSet;};
-            fromModuleAttrPathBase = config.thisFlake.homeFeatures;
-          }
-          else if moduleInfo.moduleType == "user"
-          then rec {
-            moduleIsForThisUser = moduleInfo.username == config.home.username;
-            #username comes from the module, config is specific to user
+  with moduleArgs;
+  with moduleArgs.lib;
+  with moduleArgs.lib.thisFlake;
+  let 
+    moduleInfo = moduleInfoFromPath moduleFilePath;
+    featRefs = mkFeatRefs moduleArgs moduleInfo;
+  in
+  with featRefs;
+  let 
+  universal = rec {
+    inherit moduleInfo;
+    withFeatPath = mkFeatPath moduleArgs moduleInfo;
+    thisUser = if config ? home.username then config.home.username else null;
+  } // featRefs;
+  in
+  with universal;
+  let
+    featNames = 
+      if moduleInfo ? subFeatName
+      then "${moduleInfo.featTier}.${moduleInfo.featureName}.${moduleInfo.subFeatName}"
+      else "${moduleInfo.featTier}.${moduleInfo.featureName}";
 
-            featEnableDefault = systemHasReqFeats && moduleIsForThisUser;
-            featEnableDesc = "Enables this home-manager feature, just for this user: ${featNames}";
-            withModuleAttrPath = attrSet: {thisFlake.userFeatures.${moduleInfo.username} = withFeatNames attrSet;};
-            fromModuleAttrPathBase = config.thisFlake.userFeatures.${moduleInfo.username};
-          }
-          else {};
-      in
-        with typeSpecific; let
-          universalExt =
-            universal
-            // rec {
-              cfg = fromFeatNames fromModuleAttrPathBase;
-              cfgHasFeat = featTier: targetFeat: fromModuleAttrPathBase.${featTier}.${targetFeat}.enable or false;
+    typeSpecific = 
+      if moduleInfo.moduleType == "system"
+      then {
+        featEnableDefault = false;
+        featEnableDesc = "Enables this system feature: ${featNames}";
+      }
+      else if moduleInfo.moduleType == "home"
+      then {
+        featEnableDefault = hasReqFeats "system";
+        featEnableDesc = "Enables this home-manager feature, system-wide: ${featNames}";
+      }
+      else if moduleInfo.moduleType == "user"
+      then rec {
+        moduleIsForThisUser = (moduleInfo.username == thisUser);
+        #username comes from the module, config is specific to user
 
-              thisFeatEnabled =
-                if (moduleInfo ? featureName)
-                then (cfgHasFeat moduleInfo.featTier moduleInfo.featureName)
-                else
-                  false
-                  && (
-                    if moduleInfo ? subFeatName
-                    then cfgHasFeat moduleInfo.featTier moduleInfo.subFeatName
-                    else true
-                  );
-            };
-        in
-          universalExt // typeSpecific;
+        featEnableDefault = (hasReqFeats "system" || hasReqFeats "home") && moduleIsForThisUser;
+        featEnableDesc = "Enables this home-manager feature, just for ${moduleInfo.username}: ${featNames}";
+      }
+      else {};
+  in
+    universal // typeSpecific;
   #####
   mkFeatureScope = {
     moduleArgs,
@@ -156,13 +191,23 @@ with builtins; rec {
     featConfig,
     imports,
   }:
-    with scope; {
+  with scope; let
+    finalFeatConfig = if isList featConfig then mkMerge featConfig else featConfig;
+  in {
       inherit imports;
 
-      options = withModuleAttrPath (recursiveUpdate
-        {enable = mkBoolOpt featEnableDefault featEnableDesc;}
-        featOptions);
+      options = withFeatPath (recursiveUpdate 
+          {enable = mkBoolOpt featEnableDefault featEnableDesc;} 
+          featOptions);
 
-      config = mkIf thisFeatEnabled featConfig;
+      config = mkIf (traceIf DEBUG.FEATS_ENA (
+        "FEAT: "
+        + (optionalString (moduleInfo ? username) "${moduleInfo.username}(${thisUser}).")
+        + "${moduleInfo.moduleType}Features"
+        + ".${moduleInfo.featTier}.${moduleInfo.featureName}"
+        + (optionalString (moduleInfo ? subFeatName) ".${moduleInfo.subFeatName}")
+        + ": "
+        + (optionalString thisFeatEnabled "Enabled")
+      ) thisFeatEnabled) finalFeatConfig;
     };
 }

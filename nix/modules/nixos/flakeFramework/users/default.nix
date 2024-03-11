@@ -44,7 +44,7 @@ in { #Define users here
 
             inherit (cfg.${v.name}) name initialPassword;
 
-            home = "/home/${v.name}";
+            home = USER_HOME_LOCATION v.name;
             group = "users";
 
             extraGroups = [ ] ++ cfg.${v.name}.extraGroups;
