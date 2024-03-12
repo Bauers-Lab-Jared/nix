@@ -42,8 +42,8 @@ let
     };
 
   } (mkIf (cfg.networkLocation == "grc") {
-    networking = {
-      nameservers = [ "10.131.245.1" ];
-    };
+    # networking = {
+    #   nameservers = [ "10.131.245.1" ];
+    # };
   })];
 in mkFeatureFile {inherit scope featOptions featConfig imports;}
