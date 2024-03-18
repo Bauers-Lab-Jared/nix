@@ -24,26 +24,17 @@ let
 in with scope;
 let
   imports = with inputs; [
+    ##nixvim.nixosModules.nixvim
   ];
 
   featOptions = with types; {
-    hosts = mkOpt attrs { } "An attribute set to merge with `networking.hosts`";
-    networkLocation = mkOpt' str "";
+
   };
 
-  featConfig = mkMerge [{
-    thisFlake.users.${config.thisFlake.thisConfig.mainUser}.extraGroups = 
-      mkIf config.networking.networkmanager.enable [ "networkmanager" ];
-
-    networking = {
-      hosts = {
-        "127.0.0.1" = [ "local.test" ] ++ (cfg.hosts."127.0.0.1" or [ ]);
-      } // cfg.hosts;
-    };
-
-  } (mkIf (cfg.networkLocation == "grc") {
-    # networking = {
-    #   nameservers = [ "10.131.245.1" ];
-    # };
-  })];
+  featConfig = {
+    programs.neovim = {
+      enable = true;
+    }; 
+    environment.sessionVariables = { EDITOR = "nvim"; };     
+  };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

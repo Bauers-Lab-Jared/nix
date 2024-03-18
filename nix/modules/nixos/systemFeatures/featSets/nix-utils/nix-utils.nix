@@ -37,10 +37,8 @@ let
   featConfig = {
     environment.systemPackages = with pkgs; [
       snowfallorg.flake
-      snowfallorg.thaw
       fup-repl
-      comma
-      nix-melt
+      #comma
       deploy-rs
     ];
   };

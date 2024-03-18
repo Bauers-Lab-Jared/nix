@@ -30,10 +30,9 @@ in
     };
 
     featConfig = WITH_SYSTEM_FEAT_PATH {
-      featSets = enableFeatList [
-        "base-cli-tools"
-        "base-development"
-        "nix-utils"
+      features = enableFeatList [
+        "nixvim"
+        "zig"
       ];
     };
   in

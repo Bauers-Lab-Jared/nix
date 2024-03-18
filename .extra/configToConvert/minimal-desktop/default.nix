@@ -37,7 +37,7 @@ in {
       systemFeatures = genAttrs [
         "env"
         "fish"
-        "nvim"
+        "nixvim"
         "cli-utils"
         "nix-utils"
         "tmux"
