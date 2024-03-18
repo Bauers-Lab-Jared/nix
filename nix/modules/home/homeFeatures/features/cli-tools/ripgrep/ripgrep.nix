@@ -1,3 +1,4 @@
+
 moduleArgs@{
     # Snowfall Lib provides a customized `lib` instance with access to your flake's library
     # as well as the libraries available from your flake's inputs.
@@ -26,17 +27,12 @@ in with scope;
 let
   imports = with inputs; [
   ];
-  
-  baseNeovim = inputs.neovim-flake.packages.${system}.maximal;
 
   featOptions = with types; {
-    package = mkOpt' attrs baseNeovim;
+
   };
 
   featConfig = {
-    home.packages = [
-      cfg.package
-    ];
-    home.sessionVariables = { EDITOR = "nvim"; };
+    programs.ripgrep.enable = true;      
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}

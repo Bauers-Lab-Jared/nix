@@ -24,23 +24,17 @@ let
 in with scope;
 let
   imports = with inputs; [
+    ##nixvim.nixosModules.nixvim
   ];
 
   featOptions = with types; {
 
   };
 
-  fup-repl = pkgs.writeShellScriptBin "fup-repl" ''
-    ${pkgs.fup-repl}/bin/repl ''${@}
-  '';
-
   featConfig = {
-    environment.systemPackages = with pkgs; [
-      snowfallorg.flake
-      fup-repl
-      #comma
-      deploy-rs
-    ];
+    programs.neovim = {
+      enable = true;
+    }; 
+    environment.sessionVariables = { EDITOR = "nvim"; };     
   };
 in mkFeatureFile {inherit scope featOptions featConfig imports;}
-

@@ -29,11 +29,9 @@ in
     featOptions = with types; {
     };
 
-    featConfig = WITH_SYSTEM_FEAT_PATH {
-      featSets = enableFeatList [
-        "base-cli-tools"
-        "base-development"
-        "nix-utils"
+    featConfig = {
+      environment.systemPackages = with pkgs; [
+        zig
       ];
     };
   in

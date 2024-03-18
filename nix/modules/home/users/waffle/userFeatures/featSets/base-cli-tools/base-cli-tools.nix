@@ -33,7 +33,7 @@ let
 
   featConfig = mkMerge [(WITH_HOME_FEAT_PATH {
     features = enableFeatList [
-      "neovim"
+      
     ];
   }) {
     home.packages = with pkgs; [

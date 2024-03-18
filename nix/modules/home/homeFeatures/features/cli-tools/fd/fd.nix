@@ -14,6 +14,7 @@ moduleArgs @ {
   systems, # An attribute map of your defined hosts.
   # All other arguments come from the module system.
   config,
+  osConfig,
   ...
 }:
 with moduleArgs.lib.thisFlake; let
@@ -29,11 +30,9 @@ in
     featOptions = with types; {
     };
 
-    featConfig = WITH_SYSTEM_FEAT_PATH {
-      featSets = enableFeatList [
-        "base-cli-tools"
-        "base-development"
-        "nix-utils"
+    featConfig = {
+      home.packages = [
+        pkgs.fd
       ];
     };
   in

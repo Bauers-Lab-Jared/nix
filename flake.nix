@@ -5,84 +5,73 @@
 {
   description = "Bauer's Lab Flake";
 
-  inputs = {
+  inputs = rec {
     #The SOURCE
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.11";
-    unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs-23_11.url = "github:nixos/nixpkgs/nixos-23.11";
+    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixpkgs = nixpkgs-unstable;
 
     #provides a flake framework
     snowfall-lib = {
       url = "github:snowfallorg/lib?ref=v2.1.1";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-23_11";
     };
 
     #provides a set of sub module systems for handling each home
     home-manager.url = "github:nix-community/home-manager/release-23.11";
-    home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs-23_11";
 
     # Hardware Configuration Library
     nixos-hardware.url = "github:nixos/nixos-hardware";
 
     disko = {
       url = "github:nix-community/disko";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-23_11";
     };
 
     impermanence = {
-       url = "github:nix-community/impermanence";
+      url = "github:nix-community/impermanence";
     };
 
     sops-nix.url = "github:Mic92/sops-nix";
 
     # Generate System Images
     nixos-generators.url = "github:nix-community/nixos-generators";
-    nixos-generators.inputs.nixpkgs.follows = "nixpkgs";
+    nixos-generators.inputs.nixpkgs.follows = "nixpkgs-23_11";
 
     #simplified command line calls for flakes
     snowfall-flake = {
-      url = "github:snowfallorg/flake?ref=v1.1.0";
-      inputs.nixpkgs.follows = "unstable";
+      url = "github:snowfallorg/flake";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
-    snowfall-thaw = {
-      url = "github:snowfallorg/thaw";
-      inputs.nixpkgs.follows = "nixpkgs";
+    nixd = {
+      url = "github:nix-community/nixd";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
-    neovim-flake.url = "github:bauers-lab-jared/neovim-flake?ref=main-dev";
-
-    #It's for a friend, I swear...
-    vscode-server = {
-      url = "github:nix-community/nixos-vscode-server";
-      inputs.nixpkgs.follows = "unstable";
+    nixvim = {
+      url = "github:nix-community/nixvim";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
     #When life gives you windows...
     nixos-wsl = {
       url = "github:nix-community/NixOS-WSL";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-23_11";
     };
-
-    #allows you to run a command from nixpkgs
-    #in a single use shell. EX: ", cowsay neato"
-    comma.url = "github:nix-community/comma";
-    comma.inputs.nixpkgs.follows = "unstable";
 
     # System Deployment
     deploy-rs.url = "github:serokell/deploy-rs";
-    deploy-rs.inputs.nixpkgs.follows = "unstable";
-
-    # Run unpatched dynamically compiled binaries
-    nix-ld.url = "github:Mic92/nix-ld";
-    nix-ld.inputs.nixpkgs.follows = "unstable";
+    deploy-rs.inputs.nixpkgs.follows = "nixpkgs-unstable";
 
     # This hosts a nix binary cache in a S3
     # Provider, which can be hosted with ceph
-    attic = {
-      url = "github:zhaofengli/attic";
-      inputs.nixpkgs.follows = "unstable";
-      inputs.nixpkgs-stable.follows = "nixpkgs";
-    };
+    # attic = {
+    #   url = "github:zhaofengli/attic";
+    #   inputs.nixpkgs.follows = "unstable";
+    #   inputs.nixpkgs-stable.follows = "nixpkgs";
+    # };
 
     # # Hashicorp Vault Integration (secrets management)
     # vault-service = {
@@ -124,7 +113,7 @@
   };
 
   outputs = inputs: let
-    lib = inputs.snowfall-lib.mkLib{
+    lib = inputs.snowfall-lib.mkLib {
       # You must provide our flake inputs to Snowfall Lib.
       inherit inputs;
 
@@ -153,13 +142,11 @@
         };
       };
     };
-  in 
+  in
     lib.mkFlake {
-
       channels-config.allowUnfree = true;
 
       overlays = with inputs; [
-        snowfall-thaw.overlays.default
         snowfall-flake.overlays.default
         #attic.overlays.default
       ];
