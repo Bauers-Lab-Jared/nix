@@ -47,6 +47,8 @@ in
 
         programs.nixvim = {
           enable = true;
+          viAlias = true;
+          vimAlias = true;
 
           globals.mapleader = " ";
 
@@ -186,6 +188,7 @@ in
           plugins.fugitive.enable = true;
           plugins.lsp-lines.enable = true;
           plugins.lspkind.enable = true;
+
           plugins.nvim-lightbulb = {
             enable = true;
             settings = {
@@ -301,7 +304,7 @@ in
 
           keymaps = [
             {
-              key = ";";
+              key = ",";
               action = ":";
               options.desc = ":";
             }
@@ -411,6 +414,7 @@ in
               };
             };
           };
+
           plugins.treesitter = {
             enable = true;
             nixvimInjections = true;
@@ -512,6 +516,7 @@ in
           '';
         };
         home.sessionVariables = {EDITOR = "nvim";};
+        programs.bash.shellAliases = {"v" = "vi";};
       }
     ];
   in

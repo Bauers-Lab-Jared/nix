@@ -1,7 +1,7 @@
 {
   "formatting": {
     // Which command you would like to do formatting
-    "command": "alejandro"
+    "command": "alejandra"
   },
   "eval": {
         "depth": 5
