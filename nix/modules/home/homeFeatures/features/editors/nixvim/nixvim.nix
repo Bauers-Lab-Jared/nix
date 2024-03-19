@@ -235,7 +235,6 @@ in
               operators = {};
               files = {};
               bracketed = {};
-              starter = {};
               hipatterns = {
                 highlighters = {
                   # Highlight standalone 'FIXME', 'HACK', 'TODO', 'NOTE'
