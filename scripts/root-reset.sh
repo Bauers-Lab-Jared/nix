@@ -10,6 +10,7 @@
 ##
 ## There is also a root subvolume that this script resets using a blank
 ## snapshot (root-blank).
+set -euo pipefail
 
 if [ "$UID" -ne "0" ];
 then
@@ -25,12 +26,12 @@ mkdir -p ${MOUNTDIR}
 vgscan
 vgchange -ay
 
-# if [ -b /dev/pool/root ];
-# then
+if [ -b /dev/pool/root ];
+then
 	BTRFS_VOL=/dev/pool/root
-# else
-# 	BTRFS_VOL=/dev/mapper/enc
-# fi
+else
+	BTRFS_VOL=/dev/mapper/enc
+fi
 
 if [ ! -r "$BTRFS_VOL" ];
 then
