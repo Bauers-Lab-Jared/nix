@@ -278,6 +278,8 @@ in
                 settings.telemetry.enable = false;
               };
 
+              cssls.enable = true;
+
               # nixd = {
               #   enable = true;
               #   package = inputs.nixd.packages.${system}.nixd;
