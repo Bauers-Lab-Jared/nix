@@ -278,7 +278,7 @@ in
                 settings.telemetry.enable = false;
               };
 
-              cssls.enable = true;
+              ccls.enable = true;
 
               # nixd = {
               #   enable = true;
