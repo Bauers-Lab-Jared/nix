@@ -368,7 +368,7 @@ in
             {
               key = "<leader>gc";
               action = "<cmd>Git commit<CR>";
-              options.desc = "Git [c]omit";
+              options.desc = "Git [c]ommit";
               mode = "n";
             }
             {
@@ -492,7 +492,7 @@ in
               nix = ["alejandra"];
               lua = ["stylua"];
               # use the "*" filetype to run formatters on all filetypes.
-              "*" = ["codespell"];
+              # "*" = ["codespell"];
             };
           };
 
