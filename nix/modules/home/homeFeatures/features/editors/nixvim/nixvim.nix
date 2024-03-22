@@ -1,20 +1,20 @@
 moduleArgs @ {
   # Snowfall Lib provides a customized `lib` instance with access to your flake's library
   # as well as the libraries available from your flake's inputs.
-  lib,
+  # lib,
   # An instance of `pkgs` with your overlays and packages applied is also available.
   pkgs,
   # You also have access to your flake's inputs.
   inputs,
   # Additional metadata is provided by Snowfall Lib.
-  system, # The system architecture for this host (eg. `x86_64-linux`).
-  target, # The Snowfall Lib target for this system (eg. `x86_64-iso`).
-  format, # A normalized name for the system target (eg. `iso`).
-  virtual, # A boolean to determine whether this system is a virtual target using nixos-generators.
-  systems, # An attribute map of your defined hosts.
+  # system, # The system architecture for this host (eg. `x86_64-linux`).
+  # target, # The Snowfall Lib target for this system (eg. `x86_64-iso`).
+  # format, # A normalized name for the system target (eg. `iso`).
+  # virtual, # A boolean to determine whether this system is a virtual target using nixos-generators.
+  # systems, # An attribute map of your defined hosts.
   # All other arguments come from the module system.
-  config,
-  osConfig,
+  # config,
+  # osConfig,
   ...
 }:
 with moduleArgs.lib.thisFlake; let
@@ -28,7 +28,7 @@ in
       nixvim.homeManagerModules.nixvim
     ];
 
-    featOptions = with types; {
+    featOptions = {
     };
 
     featConfig = mkMerge [
@@ -280,11 +280,13 @@ in
 
               ccls.enable = true;
 
-              # nixd = {
-              #   enable = true;
-              #   package = inputs.nixd.packages.${system}.nixd;
-              # };
-              nil_ls.enable = true;
+              # nixd.enable = true;
+              nil_ls = {
+                enable = true;
+                settings = {
+                  formatting.command = ["alejandra"];
+                };
+              };
             };
 
             keymaps = {
@@ -363,6 +365,30 @@ in
               options.desc = "Git [d]ifftool";
               mode = "n";
             }
+            {
+              key = "<leader>gc";
+              action = "<cmd>Git commit<CR>";
+              options.desc = "Git [c]omit";
+              mode = "n";
+            }
+            {
+              key = "<leader>gp";
+              action = "<cmd>Git pull<CR>";
+              options.desc = "Git [p]ull";
+              mode = "n";
+            }
+            {
+              key = "<leader>gP";
+              action = "<cmd>Git push<CR>";
+              options.desc = "Git [P]ush";
+              mode = "n";
+            }
+            {
+              key = "<leader>gB";
+              action = "<cmd>Git branch<CR>";
+              options.desc = "Git [b]ranch";
+              mode = "n";
+            }
           ];
 
           plugins.telescope = {
@@ -432,11 +458,11 @@ in
               "<leader>g" = "[g]it ...";
               "<leader>c" = "[c]ode ...";
               "<leader>cq" = "[q]uickfix diagnostic";
-              "<leader>cR" = "[R]ename";
+              "<leader>cr" = "[r]ename";
               "<leader>ca" = "Code [A]ction";
               "<leader>cd" = "[d]efinition";
               "<leader>cD" = "Type [D]efinition";
-              "<leader>cr" = "Definition [r]eferences";
+              "<leader>cR" = "Definition [R]eferences";
               "<leader>ci" = "[i]mplementation";
               "<leader>cc" = "[c]ode Documentation";
               "<leader>s" = "[s]hort cuts ...";
@@ -517,7 +543,6 @@ in
           '';
         };
         home.sessionVariables = {EDITOR = "nvim";};
-        programs.bash.shellAliases = {"v" = "vi";};
       }
     ];
   in

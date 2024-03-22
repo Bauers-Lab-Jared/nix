@@ -45,11 +45,6 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
-    nixd = {
-      url = "github:nix-community/nixd";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
-
     nixvim = {
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
