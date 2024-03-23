@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 ## Reset current root to clear any files that are not persisted.
 ## This is built to run during stage-0 (see persist.nix rollback service).
 ##
