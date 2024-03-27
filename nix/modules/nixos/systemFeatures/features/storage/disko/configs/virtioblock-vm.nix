@@ -48,15 +48,16 @@ in {
             };
             luks = {
               size = "100%";
-              content = { 
+              content = {
                 type = "luks";
                 name = "enc";
                 extraOpenArgs = [];
-                setting.allowDiscards = true;
+                settings.allowDiscards = true;
                 passwordFile = "/tmp/secret.key";
-              content = {
-                type = "lvm_pv";
-                vg = "pool";
+                content = {
+                  type = "lvm_pv";
+                  vg = "pool";
+                };
               };
             };
           };
@@ -70,7 +71,7 @@ in {
               size = "4g";
               content = {
                 type = "swap";
-                resumedevice = true;
+                resumeDevice = true;
               };
             };
             root = {
@@ -85,7 +86,7 @@ in {
                     mountpoint = "/";
                   };
 
-                  "/root-blank" = { };
+                  "/root-blank" = {};
 
                   "/persist" = {
                     mountOptions = ["subvol=persist" "compress=zstd" "noatime"];
@@ -110,4 +111,3 @@ in {
     };
   };
 }
-
