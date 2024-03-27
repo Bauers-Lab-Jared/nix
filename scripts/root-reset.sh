@@ -35,7 +35,7 @@ fi
 
 if [ ! -r "$BTRFS_VOL" ];
 then
-	>&2 echo "Device '$BTRFS_VOL' not found"
+    >&2 echo "Device '$BTRFS_VOL' not found"
 	exit 1
 fi
 

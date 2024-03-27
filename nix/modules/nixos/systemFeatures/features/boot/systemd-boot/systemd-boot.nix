@@ -34,6 +34,7 @@ in
       boot.loader.systemd-boot.configurationLimit = 10;
       boot.loader.efi.canTouchEfiVariables = true;
       boot.supportedFilesystems = ["btrfs" "ntfs"];
+      boot.initrd.supportedFilesystems = ["btrfs" "ntfs"];
 
       boot.kernelParams = [
         "rd.systemd.show_status=false"

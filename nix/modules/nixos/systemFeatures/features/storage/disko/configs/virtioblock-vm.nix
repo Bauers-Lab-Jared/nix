@@ -46,16 +46,14 @@ in {
                 mountOptions = ["uid=0" "gid=0" "fmask=0077" "dmask=0077"];
               };
             };
-            swap = {
-              size = "4G";
-              content = {
-                type = "swap";
-                resumeDevice = true;
-              };
-            };
-            root = {
-              name = "root";
+            luks = {
               size = "100%";
+              content = { 
+                type = "luks";
+                name = "enc";
+                extraOpenArgs = [];
+                setting.allowDiscards = true;
+                passwordFile = "/tmp/secret.key";
               content = {
                 type = "lvm_pv";
                 vg = "pool";
@@ -68,6 +66,13 @@ in {
         pool = {
           type = "lvm_vg";
           lvs = {
+            swap = {
+              size = "4g";
+              content = {
+                type = "swap";
+                resumedevice = true;
+              };
+            };
             root = {
               size = "100%FREE";
               content = {
@@ -75,22 +80,24 @@ in {
                 extraArgs = ["-f"];
 
                 subvolumes = {
-                  "/" = {
+                  "/root" = {
                     mountOptions = ["subvol=root" "compress=zstd" "noatime"];
                     mountpoint = "/";
                   };
 
-                  "persist" = {
+                  "/root-blank" = { };
+
+                  "/persist" = {
                     mountOptions = ["subvol=persist" "compress=zstd" "noatime"];
                     mountpoint = "${PERSIST_BASE}";
                   };
 
-                  "nix" = {
+                  "/nix" = {
                     mountOptions = ["subvol=nix" "compress=zstd" "noatime"];
                     mountpoint = "/nix";
                   };
 
-                  "log" = {
+                  "/log" = {
                     mountOptions = ["subvol=log" "compress=zstd" "noatime"];
                     mountpoint = "${PERSIST_LOG}";
                   };
